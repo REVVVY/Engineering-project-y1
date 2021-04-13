@@ -65,6 +65,8 @@ public class Server implements Runnable {
      */
     private class ClientHandler extends Thread {
 
+        private DataInputStream dis;
+        private ObjectOutputStream oos;
         private Socket socket;
 
         /***
@@ -80,12 +82,16 @@ public class Server implements Runnable {
          */
         public void run() {
             try {
-                DataInputStream dis = new DataInputStream(socket.getInputStream());
+                dis = new DataInputStream(socket.getInputStream());
+                oos = new ObjectOutputStream(socket.getOutputStream());
+
+                oos.writeObject("2");
 
                 String score1Pattern = "score1";
                 String score2Pattern = "score2";
                 String player1Pattern = "player1";
                 String player2Pattern = "player2";
+                String nbrOfPlayersPattern = "nbrOfPlayers";
 
                 while (true) {
                     String incomingString = dis.readUTF();
@@ -122,12 +128,22 @@ public class Server implements Runnable {
                         showList();
                         checkIfReadyToSend();
                     }
+
+                    else if(incomingString.regionMatches(0, nbrOfPlayersPattern, 0, 12)){
+                        System.out.println("nbrOfPlayersPattern");
+                        String nbrOfplayerStr = incomingString.substring(12);
+                        sendNbrOfPlayersToClient(nbrOfplayerStr);
+                    }
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+        }
+
+        public void sendNbrOfPlayersToClient(String nbrOfPlayers) throws IOException{
+            oos.writeObject(nbrOfPlayers);
         }
 
         /***
@@ -173,7 +189,6 @@ public class Server implements Runnable {
          */
         public void send(ArrayList<Player> highscoreList) throws IOException {
             Collections.sort(highscoreList, Collections.reverseOrder());
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(highscoreList);
             oos.flush();
         }
