@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /***
  * Klient klass för tester av servern.
  */
-public class Client implements Runnable{
+public class Client implements Runnable {
 
     private String ip;
     private int port;
@@ -22,7 +22,7 @@ public class Client implements Runnable{
      * @param ip addressen klienten använder vid start
      * @param port porten som används för att prata med servern
      */
-    public Client(String ip, int port){
+    public Client(String ip, int port) {
 
         this.ip = ip;
         this.port = port;
@@ -44,12 +44,24 @@ public class Client implements Runnable{
 
         try {
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-            //BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            while (true){
-                String name = "player1" + JOptionPane.showInputDialog("Skriv in ditt namn");
-                dos.writeUTF(name);
-                String name1 = "player2" + JOptionPane.showInputDialog("Skriv in ditt namn");
-                dos.writeUTF(name1);
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+
+            while (true) {
+
+                String nbrOfPlayersStr = (String) ois.readObject();
+                int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
+                System.out.println(nbrOfPlayers);
+
+                if (nbrOfPlayers == 1) {
+                    String name = "player1" + JOptionPane.showInputDialog("Skriv in ditt namn");
+                    dos.writeUTF(name);
+                } else if (nbrOfPlayers == 2) {
+
+                    String name = "player1" + JOptionPane.showInputDialog("Skriv in ditt namn");
+                    dos.writeUTF(name);
+                    String name1 = "player2" + JOptionPane.showInputDialog("Skriv in ditt namn");
+                    dos.writeUTF(name1);
+                }
 
                 String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
                 dos.writeUTF(score);
@@ -57,9 +69,9 @@ public class Client implements Runnable{
                 dos.writeUTF(score1);
                 dos.flush();
 
-                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+
                 ArrayList<Player> scoreboard = (ArrayList<Player>) ois.readObject();
-                for(Player p : scoreboard){
+                for (Player p : scoreboard) {
                     System.out.println(p.getName() + " " + p.getScore());
                 }
             }
