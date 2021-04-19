@@ -6,6 +6,7 @@ package Client;
 public class StartClient {
     public static void main(String[] args) {
         Client client = new Client("localhost", 2323);
+        System.out.println("Test");
     }
 }
 
