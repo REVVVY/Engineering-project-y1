@@ -1,15 +1,13 @@
 package Server;
 
-import Client.Player;
+import Client.Model.Player;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.function.ToDoubleBiFunction;
 
 /***
  * Server klass som lagrar data och skickar vidare data från inbyggda systemet till klienten.

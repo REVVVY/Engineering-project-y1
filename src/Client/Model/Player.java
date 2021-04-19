@@ -1,11 +1,11 @@
-package Client;
+package Client.Model;
 
 import java.io.Serializable;
 
 /***
  * Klass för att kunna skapa Player objekt med namn och score.
  */
-public class Player implements Serializable, Comparable<Player> {
+public class Player implements Serializable {
 
     private String name;
     private int score;
@@ -36,8 +36,4 @@ public class Player implements Serializable, Comparable<Player> {
         this.score = score;
     }
 
-    @Override
-    public int compareTo(Player o) {
-        return this.score - o.score;
-    }
 }

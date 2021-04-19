@@ -1,4 +1,4 @@
-package Client;
+package Client.Model;
 
 public class Game {
 
