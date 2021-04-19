@@ -16,6 +16,7 @@ public class Client implements Runnable {
     private Player player; //Skapa player arraylist
     private Player player1; //Skapa player arraylist
     private Socket socket;
+    private String s = "sebbe";
 
     /***
      * Konstruktor för starten av klienten
