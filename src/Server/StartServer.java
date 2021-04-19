@@ -5,6 +5,6 @@ package Server;
  */
 public class StartServer {
     public static void main(String[] args) {
-        Server server = new Server(2020);
+        Server server = new Server(2323);
     }
 }
