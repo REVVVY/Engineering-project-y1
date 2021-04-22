@@ -3,9 +3,7 @@ package Server;
 import Client.Player;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,6 +17,7 @@ public class Server implements Runnable {
     private Thread server = new Thread(this);
     private ServerSocket serverSocket;
     private int port;
+    private ObjectOutputStream oos;
 
     private LinkedList<ClientHandler> clientList;
     private ArrayList<Player> highscoreList;
@@ -46,16 +45,64 @@ public class Server implements Runnable {
      */
     @Override
     public void run() {
-        while (true) {
-            try {
-                Socket socket = serverSocket.accept();
-                ClientHandler ch = new ClientHandler(socket);
-                clientList.add(ch);
-                ch.start();
+        //while (true) {
+        try {
+            DatagramSocket arduinoSocket = new DatagramSocket(2323);
+            InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
+            inbyggdaSystemHandler.start();
 
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            Socket socket = serverSocket.accept();
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject("2"); //Test för java klienten
+            ClientHandler ch = new ClientHandler(socket);
+            //clientList.add(ch);
+            ch.start();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //}
+    }
+
+    /***
+     * Kollar ifall sista spelaren har fått in score för att kunna skicka till klienten.
+     * @throws IOException kastar IOExeption för att kunna anropa send metoden som skickar via en ström.
+     */
+    public void checkIfReadyToSend() throws IOException {
+        int lastIndex = highscoreList.size() - 1;
+        Player lastPlayer = highscoreList.get(lastIndex);
+        if (lastPlayer.getScore() != 0) {
+            send(highscoreList);
+        }
+    }
+
+    /***
+     * Metod som skickar hela highscoreListan till klienten så att klienten kan uppdatera JListen
+     * Så att JListen är aktuell i början/slut av varje spel.
+     * @param highscoreList en arraylista med alla personer som spelat spelet och dess score
+     * @throws IOException Kastar IOExeption för att kunna skicka över data över Objekt strömmen.
+     */
+    public void send(ArrayList<Player> highscoreList) throws IOException {
+        Collections.sort(highscoreList, Collections.reverseOrder());
+        oos.writeObject(highscoreList);
+        oos.flush();
+    }
+
+    public void sendNbrOfPlayersToClient(String nbrOfPlayers) throws IOException {
+        oos.writeObject(nbrOfPlayers);
+    }
+
+    /***
+     * Metod som lägger till score på den specifika spelaren
+     * @param score score som en viss spelare fått
+     */
+    public void addScoreToPlayer(int score) {
+        for (Player p : highscoreList) {
+            if (p.getScore() == 0) {
+                p.setScore(score);
+                break;
             }
         }
     }
@@ -66,7 +113,6 @@ public class Server implements Runnable {
     private class ClientHandler extends Thread {
 
         private DataInputStream dis;
-        private ObjectOutputStream oos;
         private Socket socket;
 
         /***
@@ -75,6 +121,7 @@ public class Server implements Runnable {
          */
         public ClientHandler(Socket socket) {
             this.socket = socket;
+
         }
 
         /***
@@ -82,16 +129,15 @@ public class Server implements Runnable {
          */
         public void run() {
             try {
+                System.out.println("I java klient");
                 dis = new DataInputStream(socket.getInputStream());
-                oos = new ObjectOutputStream(socket.getOutputStream());
 
-                oos.writeObject("2");
 
-                String score1Pattern = "score1";
-                String score2Pattern = "score2";
+                //oos.writeObject("2");
+
                 String player1Pattern = "player1";
                 String player2Pattern = "player2";
-                String nbrOfPlayersPattern = "nbrOfPlayers";
+
 
                 while (true) {
                     String incomingString = dis.readUTF();
@@ -106,91 +152,82 @@ public class Server implements Runnable {
                         Player player1 = new Player(player);
                         highscoreList.add(player1);
 
-                    } else if (incomingString.regionMatches(0, player1Pattern, 0, 7)){
+                    } else if (incomingString.regionMatches(0, player1Pattern, 0, 7)) {
                         System.out.println("Player1 pattern");
                         String player = incomingString.substring(7);
                         Player player2 = new Player(player);
                         highscoreList.add(player2);
 
-                    } else if (incomingString.regionMatches(0, score2Pattern, 0, 6)) {
-                        System.out.println("Score2 pattern");
-                        String scoreStr = incomingString.substring(6);
-                        int score = Integer.parseInt(scoreStr);
-                        addScoreToPlayer(score);
-                        showList();
-                        checkIfReadyToSend();
-
-                    } else if(incomingString.regionMatches(0, score1Pattern, 0, 6)){
-                        System.out.println("Score1 pattern");
-                        String scoreStr = incomingString.substring(6);
-                        int score = Integer.parseInt(scoreStr);
-                        addScoreToPlayer(score);
-                        showList();
-                        checkIfReadyToSend();
-                    }
-
-                    else if(incomingString.regionMatches(0, nbrOfPlayersPattern, 0, 12)){
-                        System.out.println("nbrOfPlayersPattern");
-                        String nbrOfplayerStr = incomingString.substring(12);
-                        sendNbrOfPlayersToClient(nbrOfplayerStr);
                     }
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
 
+    private class InbyggdaSystemHandler extends Thread {
+
+        private DatagramSocket serverSocket;
+        private byte[] receiveData = new byte[1024];
+        private byte[] sendData = new byte[1024];
+
+        public InbyggdaSystemHandler(DatagramSocket socket) {
+            this.serverSocket = socket;
         }
 
-        public void sendNbrOfPlayersToClient(String nbrOfPlayers) throws IOException{
-            oos.writeObject(nbrOfPlayers);
-        }
+        public void run() {
+            System.out.println("Inne i inbyggda");
+            while (true) {
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                try {
+                    serverSocket.receive(receivePacket);
 
-        /***
-         * Metod som lägger till score på den specifika spelaren
-         * @param score score som en viss spelare fått
-         */
-        public void addScoreToPlayer(int score) {
-            for (Player p : highscoreList) {
-                if (p.getScore() == 0) {
-                    p.setScore(score);
-                    break;
+                    String sentence = new String(receivePacket.getData());
+                    System.out.println("RECEIVED: " + sentence);
+
+                    String score1Pattern = "score1";
+                    String score2Pattern = "score2";
+                    String nbrOfPlayersPattern = "nbrOfPlayers";
+
+                    if (sentence.regionMatches(0, score2Pattern, 0, 6)) {
+                        System.out.println("Score2 pattern");
+                        String scoreStr = sentence.substring(6);
+                        int score = Integer.parseInt(scoreStr);
+                        addScoreToPlayer(score);
+                        //showList();
+                        checkIfReadyToSend();
+
+                    } else if (sentence.regionMatches(0, score1Pattern, 0, 6)) {
+                        System.out.println("Score1 pattern");
+                        String scoreStr = sentence.substring(6);
+                        int score = Integer.parseInt(scoreStr);
+                        addScoreToPlayer(score);
+                        //showList();
+                        checkIfReadyToSend();
+                    } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
+                        System.out.println("nbrOfPlayersPattern");
+                        String nbrOfplayerStr = sentence.substring(12);
+                        sendNbrOfPlayersToClient(nbrOfplayerStr);
+                    }
+
+
+                    //Ifall vi vill kunna skicka till det inbyggda systemet
+                   /* InetAddress IPAddress = receivePacket.getAddress();
+                    int port = receivePacket.getPort();
+                    String capitalizedSentence = sentence.toUpperCase();
+
+                    sendData = capitalizedSentence.getBytes();
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+
+                    serverSocket.send(sendPacket);
+                    */
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
-        }
-
-        //TODO - Lägg till GUI för servern som loggar all trafik in och ut och den specifika datan
-        /***
-         * Metod för att skriva ut listan i terminalen för tester.
-         */
-        public void showList() {
-            for (Player player : highscoreList) {
-                System.out.println(player.getName() + " " + player.getScore());
-            }
-        }
-
-        /***
-         * Kollar ifall sista spelaren har fått in score för att kunna skicka till klienten.
-         * @throws IOException kastar IOExeption för att kunna anropa send metoden som skickar via en ström.
-         */
-        public void checkIfReadyToSend() throws IOException{
-            int lastIndex = highscoreList.size() - 1;
-            Player lastPlayer = highscoreList.get(lastIndex);
-            if (lastPlayer.getScore() != 0){
-                send(highscoreList);
-            }
-        }
-
-        /***
-         * Metod som skickar hela highscoreListan till klienten så att klienten kan uppdatera JListen
-         * Så att JListen är aktuell i början/slut av varje spel.
-         * @param highscoreList en arraylista med alla personer som spelat spelet och dess score
-         * @throws IOException Kastar IOExeption för att kunna skicka över data över Objekt strömmen.
-         */
-        public void send(ArrayList<Player> highscoreList) throws IOException {
-            Collections.sort(highscoreList, Collections.reverseOrder());
-            oos.writeObject(highscoreList);
-            oos.flush();
         }
     }
 }

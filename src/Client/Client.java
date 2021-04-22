@@ -63,11 +63,13 @@ public class Client implements Runnable {
                     dos.writeUTF(name1);
                 }
 
-                String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
+                /*String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
                 dos.writeUTF(score);
                 String score1 = "score2" + JOptionPane.showInputDialog("Skriv in din score");
                 dos.writeUTF(score1);
                 dos.flush();
+
+                 */
 
 
                 ArrayList<Player> scoreboard = (ArrayList<Player>) ois.readObject();
