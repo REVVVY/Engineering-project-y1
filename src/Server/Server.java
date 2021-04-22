@@ -138,7 +138,6 @@ public class Server implements Runnable {
                 String player1Pattern = "player1";
                 String player2Pattern = "player2";
 
-
                 while (true) {
                     String incomingString = dis.readUTF();
 
@@ -183,8 +182,13 @@ public class Server implements Runnable {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
                     serverSocket.receive(receivePacket);
-
-                    String sentence = new String(receivePacket.getData());
+                    int dataLength = receivePacket.getLength();
+                    char[] rawData = new char[dataLength];
+                    byte[] rawBytes = receivePacket.getData();
+                    for (int i = 0; i < dataLength; i++) {
+                        rawData[i] = (char)rawBytes[i];
+                    }
+                    String sentence = new String(rawData);
                     System.out.println("RECEIVED: " + sentence);
 
                     String score1Pattern = "score1";
