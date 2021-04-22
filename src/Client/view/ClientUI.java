@@ -18,11 +18,14 @@ public class ClientUI extends JPanel implements ActionListener{
 
     private ClientController controller;
 
+
+
     private JPanel centerPanel = new JPanel();
     /** Creates new form UserInput */
     public ClientUI(ClientController controller) {
         this.controller = controller;
         setLayout(new BorderLayout());
+
 
         lblTitle.setFont(new Font("Apple Chancery", Font.BOLD, 24));
         taResult.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -91,6 +94,9 @@ public class ClientUI extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        taResult.setText(tfPlayer1.getText());
+        taResult.setText(tfPlayer2.getText());
 
     }
 
