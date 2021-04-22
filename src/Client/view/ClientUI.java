@@ -94,9 +94,9 @@ public class ClientUI extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String playerInfo = tfPlayer1.getText() + ", " + tfPlayer2.getText();
+        taResult.setText(playerInfo);
 
-        taResult.setText(tfPlayer1.getText());
-        taResult.setText(tfPlayer2.getText());
 
     }
 
