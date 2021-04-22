@@ -11,12 +11,15 @@ public class ClientController {
     private Client client;
     private ClientUI ui = new ClientUI(this);
 
+
     public ClientController(Client client) {
         this.client = client;
 
+        client.setController(this);
         controlNbrOfPlayers();
         viewPlayerUI();
         showUI();
+        client.getScoreFromServer();
         printScoreboard(getFirstPlayer(), getSecondPlayer());
     }
 

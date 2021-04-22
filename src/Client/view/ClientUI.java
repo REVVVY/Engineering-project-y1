@@ -94,16 +94,17 @@ public class ClientUI extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String playerInfo = tfPlayer1.getText() + ", " + tfPlayer2.getText();
+        String playerInfo = getName1() +"\n" + getName2();
+
         taResult.setText(playerInfo);
 
 
     }
 
     public String getName1(){
-        return tfPlayer1.getName();
+        return tfPlayer1.getText();
     }
     public String getName2(){
-        return tfPlayer2.getName();
+        return tfPlayer2.getText();
     }
 }
