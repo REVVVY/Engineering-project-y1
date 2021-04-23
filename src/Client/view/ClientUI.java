@@ -7,9 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ClientUI extends JPanel implements ActionListener{
+public class ClientUI extends JPanel  implements ActionListener{
     private JButton btnRegister = new JButton("Register");
-    private JLabel lblTitle = new JLabel("Welcome to our Laser-game!");
+    private JLabel lblTitle = new JLabel("Welcome to our Laser-game!", SwingConstants.CENTER);
     private JTextArea taResult = new JTextArea("Score: ");
     private JLabel lblPlayer1 = new JLabel("Player 1:");
     private JLabel lblPlayer2 = new JLabel("player 2:");
@@ -18,9 +18,8 @@ public class ClientUI extends JPanel implements ActionListener{
 
     private ClientController controller;
 
-
-
     private JPanel centerPanel = new JPanel();
+
     /** Creates new form UserInput */
     public ClientUI(ClientController controller) {
         this.controller = controller;
@@ -34,6 +33,7 @@ public class ClientUI extends JPanel implements ActionListener{
 
         add(lblTitle,BorderLayout.NORTH);
         add(taResult, BorderLayout.SOUTH);
+
     }
 
     public JPanel onePlayerPnl(){
@@ -66,29 +66,27 @@ public class ClientUI extends JPanel implements ActionListener{
 
     /** Gets number of players from controller, and opens its player panel, 1 or 2 */
 
-    public JPanel playersPnl(int numOfPlayers) {
+    public void playersPnl(int numOfPlayers) {
         JPanel panel = new JPanel(new GridLayout(2,5));
 
         if (numOfPlayers == 1){
-            panel.add(onePlayerPnl());
+            add(onePlayerPnl(), BorderLayout.CENTER);
         }
         else if(numOfPlayers == 2){
-            panel.add(twoPlayersPnl());
+            add(twoPlayersPnl(), BorderLayout.CENTER);
         }
-        add(panel, BorderLayout.CENTER);
-        return panel;
 
     }
 
     public void setResult(String result) {
-        controller.printScoreboard(tfPlayer1.getText(), tfPlayer2.getText());
+      //  controller.printScoreboard(tfPlayer1.getText(), tfPlayer2.getText());
 
         taResult.setText(result);
     }
     public static void main(String[] args) {
         ClientUI ui = new ClientUI(null);
         ui.playersPnl(2);
-        ui.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+     //   ui.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         JOptionPane.showMessageDialog( null, ui );
     }
 
@@ -97,8 +95,9 @@ public class ClientUI extends JPanel implements ActionListener{
         String playerInfo = getName1() +"\n" + getName2();
 
         taResult.setText(playerInfo);
+        //anropa twoPlayers
 
-
+        controller.sendPlayers(getName1(), getName2());
     }
 
     public String getName1(){

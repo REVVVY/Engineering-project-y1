@@ -4,6 +4,7 @@ import Client.Controller.*;
 import Client.Model.Client;
 import Client.view.*;
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 
 public class ClientController {
@@ -12,36 +13,52 @@ public class ClientController {
     private ClientUI ui = new ClientUI(this);
 
 
-    public ClientController(Client client) {
-        this.client = client;
+    public ClientController(String ip, int port) {
 
-        client.setController(this);
-        controlNbrOfPlayers();
-        viewPlayerUI();
+        this.client = new Client(ip, port, this);
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         showUI();
-        client.getScoreFromServer();
-        printScoreboard(getFirstPlayer(), getSecondPlayer());
+
+        viewPlayerUI();
+        //client.getScoreFromServer();
+        //printScoreboard(getFirstPlayer(), getSecondPlayer());
     }
 
     private void viewPlayerUI() {
-        if (controlNbrOfPlayers() == 1) {
+        int controlNbrOfPlayers = controlNbrOfPlayers();
+        if (controlNbrOfPlayers == 1) {
             ui.playersPnl(1);
         }
-        else if(controlNbrOfPlayers() == 2) {
+        else if(controlNbrOfPlayers == 2) {
             ui.playersPnl(2);
         }
-
     }
 
     public int controlNbrOfPlayers(){
         int numPlayers = 0;
-        try {
-            numPlayers = client.numOfPlayers();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        numPlayers = client.numOfPlayers();
         return numPlayers;
     }
+
+    public void sendPlayers(String name1, String name2) {
+        try {
+            int controlNbrOfPlayers = controlNbrOfPlayers();
+            if (controlNbrOfPlayers == 1) {
+                client.onePlayer(name1);
+            }
+            else if(controlNbrOfPlayers == 2) {
+                client.twoPlayers(name1, name2);
+            }
+        } catch (IOException e){
+         e.printStackTrace();
+        }
+    }
+
 
     public void printScoreboard(String name1, String name2) {
         try {
@@ -60,15 +77,15 @@ public class ClientController {
         });
     }
     public String getFirstPlayer(){
-        if (ui.getName1() == null) {
-            return "";
+        if (ui.getName1().isEmpty() || ui.getName1().equals(null)) {
+            return "NoName";
         }
         return ui.getName1();
     }
 
     public String getSecondPlayer(){
-        if (ui.getName2() == null) {
-            return "";
+        if (ui.getName2().isEmpty() || ui.getName2().equals("")) {
+            return "NoName";
         }
         return ui.getName2();
     }
@@ -77,12 +94,13 @@ public class ClientController {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame frame = new JFrame("Client");
+                JFrame frame = new JFrame("Laser-Game");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.add(ui);
                 frame.pack();
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
+                viewPlayerUI();
             }
         });
     }

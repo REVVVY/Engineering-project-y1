@@ -3,9 +3,11 @@ package Client.Model;
 import Client.Controller.ClientController;
 
 import javax.swing.*;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -36,11 +38,10 @@ public class Client implements Runnable {
      * @param ip addressen klienten använder vid start
      * @param port porten som används för att prata med servern
      */
-
-    public Client(String ip, int port) {
+    public Client(String ip, int port, ClientController controller) {
+        this.controller = controller;
         this.ip = ip;
         this.port = port;
-
         try {
             this.socket = new Socket(ip, port);
 
@@ -52,24 +53,28 @@ public class Client implements Runnable {
         }
         thread.start();
     }
-    public void setController(ClientController controller) {
-        this.controller = controller;
+
+    public ClientController setController() {
+         return controller;
     }
 
-    public int numOfPlayers() throws IOException, ClassNotFoundException {
+    public int numOfPlayers(){
+
         return numOfPlayers;
     }
 
-    public void onePlayer() throws IOException {
-        String name = controller.getFirstPlayer();
+    public void onePlayer(String name) throws IOException {
+        name = "player1" + controller.getFirstPlayer();
         dos.writeUTF(name);
+        dos.flush();
     }
 
-    public void twoPlayers() throws IOException {
-        String name = controller.getFirstPlayer();
+    public void twoPlayers(String name, String name1) throws IOException {
+        name = "player1" + controller.getFirstPlayer();
         dos.writeUTF(name);
-        String name1 = controller.getSecondPlayer();
+        name1 = "player2" + controller.getSecondPlayer();
         dos.writeUTF(name1);
+        dos.flush();
     }
 
     public void createScoreboard() throws IOException, ClassNotFoundException {
@@ -77,7 +82,6 @@ public class Client implements Runnable {
         for (Player p : scoreboard) {
             System.out.println(p.getName() + " " + p.getScore());
         }
-
     }
 
     public void getScoreFromServer() {
@@ -91,14 +95,58 @@ public class Client implements Runnable {
         }
 
     }
+
+
     /**
      * Klientens tråd som lägger till spelares namn + score som test för servern
      * samt hämtar arraylistan med hela highscorelistan.
      */
     @Override
     public void run() {
-
         try {
+
+            String nbrOfPlayersStr =  (String) ois.readObject();
+            int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
+            System.out.println(nbrOfPlayers);
+
+            numOfPlayers = nbrOfPlayers;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        //createScoreboard();
+
+    }
+
+
+
+
+
+
+
+
+/*
+    public void run(){
+        String nbrOfPlayersStr = "";
+        try {
+            nbrOfPlayersStr = (String) ois.readObject();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
+        System.out.println(nbrOfPlayers);
+
+        numOfPlayers = nbrOfPlayers;
+
+
+
+    }
+*/
+    /*try {
             while (true) {
                 String nbrOfPlayersStr = (String) ois.readObject();
                 int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
@@ -116,20 +164,21 @@ public class Client implements Runnable {
                     dos.writeUTF(score);
                     String score1 = "score2" + JOptionPane.showInputDialog("Skriv in din score");
                     dos.writeUTF(score1);*/
-                }
+    /*
+}
                 dos.flush();
-                createScoreboard();
-            }
+                        //createScoreboard();
+                        }
 
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            socket.close();
-        } catch(Exception e) {}
-        controller.newResponse("Klient kopplar ner");
+                        } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                        }
+                        try {
+                        socket.close();
+                        } catch(Exception e) {}
+                        controller.newResponse("Klient kopplar ner");
 
-    }
-
+                        }
+*/
 
 }

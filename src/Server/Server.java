@@ -93,7 +93,7 @@ public class Server implements Runnable {
 
                 while (true) {
                     String incomingString = dis.readUTF();
-
+                    System.out.println(incomingString);
                     //TODO, Skapa ett till pattern för att kolla antalet spelare som ska spela spelet,
                     // beroende på siffran som kommer in så skapas ett gameobjekt med antingen 1 eller 2 spelare
                     // efter det mottagits namn från java klient.
@@ -134,6 +134,8 @@ public class Server implements Runnable {
                     }
                 }
 
+            } catch (EOFException e) { //to avoid error occurs because of long waiting?
+                System.out.println("Waiting to read...\n");
             } catch (IOException e) {
                 e.printStackTrace();
             }
