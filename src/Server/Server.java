@@ -23,6 +23,7 @@ public class Server implements Runnable {
     private LinkedList<ClientHandler> clientList;
     private ArrayList<Player> highscoreList;
     private ArrayList<Game> gameList;
+    //TODO - Fixa databas
 
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
