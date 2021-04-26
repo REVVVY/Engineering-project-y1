@@ -15,7 +15,7 @@ public class ClientUI extends JPanel  implements ActionListener{
     private JLabel lblPlayer2 = new JLabel("player 2:");
     private JTextField tfPlayer1 = new JTextField();
     private JTextField tfPlayer2 = new JTextField();
-
+    private String str;
     private ClientController controller;
 
     private JPanel centerPanel = new JPanel();
