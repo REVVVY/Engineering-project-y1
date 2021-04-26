@@ -1,7 +1,7 @@
 package Server;
 
 import Client.Player;
-
+import Client.Game;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -18,9 +18,11 @@ public class Server implements Runnable {
     private ServerSocket serverSocket;
     private int port;
     private ObjectOutputStream oos;
+    private Game game;
 
     private LinkedList<ClientHandler> clientList;
     private ArrayList<Player> highscoreList;
+    private ArrayList<Game> gameList;
 
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
@@ -30,6 +32,7 @@ public class Server implements Runnable {
         this.port = port;
         clientList = new LinkedList<>();
         highscoreList = new ArrayList<>();
+        gameList = new ArrayList<>();
 
         try {
             serverSocket = new ServerSocket(port);
@@ -86,7 +89,14 @@ public class Server implements Runnable {
      */
     public void send(ArrayList<Player> highscoreList) throws IOException {
         Collections.sort(highscoreList, Collections.reverseOrder());
-        oos.writeObject(highscoreList);
+        ArrayList<Player> temp = new ArrayList<>();
+        for(Player p: highscoreList){
+            if(temp.size() < 10){
+                temp.add(p);
+            }
+        }
+        oos.writeObject(temp);
+        oos.writeObject(game);
         oos.flush();
     }
 
@@ -99,10 +109,37 @@ public class Server implements Runnable {
      * @param score score som en viss spelare fått
      */
     public void addScoreToPlayer(int score) {
+
         for (Player p : highscoreList) {
             if (p.getScore() == 0) {
                 p.setScore(score);
                 break;
+            }
+        }
+    }
+
+    public void addPlayersToList(){
+
+        if(game.getPlayer1() != null){
+            highscoreList.add(game.getPlayer1());
+        }
+        if(game.getPlayer2() != null){
+            highscoreList.add(game.getPlayer2());
+        }
+    }
+
+    public void decideWinner() { //TODO, fixa hur det blir ifall det blir lika
+
+        if(game.getPlayer1() != null && game.getPlayer2() == null){
+            game.setWinner(game.getPlayer1());
+
+        }else if(game.getPlayer1() != null && game.getPlayer2() != null){
+
+            if(game.getPlayer1().getScore() > game.getPlayer2().getScore()){
+                game.setWinner(game.getPlayer1());
+
+            }else if(game.getPlayer2().getScore() > game.getPlayer1().getScore()){
+                game.setWinner(game.getPlayer2());
             }
         }
     }
@@ -113,6 +150,7 @@ public class Server implements Runnable {
     private class ClientHandler extends Thread {
 
         private DataInputStream dis;
+        private ObjectInputStream ois;
         private Socket socket;
 
         /***
@@ -129,7 +167,22 @@ public class Server implements Runnable {
          */
         public void run() {
             try {
-                System.out.println("I java klient");
+                ois = new ObjectInputStream(socket.getInputStream());
+
+                while(true){
+                    Object obj = ois.readObject();
+
+                    if(obj instanceof Game){
+                        game = (Game)obj;
+                        gameList.add(game);
+                        addPlayersToList();
+                        addScoreToPlayer(22);
+                        addScoreToPlayer(50);
+                        decideWinner();
+                        checkIfReadyToSend();
+                    }
+                }
+              /*  System.out.println("I java klient");
                 dis = new DataInputStream(socket.getInputStream());
 
 
@@ -137,6 +190,7 @@ public class Server implements Runnable {
 
                 String player1Pattern = "player1";
                 String player2Pattern = "player2";
+
 
                 while (true) {
                     String incomingString = dis.readUTF();
@@ -156,11 +210,10 @@ public class Server implements Runnable {
                         String player = incomingString.substring(7);
                         Player player2 = new Player(player);
                         highscoreList.add(player2);
-
                     }
-                }
+                } */
 
-            } catch (IOException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
@@ -189,6 +242,7 @@ public class Server implements Runnable {
                         rawData[i] = (char)rawBytes[i];
                     }
                     String sentence = new String(rawData);
+
                     System.out.println("RECEIVED: " + sentence);
 
                     String score1Pattern = "score1";
@@ -200,7 +254,7 @@ public class Server implements Runnable {
                         String scoreStr = sentence.substring(6);
                         int score = Integer.parseInt(scoreStr);
                         addScoreToPlayer(score);
-                        //showList();
+                        decideWinner();
                         checkIfReadyToSend();
 
                     } else if (sentence.regionMatches(0, score1Pattern, 0, 6)) {
@@ -208,8 +262,9 @@ public class Server implements Runnable {
                         String scoreStr = sentence.substring(6);
                         int score = Integer.parseInt(scoreStr);
                         addScoreToPlayer(score);
-                        //showList();
+                        decideWinner();
                         checkIfReadyToSend();
+
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
                         System.out.println("nbrOfPlayersPattern");
                         String nbrOfplayerStr = sentence.substring(12);
