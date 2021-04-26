@@ -22,7 +22,6 @@ public class Client implements Runnable {
     private Thread thread = new Thread(this);
     private Player player; //Skapa player arraylist
     private Player player1; //Skapa player arraylist
-    private String s;
     private ArrayList<Player> playerScore;
 
     private Socket socket;
