@@ -22,6 +22,7 @@ public class DataConn {
 
     public void getData(){
         try{
+            
             String sql = "select * from Highscore";
             rs = st.executeQuery(sql);
             System.out.println("Data från Isacs databas");
