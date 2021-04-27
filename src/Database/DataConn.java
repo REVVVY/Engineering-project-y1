@@ -1,5 +1,6 @@
 package Database;
 
+import javax.swing.*;
 import java.sql.*;
 
 public class DataConn {
@@ -23,7 +24,7 @@ public class DataConn {
         try{
             String sql = "select * from Highscore";
             rs = st.executeQuery(sql);
-            System.out.println("Data from online Database:");
+            System.out.println("Data från Isacs databas");
             while(rs.next()){
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
@@ -32,7 +33,26 @@ public class DataConn {
             }
 
         }catch(Exception ex){
-            System.out.println("Error is found :"+ex);
+            System.out.println("Error is found: "+ex);
+        }
+    }
+
+    public void setData(){
+        try{
+            String name = JOptionPane.showInputDialog("Ange ditt namn");
+            int score = Integer.parseInt(JOptionPane.showInputDialog("Ange din score"));
+            String sql = "INSERT INTO Highscore VALUES (?, ?, ?)";
+
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, 0);
+            pstmt.setString(2, name);
+            pstmt.setInt(3, score);
+            pstmt.executeUpdate();
+            pstmt.close();
+            System.out.println("Uppdaterat databasen");
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 

@@ -5,6 +5,8 @@ public class DatabaseMainTest {
 
         DataConn connect = new DataConn();
         connect.getData();
+        connect.setData();
+        connect.getData();
 
     }
 }
