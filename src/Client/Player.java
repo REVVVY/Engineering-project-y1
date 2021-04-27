@@ -18,6 +18,11 @@ public class Player implements Serializable, Comparable<Player> {
         this.name = name;
     }
 
+    public Player(String name, int score){
+        this.name = name;
+        this.score = score;
+    }
+
     //Getters o setters nedan
 
     public String getName() {

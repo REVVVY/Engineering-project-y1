@@ -8,7 +8,7 @@ public class DatabaseMainTest {
 
         DatabaseJohan connect = new DatabaseJohan();
         connect.getData();
-        connect.setData();
+      //  connect.setData();
         connect.getData();
 
     }

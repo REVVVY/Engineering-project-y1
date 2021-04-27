@@ -37,6 +37,7 @@ public class Server implements Runnable {
         gameList = new ArrayList<>();
         //Todo - Uppdatera listorna med informationen i databasen
         connectToDatabase();
+        getInfoFromDatabase();
 
         try {
             serverSocket = new ServerSocket(port);
@@ -45,6 +46,8 @@ public class Server implements Runnable {
         }
         server.start();
     }
+
+
 
     /***
      * Accepterar klientens anslutning och skapar ett objekt av en inre klass.
@@ -75,7 +78,22 @@ public class Server implements Runnable {
 
     public void connectToDatabase(){
         connection = new DataConn();
-        connection.getData();
+    }
+
+    public void getInfoFromDatabase() {     //icke ifyllt namn i databas = tom sträng
+       highscoreList = connection.getHighscore(highscoreList);
+       gameList = connection.getGamelist(gameList);
+        for (Player p: highscoreList
+             ) {
+            System.out.println(p.getName() + ": " + p.getScore());
+        }
+        System.out.println("-------------------------");
+        for(Game g: gameList){
+            System.out.println("player1: " + g.getPlayer1().getName() + ", Score: " + g.getPlayer1().getScore());
+            if(!g.getPlayer2().getName().equals("")){
+                System.out.println("player2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore());
+            }
+        }
     }
 
     /***
