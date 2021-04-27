@@ -35,7 +35,6 @@ public class Server implements Runnable {
         clientList = new LinkedList<>();
         highscoreList = new ArrayList<>();
         gameList = new ArrayList<>();
-        //Todo - Uppdatera listorna med informationen i databasen
         connectToDatabase();
         getInfoFromDatabase();
 
@@ -64,7 +63,7 @@ public class Server implements Runnable {
 
             Socket socket = serverSocket.accept();
             oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject("2"); //Test för java klienten
+            oos.writeObject("2"); //Test för java klienten //Todo ta bort vid test av inbyggda
             ClientHandler ch = new ClientHandler(socket);
             //clientList.add(ch);
             ch.start();
@@ -199,6 +198,7 @@ public class Server implements Runnable {
                 while(true){
                     Object obj = ois.readObject();
 
+                    //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
                     if(obj instanceof Game){
                         game = (Game)obj;
                         gameList.add(game);
