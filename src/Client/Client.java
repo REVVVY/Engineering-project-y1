@@ -83,7 +83,11 @@ public class Client implements Runnable {
                     System.out.println(p.getName() + " " + p.getScore());
                 }
                 Game game = (Game)ois.readObject();
-                System.out.println(game.getWinner().getName() + " " + game.getWinner().getScore());
+                if(game.getWinner() == null){
+                    System.out.println("DRAW");
+                } else{
+                    System.out.println(game.getWinner().getName() + " " + game.getWinner().getScore());
+                }
             }
 
         } catch (IOException | ClassNotFoundException e) {

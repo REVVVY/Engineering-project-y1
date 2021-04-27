@@ -8,7 +8,6 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.function.ToDoubleBiFunction;
 
 /***
  * Server klass som lagrar data och skickar vidare data från inbyggda systemet till klienten.
@@ -82,6 +81,7 @@ public class Server implements Runnable {
     public void getInfoFromDatabase() {     //icke ifyllt namn i databas = tom sträng
        highscoreList = connection.getHighscore(highscoreList);
        gameList = connection.getGamelist(gameList);
+       //Bara tester undan för att visa databasen
         for (Player p: highscoreList
              ) {
             System.out.println(p.getName() + ": " + p.getScore());
@@ -103,6 +103,7 @@ public class Server implements Runnable {
         int lastIndex = highscoreList.size() - 1;
         Player lastPlayer = highscoreList.get(lastIndex);
         if (lastPlayer.getScore() != 0) {
+            updateDatabase();
             send(highscoreList);
         }
     }
@@ -154,7 +155,7 @@ public class Server implements Runnable {
         }
     }
 
-    public void decideWinner() { //TODO, fixa hur det blir ifall det blir lika
+    public void decideWinner() {
 
         if(game.getPlayer1() != null && game.getPlayer2() == null){
             game.setWinner(game.getPlayer1());
@@ -166,8 +167,14 @@ public class Server implements Runnable {
 
             }else if(game.getPlayer2().getScore() > game.getPlayer1().getScore()){
                 game.setWinner(game.getPlayer2());
+            } else if(game.getPlayer1().getScore() == game.getPlayer2().getScore()){
+                game.setWinner(null);
             }
         }
+    }
+
+    public void updateDatabase(){
+        connection.setDataInDatabase(game);
     }
 
     /***
@@ -203,43 +210,12 @@ public class Server implements Runnable {
                         game = (Game)obj;
                         gameList.add(game);
                         addPlayersToList();
-                        addScoreToPlayer(22);
-                        addScoreToPlayer(50);
+                        addScoreToPlayer(40);
+                        addScoreToPlayer(40);
                         decideWinner();
                         checkIfReadyToSend();
                     }
                 }
-              /*  System.out.println("I java klient");
-                dis = new DataInputStream(socket.getInputStream());
-
-
-                //oos.writeObject("2");
-
-                String player1Pattern = "player1";
-                String player2Pattern = "player2";
-
-
-                while (true) {
-                    String incomingString = dis.readUTF();
-
-                    //TODO, Skapa ett till pattern för att kolla antalet spelare som ska spela spelet,
-                    // beroende på siffran som kommer in så skapas ett gameobjekt med antingen 1 eller 2 spelare
-                    // efter det mottagits namn från java klient.
-
-                    if (incomingString.regionMatches(0, player2Pattern, 0, 7)) {
-                        System.out.println("Player2 pattern");
-                        String player = incomingString.substring(7);
-                        Player player1 = new Player(player);
-                        highscoreList.add(player1);
-
-                    } else if (incomingString.regionMatches(0, player1Pattern, 0, 7)) {
-                        System.out.println("Player1 pattern");
-                        String player = incomingString.substring(7);
-                        Player player2 = new Player(player);
-                        highscoreList.add(player2);
-                    }
-                } */
-
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }

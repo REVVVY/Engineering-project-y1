@@ -101,19 +101,78 @@ public class DataConn {
         return gamelist;
     }
 
-    public void setData() {
+    public void setDataInDatabase(Game currentGame) {
         try {
-            String name = JOptionPane.showInputDialog("Ange ditt namn");
-            int score = Integer.parseInt(JOptionPane.showInputDialog("Ange din score"));
-            String sql = "INSERT INTO Highscore VALUES (?, ?, ?)";
+            String sqlHighscore = "INSERT INTO Highscore VALUES (?, ?, ?)";
 
-            PreparedStatement pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, 0);
-            pstmt.setString(2, name);
-            pstmt.setInt(3, score);
-            pstmt.executeUpdate();
-            pstmt.close();
-            System.out.println("Uppdaterat databasen");
+            String name1 = currentGame.getPlayer1().getName();
+            int score1 = currentGame.getPlayer1().getScore();
+
+            if(currentGame.getPlayer2() != null){
+                String name2 = currentGame.getPlayer2().getName();
+                int score2 = currentGame.getPlayer2().getScore();
+
+                PreparedStatement player1Statement = con.prepareStatement(sqlHighscore);
+                player1Statement.setInt(1, 0);
+                player1Statement.setString(2, name1);
+                player1Statement.setInt(3, score1);
+                player1Statement.executeUpdate();
+                player1Statement.close();
+
+                PreparedStatement player2Statement = con.prepareStatement(sqlHighscore);
+                player2Statement.setInt(1, 0);
+                player2Statement.setString(2, name2);
+                player2Statement.setInt(3, score2);
+                player2Statement.executeUpdate();
+                player2Statement.close();
+            } else{
+                PreparedStatement player1Statement = con.prepareStatement(sqlHighscore);
+                player1Statement.setInt(1, 0);
+                player1Statement.setString(2, name1);
+                player1Statement.setInt(3, score1);
+                player1Statement.executeUpdate();
+                player1Statement.close();
+            }
+            System.out.println("Highscore updated in database");
+
+            String sqlGame = "INSERT INTO Games VALUES (?, ?, ?, ?, ?, ?)";
+
+            Player winningPlayer = currentGame.getWinner();
+            int winner = 0;
+            if(winningPlayer == currentGame.getPlayer1()){
+                winner = 1;
+            } else if(winningPlayer == currentGame.getPlayer2()){
+                winner = 2;
+            } else if(winningPlayer == null){
+                winner = 3;
+            }
+
+            if(currentGame.getPlayer2() != null) {
+                String name2 = currentGame.getPlayer2().getName();
+                int score2 = currentGame.getPlayer2().getScore();
+
+                PreparedStatement game2PlayerStatement = con.prepareStatement(sqlGame);
+                game2PlayerStatement.setInt(1, 0);
+                game2PlayerStatement.setString(2, name1);
+                game2PlayerStatement.setInt(3, score1);
+                game2PlayerStatement.setString(4, name2);
+                game2PlayerStatement.setInt(5, score2);
+                game2PlayerStatement.setInt(6, winner);
+                game2PlayerStatement.executeUpdate();
+                game2PlayerStatement.close();
+
+            } else {
+                PreparedStatement game1PlayerStatement = con.prepareStatement(sqlGame);
+                game1PlayerStatement.setInt(1, 0);
+                game1PlayerStatement.setString(2, name1);
+                game1PlayerStatement.setInt(3, score1);
+                game1PlayerStatement.setString(4, "");
+                game1PlayerStatement.setInt(5, 0);
+                game1PlayerStatement.setInt(6, winner);
+                game1PlayerStatement.executeUpdate();
+                game1PlayerStatement.close();
+            }
+            System.out.println("Games updated in database");
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
