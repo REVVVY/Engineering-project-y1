@@ -1,7 +1,7 @@
 package Server;
 
-import Client.Player;
-import Client.Game;
+import Client.Model.Player;
+import Client.Model.Game;
 import Database.DataConn;
 import java.io.*;
 import java.net.*;
@@ -79,11 +79,11 @@ public class Server implements Runnable {
     }
 
     public void getInfoFromDatabase() {     //icke ifyllt namn i databas = tom sträng
-       highscoreList = connection.getHighscore(highscoreList);
-       gameList = connection.getGamelist(gameList);
-       //Bara tester undan för att visa databasen
+        highscoreList = connection.getHighscore(highscoreList);
+        gameList = connection.getGamelist(gameList);
+        //Bara tester undan för att visa databasen
         for (Player p: highscoreList
-             ) {
+        ) {
             System.out.println(p.getName() + ": " + p.getScore());
         }
         System.out.println("-------------------------");
