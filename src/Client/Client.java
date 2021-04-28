@@ -43,7 +43,8 @@ public class Client implements Runnable {
     public void run() {
 
         try {
-            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+            //DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
@@ -54,25 +55,38 @@ public class Client implements Runnable {
 
                 if (nbrOfPlayers == 1) {
                     String name = "player1" + JOptionPane.showInputDialog("Skriv in ditt namn");
-                    dos.writeUTF(name);
+                    oos.writeObject(name);
                 } else if (nbrOfPlayers == 2) {
 
-                    String name = "player1" + JOptionPane.showInputDialog("Skriv in ditt namn");
-                    dos.writeUTF(name);
-                    String name1 = "player2" + JOptionPane.showInputDialog("Skriv in ditt namn");
-                    dos.writeUTF(name1);
+                    String name = JOptionPane.showInputDialog("Skriv in ditt namn");
+
+                    String name1 = JOptionPane.showInputDialog("Skriv in ditt namn");
+
+                    Player player1 = new Player(name);
+                    Player player2 = new Player(name1);
+
+                    Game game = new Game(player1, player2);
+                    oos.writeObject(game);
                 }
 
-                String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
+                /*String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
                 dos.writeUTF(score);
                 String score1 = "score2" + JOptionPane.showInputDialog("Skriv in din score");
                 dos.writeUTF(score1);
                 dos.flush();
 
+                 */
+
 
                 ArrayList<Player> scoreboard = (ArrayList<Player>) ois.readObject();
                 for (Player p : scoreboard) {
                     System.out.println(p.getName() + " " + p.getScore());
+                }
+                Game game = (Game)ois.readObject();
+                if(game.getWinner() == null){
+                    System.out.println("DRAW");
+                } else{
+                    System.out.println(game.getWinner().getName() + " " + game.getWinner().getScore());
                 }
             }
 
