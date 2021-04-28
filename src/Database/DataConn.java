@@ -1,6 +1,6 @@
 package Database;
 
-import Client.*;
+import Client.Model.*;
 
 import javax.swing.*;
 import java.sql.*;
