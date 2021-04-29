@@ -25,6 +25,8 @@ public class Server implements Runnable {
     private ArrayList<Game> gameList;
     private DataConn connection;
 
+    private String numOfPlayers;
+
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
      * @param port porten som väljs när servern körs så att man vet vart informationen ska skickas/tas emot
@@ -201,6 +203,7 @@ public class Server implements Runnable {
         public void run() {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
+                sendNbrOfPlayersToClient(numOfPlayers);
 
                 while(true){
                     Object obj = ois.readObject();
@@ -210,10 +213,6 @@ public class Server implements Runnable {
                         game = (Game)obj;
                         gameList.add(game);
                         addPlayersToList();
-                        addScoreToPlayer(40);
-                        addScoreToPlayer(40);
-                        decideWinner();
-                        checkIfReadyToSend();
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -271,7 +270,7 @@ public class Server implements Runnable {
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
                         System.out.println("nbrOfPlayersPattern");
                         String nbrOfplayerStr = sentence.substring(12);
-                        sendNbrOfPlayersToClient(nbrOfplayerStr);
+                        numOfPlayers = nbrOfplayerStr;
                     }
 
 
