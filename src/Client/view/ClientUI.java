@@ -15,7 +15,7 @@ public class ClientUI extends JPanel  implements ActionListener{
     private JLabel lblPlayer2 = new JLabel("player 2:");
     private JTextField tfPlayer1 = new JTextField();
     private JTextField tfPlayer2 = new JTextField();
-    private String str;
+
     private ClientController controller;
 
     private JPanel centerPanel = new JPanel();
@@ -79,14 +79,14 @@ public class ClientUI extends JPanel  implements ActionListener{
     }
 
     public void setResult(String result) {
-      //  controller.printScoreboard(tfPlayer1.getText(), tfPlayer2.getText());
+        //  controller.printScoreboard(tfPlayer1.getText(), tfPlayer2.getText());
 
         taResult.setText(result);
     }
     public static void main(String[] args) {
         ClientUI ui = new ClientUI(null);
         ui.playersPnl(2);
-     //   ui.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        //   ui.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         JOptionPane.showMessageDialog( null, ui );
     }
 

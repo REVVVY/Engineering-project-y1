@@ -2,12 +2,10 @@ package Client.Model;
 
 import Client.Controller.ClientController;
 
-import javax.swing.*;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.ServerSocket;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -23,13 +21,14 @@ public class Client implements Runnable {
     private Player player; //Skapa player arraylist
     private Player player1; //Skapa player arraylist
     private ArrayList<Player> playerScore;
+    private Game currentGame;
 
     private Socket socket;
 
     private int numOfPlayers;
 
     private ObjectInputStream ois;
-    private DataOutputStream dos;
+    private ObjectOutputStream oos;
 
 
     /***
@@ -44,7 +43,7 @@ public class Client implements Runnable {
         try {
             this.socket = new Socket(ip, port);
 
-            dos = new DataOutputStream(socket.getOutputStream());
+            oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
 
         } catch (IOException e) {
@@ -54,7 +53,7 @@ public class Client implements Runnable {
     }
 
     public ClientController setController() {
-         return controller;
+        return controller;
     }
 
     public int numOfPlayers(){
@@ -63,17 +62,18 @@ public class Client implements Runnable {
     }
 
     public void onePlayer(String name) throws IOException {
-        name = "player1" + controller.getFirstPlayer();
-        dos.writeUTF(name);
-        dos.flush();
+        Player player1 = new Player(name);
+        Game game = new Game(player1);
+        oos.writeObject(game);
+        oos.flush();
     }
 
-    public void twoPlayers(String name, String name1) throws IOException {
-        name = "player1" + controller.getFirstPlayer();
-        dos.writeUTF(name);
-        name1 = "player2" + controller.getSecondPlayer();
-        dos.writeUTF(name1);
-        dos.flush();
+    public void twoPlayers(String name, String name2) throws IOException {
+        Player player1 = new Player(name);
+        Player player2 = new Player(name2);
+        Game game = new Game(player1, player2);
+        oos.writeObject(game);
+        oos.flush();
     }
 
     public void createScoreboard() throws IOException, ClassNotFoundException {
@@ -89,10 +89,15 @@ public class Client implements Runnable {
             for (Player p : playerScore) {
                 System.out.println(p.getName() + " " + p.getScore());
             }
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e){}
+    }
 
+    public void getCurrGameFromServer(){
+        try {
+            currentGame = (Game) ois.readObject();
+        } catch (IOException  | ClassNotFoundException e) {
+            e.printStackTrace();
         }
-
     }
 
 
@@ -103,18 +108,21 @@ public class Client implements Runnable {
     @Override
     public void run() {
         try {
+            while(true){
+                String nbrOfPlayersstr = (String) ois.readObject();
+                int nbrOfPlayers = Integer.parseInt(nbrOfPlayersstr);
+                System.out.println(nbrOfPlayers);
 
-            String nbrOfPlayersStr =  (String) ois.readObject();
-            int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
-            System.out.println(nbrOfPlayers);
+                numOfPlayers = nbrOfPlayers;
+                getScoreFromServer();
+                getCurrGameFromServer();
+            }
 
-            numOfPlayers = nbrOfPlayers;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
 
-        //createScoreboard();
 
     }
 

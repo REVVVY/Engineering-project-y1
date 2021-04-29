@@ -55,7 +55,7 @@ public class ClientController {
                 client.twoPlayers(name1, name2);
             }
         } catch (IOException e){
-         e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
