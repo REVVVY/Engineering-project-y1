@@ -210,10 +210,7 @@ public class Server implements Runnable {
                         game = (Game)obj;
                         gameList.add(game);
                         addPlayersToList();
-                        addScoreToPlayer(40);
-                        addScoreToPlayer(40);
-                        decideWinner();
-                        checkIfReadyToSend();
+
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
