@@ -26,6 +26,8 @@ public class Server implements Runnable {
     private DataConn connection;
     private String numOfPlayers;
 
+    private String numOfPlayers;
+
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
      * @param port porten som väljs när servern körs så att man vet vart informationen ska skickas/tas emot
@@ -201,8 +203,10 @@ public class Server implements Runnable {
             try {
                 //ServerLog log = new ServerLog(this);
                 ois = new ObjectInputStream(socket.getInputStream());
+                sendNbrOfPlayersToClient(numOfPlayers);
 
                 while(true){
+<<<<<<< HEAD:src/Server/Model/Server.java
                     if(numOfPlayers != null){
                         sendNbrOfPlayersToClient(numOfPlayers);
                         Object obj = ois.readObject();
@@ -217,6 +221,15 @@ public class Server implements Runnable {
                             decideWinner();
                             checkIfReadyToSend();
                         }
+=======
+                    Object obj = ois.readObject();
+
+                    //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
+                    if(obj instanceof Game){
+                        game = (Game)obj;
+                        gameList.add(game);
+                        addPlayersToList();
+>>>>>>> 96650af0edb5eaa4f286d53f2877aeaca96e32df:src/Server/Server.java
                     }
 
                 }
