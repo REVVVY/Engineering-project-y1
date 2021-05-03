@@ -18,8 +18,6 @@ public class Client implements Runnable {
     private String ip;
     private int port;
     private Thread thread = new Thread(this);
-    private Player player; //Skapa player arraylist
-    private Player player1; //Skapa player arraylist
     private ArrayList<Player> playerScore;
     private Game currentGame;
 
@@ -56,7 +54,7 @@ public class Client implements Runnable {
         return controller;
     }
 
-    public int numOfPlayers(){
+    public int numOfPlayers() {
 
         return numOfPlayers;
     }
@@ -89,13 +87,14 @@ public class Client implements Runnable {
             for (Player p : playerScore) {
                 System.out.println(p.getName() + " " + p.getScore());
             }
-        } catch (IOException | ClassNotFoundException e){}
+        } catch (IOException | ClassNotFoundException e) {
+        }
     }
 
-    public void getCurrGameFromServer(){
+    public void getCurrGameFromServer() {
         try {
             currentGame = (Game) ois.readObject();
-        } catch (IOException  | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -108,7 +107,7 @@ public class Client implements Runnable {
     @Override
     public void run() {
         try {
-            while(true){
+            while (true) {
                 String nbrOfPlayersstr = (String) ois.readObject();
                 int nbrOfPlayers = Integer.parseInt(nbrOfPlayersstr);
                 System.out.println(nbrOfPlayers);
@@ -121,71 +120,5 @@ public class Client implements Runnable {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-
-
     }
-
-
-
-
-
-
-
-
-/*
-    public void run(){
-        String nbrOfPlayersStr = "";
-        try {
-            nbrOfPlayersStr = (String) ois.readObject();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
-        System.out.println(nbrOfPlayers);
-
-        numOfPlayers = nbrOfPlayers;
-
-
-
-    }
-*/
-    /*try {
-            while (true) {
-                String nbrOfPlayersStr = (String) ois.readObject();
-                int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
-                System.out.println(nbrOfPlayers);
-
-                numOfPlayers = nbrOfPlayers;
-
-                if (nbrOfPlayers == 1) {
-                    onePlayer();
-                    String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
-                    dos.writeUTF(score);
-                } else if (nbrOfPlayers == 2) {
-                    twoPlayers();
-                   /* String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
-                    dos.writeUTF(score);
-                    String score1 = "score2" + JOptionPane.showInputDialog("Skriv in din score");
-                    dos.writeUTF(score1);*/
-    /*
-}
-                dos.flush();
-                        //createScoreboard();
-                        }
-
-                        } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                        }
-                        try {
-                        socket.close();
-                        } catch(Exception e) {}
-                        controller.newResponse("Klient kopplar ner");
-
-                        }
-*/
-
 }

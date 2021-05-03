@@ -1,4 +1,4 @@
-package Server;
+package Server.Model;
 
 import Client.Model.Player;
 import Client.Model.Game;
@@ -24,6 +24,7 @@ public class Server implements Runnable {
     private ArrayList<Player> highscoreList;
     private ArrayList<Game> gameList;
     private DataConn connection;
+    private String numOfPlayers;
 
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
@@ -67,11 +68,9 @@ public class Server implements Runnable {
             //clientList.add(ch);
             ch.start();
 
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //}
     }
 
     public void connectToDatabase(){
@@ -82,8 +81,7 @@ public class Server implements Runnable {
         highscoreList = connection.getHighscore(highscoreList);
         gameList = connection.getGamelist(gameList);
         //Bara tester undan för att visa databasen
-        for (Player p: highscoreList
-        ) {
+        for (Player p: highscoreList) {
             System.out.println(p.getName() + ": " + p.getScore());
         }
         System.out.println("-------------------------");
@@ -129,6 +127,7 @@ public class Server implements Runnable {
 
     public void sendNbrOfPlayersToClient(String nbrOfPlayers) throws IOException {
         oos.writeObject(nbrOfPlayers);
+        numOfPlayers = null;
     }
 
     /***
@@ -200,21 +199,26 @@ public class Server implements Runnable {
          */
         public void run() {
             try {
+                //ServerLog log = new ServerLog(this);
                 ois = new ObjectInputStream(socket.getInputStream());
 
                 while(true){
-                    Object obj = ois.readObject();
+                    if(numOfPlayers != null){
+                        sendNbrOfPlayersToClient(numOfPlayers);
+                        Object obj = ois.readObject();
 
-                    //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
-                    if(obj instanceof Game){
-                        game = (Game)obj;
-                        gameList.add(game);
-                        addPlayersToList();
-                        addScoreToPlayer(40);
-                        addScoreToPlayer(40);
-                        decideWinner();
-                        checkIfReadyToSend();
+                        //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
+                        if(obj instanceof Game){
+                            game = (Game)obj;
+                            gameList.add(game);
+                            addPlayersToList();
+                            addScoreToPlayer(40);
+                            addScoreToPlayer(40);
+                            decideWinner();
+                            checkIfReadyToSend();
+                        }
                     }
+
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -271,7 +275,7 @@ public class Server implements Runnable {
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
                         System.out.println("nbrOfPlayersPattern");
                         String nbrOfplayerStr = sentence.substring(12);
-                        sendNbrOfPlayersToClient(nbrOfplayerStr);
+                        numOfPlayers = nbrOfplayerStr;
                     }
 
 
