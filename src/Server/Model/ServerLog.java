@@ -142,4 +142,10 @@ public class ServerLog {
     public void setSendOrRecieve(String sendOrRecieve) {
         this.sendOrRecieve = sendOrRecieve;
     }
+
+    @Override
+    public String toString() {
+        //return String.format("%s, " + thread.getName()+ "%s" , timeNow, description);
+        return timeNow + " " + description;
+    }
 }

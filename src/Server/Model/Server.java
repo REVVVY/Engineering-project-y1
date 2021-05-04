@@ -3,8 +3,11 @@ package Server.Model;
 import Client.Model.Player;
 import Client.Model.Game;
 import Database.DataConn;
+import Server.Controller.ServerController;
+
 import java.io.*;
 import java.net.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -25,12 +28,13 @@ public class Server implements Runnable {
     private ArrayList<Game> gameList;
     private DataConn connection;
     private String numOfPlayers;
-
+    private ServerController controller;
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
      * @param port porten som väljs när servern körs så att man vet vart informationen ska skickas/tas emot
      */
-    public Server(int port) {
+    public Server(int port, ServerController controller) {
+        this.controller = controller;
         this.port = port;
         clientList = new LinkedList<>();
         highscoreList = new ArrayList<>();
@@ -56,6 +60,7 @@ public class Server implements Runnable {
     public void run() {
         //while (true) {
         try {
+            controller.addElementInView(new ServerLog(LocalDateTime.now(), server, "KUKFITTA"));
             DatagramSocket arduinoSocket = new DatagramSocket(2525);
             InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
             inbyggdaSystemHandler.start();
@@ -239,6 +244,7 @@ public class Server implements Runnable {
 
         public void run() {
             System.out.println("Inne i inbyggda");
+            controller.addElementInView(new ServerLog(LocalDateTime.now(), this, "bajs"));
             while (true) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {

@@ -1,6 +1,7 @@
 package Server.View;
 
 import Server.Controller.ServerController;
+import Server.Model.ServerLog;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -10,6 +11,8 @@ public class WestPanelLog extends JPanel {
 
     private ServerController sController;
     private JList logList;
+    private DefaultListModel<ServerLog> model;
+
 
     public WestPanelLog(ServerController sController){
         this.sController = sController;
@@ -20,5 +23,16 @@ public class WestPanelLog extends JPanel {
         this.setBorder(border);
 
         logList = new JList();
+        model = new DefaultListModel<>();
+
+        logList.setModel(model);
+
+        logList.setPreferredSize(new Dimension(480, 345));
+        add(logList);
+    }
+
+    public void addElemtent(ServerLog newLog){
+        this.model.addElement(newLog);
+       // logList.setModel(model);
     }
 }

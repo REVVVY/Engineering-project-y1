@@ -8,6 +8,9 @@ import java.util.ArrayList;
 public class ServerUI{
     ServerController controller;
     JFrame frame;
+
+
+
     EastPanelInfo pnlEast;
     WestPanelLog pnlWest;
     public ServerUI(ServerController sController)
@@ -27,6 +30,14 @@ public class ServerUI{
         frame.setResizable(false);
         frame.setVisible(true);
         frame.pack();
+    }
+
+    public EastPanelInfo getPnlEast() {
+        return pnlEast;
+    }
+
+    public WestPanelLog getPnlWest() {
+        return pnlWest;
     }
 
 }
