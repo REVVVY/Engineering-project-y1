@@ -23,6 +23,16 @@ public class DataConn {
         }
     }
 
+    public void closeConnection(){
+        try {
+            con.close();
+            st.close();
+            rs.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public void getData() {
         try {
 

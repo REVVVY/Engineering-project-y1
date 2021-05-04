@@ -20,4 +20,7 @@ public class ServerController {
         gui.getPnlWest().addElemtent(log);
     }
 
+    public void closeConnection(){
+        server.closeConnectionToDatabase();
+    }
 }

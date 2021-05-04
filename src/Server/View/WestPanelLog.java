@@ -32,7 +32,7 @@ public class WestPanelLog extends JPanel {
     }
 
     public void addElemtent(ServerLog newLog){
-        this.model.addElement(newLog);
+        ((DefaultListModel)logList.getModel()).addElement(newLog);
        // logList.setModel(model);
     }
 }

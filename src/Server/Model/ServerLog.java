@@ -146,6 +146,6 @@ public class ServerLog {
     @Override
     public String toString() {
         //return String.format("%s, " + thread.getName()+ "%s" , timeNow, description);
-        return timeNow + " " + description;
+        return timeNow + " "+ thread.getName()+ " " + description;
     }
 }

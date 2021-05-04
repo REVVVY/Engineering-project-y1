@@ -78,6 +78,10 @@ public class Server implements Runnable {
         }
     }
 
+    public void closeConnectionToDatabase(){
+        connection.closeConnection();
+    }
+
     public void connectToDatabase(){
         connection = new DataConn();
     }
