@@ -55,7 +55,7 @@ public class Server implements Runnable {
     public void run() {
         //while (true) {
         try {
-            DatagramSocket arduinoSocket = new DatagramSocket(2525);
+            DatagramSocket arduinoSocket = new DatagramSocket(2575);
             InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
             inbyggdaSystemHandler.start();
 

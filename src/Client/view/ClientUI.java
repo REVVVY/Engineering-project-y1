@@ -67,8 +67,6 @@ public class ClientUI extends JPanel  implements ActionListener{
     /** Gets number of players from controller, and opens its player panel, 1 or 2 */
 
     public void playersPnl(int numOfPlayers) {
-        JPanel panel = new JPanel(new GridLayout(2,5));
-
         if (numOfPlayers == 1){
             add(onePlayerPnl(), BorderLayout.CENTER);
         }
@@ -98,6 +96,10 @@ public class ClientUI extends JPanel  implements ActionListener{
         //anropa twoPlayers
 
         controller.sendPlayers(getName1(), getName2());
+
+        //Ska anropas på ett annat sätt (metod i controller?)
+        CurrentGameUI currentGameUI = new CurrentGameUI(controller, getName1(), getName2());
+        currentGameUI.setVisible(true);
     }
 
     public String getName1(){

@@ -2,10 +2,7 @@ package Client.Model;
 
 import Client.Controller.ClientController;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -121,7 +118,6 @@ public class Client implements Runnable {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
 
 
     }
