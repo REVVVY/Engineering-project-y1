@@ -2,6 +2,8 @@ package Server.Model;
 
 import Client.Model.Game;
 import Client.Model.Player;
+
+import javax.swing.*;
 import java.util.ArrayList;
 
 import java.net.DatagramSocket;
@@ -146,6 +148,13 @@ public class ServerLog {
     @Override
     public String toString() {
         //return String.format("%s, " + thread.getName()+ "%s" , timeNow, description);
-        return timeNow + " "+ thread.getName()+ " " + description;
+        return timeNow + " " + description;
+    }
+
+    public ArrayList getUDPanslutningsString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time : " + timeNow);
+        temp.add("Thread: " +thread.getName());
+       return temp;
     }
 }

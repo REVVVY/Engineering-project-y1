@@ -5,6 +5,7 @@ import Server.Model.ServerLog;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class WestPanelLog extends JPanel {
@@ -24,6 +25,13 @@ public class WestPanelLog extends JPanel {
 
         logList = new JList();
         model = new DefaultListModel<>();
+        logList.getSelectionModel().addListSelectionListener(e -> {
+            ServerLog log = (ServerLog) logList.getSelectedValue();
+            if(log.getDescription().equals("Öppnar UDP Anslutning")){
+                sController.setContentInView(log.getUDPanslutningsString());
+            }
+
+        });
 
         logList.setModel(model);
 
@@ -32,7 +40,7 @@ public class WestPanelLog extends JPanel {
     }
 
     public void addElemtent(ServerLog newLog){
-        ((DefaultListModel)logList.getModel()).addElement(newLog);
-       // logList.setModel(model);
+        model.addElement(newLog);
+        logList.setModel(model);
     }
 }

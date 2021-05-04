@@ -248,7 +248,7 @@ public class Server implements Runnable {
 
         public void run() {
             System.out.println("Inne i inbyggda");
-            controller.addElementInView(new ServerLog(LocalDateTime.now(), this, "bajs"));
+            controller.addElementInView(new ServerLog(LocalDateTime.now(), this, "Öppnar UDP Anslutning"));
             while (true) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {

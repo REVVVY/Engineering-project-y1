@@ -3,6 +3,8 @@ package Server.Controller;
 import Server.Model.*;
 import Server.View.ServerUI;
 
+import java.util.ArrayList;
+
 
 public class ServerController {
     private Server server;
@@ -13,6 +15,7 @@ public class ServerController {
 
     public ServerController(int port) {
         gui = new ServerUI(this);
+        gui.setUpFrame();
         server = new Server(port, this);
     }
 
@@ -22,5 +25,9 @@ public class ServerController {
 
     public void closeConnection(){
         server.closeConnectionToDatabase();
+    }
+
+    public void setContentInView(ArrayList<String> log){
+        gui.getPnlEast().setContentList(log);
     }
 }

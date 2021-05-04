@@ -13,35 +13,37 @@ public class ServerUI{
     ServerController controller;
     JFrame frame;
 
-
-
     EastPanelInfo pnlEast;
     WestPanelLog pnlWest;
+
     public ServerUI(ServerController sController)
     {
         this.controller = sController;
-        pnlWest = new WestPanelLog(controller);
-        pnlEast = new EastPanelInfo(controller);
-        frame = new JFrame("ServerLog");
-
-        frame.setBackground(new Color(255, 255, 255));
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                exitProgram();
-            }
-        });
-
-        frame.setLocation(140, 200);
-
-        frame.add(pnlEast, BorderLayout.EAST);
-        frame.add(pnlWest, BorderLayout.WEST);
-
-        frame.setResizable(false);
-        frame.setVisible(true);
-        frame.pack();
     }
+
+   public void setUpFrame(){
+       pnlWest = new WestPanelLog(controller);
+       pnlEast = new EastPanelInfo(controller);
+       frame = new JFrame("ServerLog");
+
+       frame.setBackground(new Color(255, 255, 255));
+       frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+       frame.addWindowListener(new WindowAdapter() {
+           @Override
+           public void windowClosing(WindowEvent e) {
+               exitProgram();
+           }
+       });
+
+       frame.setLocation(140, 200);
+
+       frame.add(pnlEast, BorderLayout.EAST);
+       frame.add(pnlWest, BorderLayout.WEST);
+
+       frame.setResizable(false);
+       frame.setVisible(true);
+       frame.pack();
+   }
 
     public void exitProgram() {
         controller.closeConnection();

@@ -1,18 +1,21 @@
 package Server.View;
 
 import Server.Controller.ServerController;
+import Server.Model.ServerLog;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class EastPanelInfo extends JPanel {
 
     private ServerController sController;
     private JPanel pnlSouth;
     private JPanel pnlNorth;
-    private JList contentList;
+   // private JLabel contentLabel;
     private JList renameList;
+    private JList contentList;
 
     public EastPanelInfo(ServerController sController){
         this.sController = sController;
@@ -24,7 +27,7 @@ public class EastPanelInfo extends JPanel {
         setPreferredSize(new Dimension(500, 350));
 
 
-
+        contentList = new JList();
         pnlNorth = new JPanel();
         pnlSouth = new JPanel();
 
@@ -36,14 +39,10 @@ public class EastPanelInfo extends JPanel {
         pnlSouth.setBorder(borderSouth);
         pnlSouth.setPreferredSize(new Dimension(500, 175));
 
-        contentList = new JList();
-        contentList.setPreferredSize(new Dimension(480, 170));
+        contentList.setPreferredSize(new Dimension(490, 170));
         renameList = new JList();
 
-        String daysList[] = {"Sunday", "Monday", "Tuesday", "Wednesday",
-                "Thursday", "Friday", "Saturday"};
 
-        contentList.setListData(daysList);
 
         pnlSouth.add(contentList);
         pnlNorth.add(renameList);
@@ -51,6 +50,20 @@ public class EastPanelInfo extends JPanel {
         JSplitPane splitPane = new JSplitPane(SwingConstants.HORIZONTAL, pnlNorth, pnlSouth);
         add(splitPane);
 
-
     }
+
+    public void setContentList(ArrayList<String> log){
+            String[] array = new String[log.size()];
+
+        for(int i = 0; i < log.size(); i++){
+            array[i] = log.get(i);
+        }
+        contentList.setListData(array);
+    }
+
+
+
+    /*public JLabel getContentLabel() {
+        return contentLabel;
+    } */
 }
