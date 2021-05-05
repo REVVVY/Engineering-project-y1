@@ -2,30 +2,27 @@ package Server.Model;
 
 import Client.Model.Game;
 import Client.Model.Player;
-
-import javax.swing.*;
 import java.util.ArrayList;
-
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ServerLog {
-    private String timeNow;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private Thread thread;
-    private String description;
-    private Game game;
-    private String databaseTable;
-    private String databaseDriver;
-    private Socket socket;
-    private DatagramSocket dSocket;
-    private String score;
-    private String numOfPlayers;
-    private String packetType;
-    private ArrayList<Player> highscore;
-    private String sendOrRecieve;
+    private String timeNow; // - Finns alltid
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // - Finns alltid
+    private Thread thread; // - Finns alltid
+    private String description; // - Finns alltid
+    private Game game; // - Skickas och Tas emot
+    private String databaseTable; // - Skickat eller tagit emot info från databas Samma
+    private String databaseDriver; // - Skickat eller tagit emot info från databas Samma ^^
+    private Socket socket; // - Ska alltid finns via TCP
+    private DatagramSocket dSocket; // - Ska alltid finnas via UDP
+    private String score; // - Tas emot
+    private String numOfPlayers; // - Tas emot och skickas
+    private String packetType; // - Ska alltid visas vid UDP / TCP överföring
+    private ArrayList<Player> highscore; // - Skickas till java klient
+    private String sendOrRecieve; // - Ska alltid vara med
 
     public ServerLog(LocalDateTime ldt, Thread thread, String description){
          this.thread = thread;
