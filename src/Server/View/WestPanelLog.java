@@ -19,7 +19,7 @@ public class WestPanelLog extends JPanel {
     public WestPanelLog(ServerController sController){
         this.sController = sController;
         this.setLayout(new FlowLayout());
-        this.setPreferredSize(new Dimension(500, 350));
+        this.setPreferredSize(new Dimension(500, 360));
 
         Border border = BorderFactory.createTitledBorder("Logg");
         this.setBorder(border);
@@ -38,32 +38,31 @@ public class WestPanelLog extends JPanel {
                 sController.setContentInView(log.getGameSentFromClientString());
 
             }else if(log.getDescription().equals("Updated highscore in database")){
-                sController.setContentInView();
+                sController.setContentInView(log.getUpdatedHighscoreInDBString());
 
             } else if(log.getDescription().equals("Updated games in database")){
-                sController.setContentInView();
+                sController.setContentInView(log.getUpdatedGameInDbString());
 
             } else if(log.getDescription().equals("Connection to database established")){
                 sController.setContentInView(log.getDatabaseConnectionString());
 
             } else if(log.getDescription().equals("Recived highscorelist from database")){
-                sController.setContentInView();
+                sController.setContentInView(log.getDatabaseHighscorelistString());
 
             } else if(log.getDescription().equals("Recived games from database")){
-                sController.setContentInView();
+                sController.setContentInView(log.getDatabaseGamesListString());
 
             } else if(log.getDescription().equals("Sent highscorelist to client")){
-                sController.setContentInView();
+                sController.setContentInView(log.getSentHighscoreListToClientString());
 
             }  else if(log.getDescription().equals("Sent game to client")){
-                sController.setContentInView();
+                sController.setContentInView(log.getSentGameToClientString());
 
             } else if(log.getDescription().equals("Recived score from client")){
-                sController.setContentInView();
+                sController.setContentInView(log.getReceivedScoreFromClientString());
 
             } else if(log.getDescription().equals("Received number of players from client")){
-                sController.setContentInView();
-
+                sController.setContentInView(log.getReceivedNbrOfPlayersFromClientString());
             }
 
         });

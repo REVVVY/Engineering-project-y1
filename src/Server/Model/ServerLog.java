@@ -26,7 +26,7 @@ public class ServerLog {
     private ArrayList<Game> gamelist; //hämtar från db
     private String sendOrRecieve; // - Ska alltid vara med
     private int port;
-    // 8
+    // 12 kombinationer
 
     public ServerLog(LocalDateTime ldt, Thread thread, String description){
          this.thread = thread;
@@ -205,32 +205,128 @@ public class ServerLog {
 
     public ArrayList getUDPanslutningsString(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Time : " + timeNow);
-        temp.add("Thread: " +thread.getName());
+        temp.add("Time: " + timeNow);
+       // temp.add("Thread: " +thread.getName());  VISA I RENAME
        return temp;
     }
     public ArrayList getClientConnectString(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Time : " + timeNow);
-        temp.add("Thread: " +thread.getName());
+        temp.add("Time: " + timeNow);
+        //temp.add("Thread: " +thread.getName());       LÄGG TILL I RENAME
         return temp;
     }
     public ArrayList getGameSentFromClientString(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Player 1: " + game.getPlayer1());
+        temp.add("Time: " + timeNow);
+        temp.add("Player 1: " + game.getPlayer1().getName());
         if(game.getPlayer2()!= null){
             temp.add("Player 2:  " + game.getPlayer2().getName());
         }
+       // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
+        //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
     }
     public ArrayList getDatabaseConnectionString(){
         ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time: " + timeNow);
         temp.add("DatabaseURL: " + databaseURL);
         return temp;
     }
     public ArrayList getDatabaseHighscorelistString(){
         ArrayList<String> temp = new ArrayList<>();
-        //temp.add();
+        temp.add("Time: " + timeNow);
+        for(Player p: highscore){
+            temp.add("Name: " + p.getName() + ", Score: " + p.getScore());
+        }
+        return temp;
+    }
+    public ArrayList getUpdatedHighscoreInDBString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time: " + timeNow);
+        temp.add("Player 1: " + game.getPlayer1().getName() + ", Score: " + game.getPlayer1().getScore());
+        if(game.getPlayer2()!= null){
+            temp.add("Player 2:  " + game.getPlayer2().getName() + ", Score: " + game.getPlayer2().getScore());
+        }
+        // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
+        //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
+        return temp;
+
+    }
+    public ArrayList getUpdatedGameInDbString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time: " + timeNow);
+        temp.add("Player 1: " + game.getPlayer1().getName() + ", Score: " + game.getPlayer1().getScore());
+        if(game.getPlayer2()!= null){
+            temp.add("Player 2:  " + game.getPlayer2().getName() + "Score: " + game.getPlayer2().getScore());
+        }
+        if(game.getWinner() == null){
+            temp.add("Winner: Draw");
+        }else {
+            temp.add("Winner: " + game.getWinner().getName());
+        }
+
+        // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
+        //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
+        return temp;
+    }
+    public ArrayList getDatabaseGamesListString(){
+        ArrayList<String> temp = new ArrayList<>();
+        int counter = 1;
+        temp.add("Time: " + timeNow);
+        for(Game g: gamelist){
+            if(g.getPlayer2() == null){
+                temp.add(counter + ": Player 1: " + g.getPlayer1().getName() + ", Score: " + g.getPlayer1().getScore() + ", Winner: " + g.getWinner().getName());
+                counter++;
+            }
+            else{
+                if(g.getWinner() == null){
+                    temp.add(counter + ": Player 1: " + g.getPlayer1().getName() + " Score: " + g.getPlayer1().getScore() + ", Player 2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore() + ", Winner: Draw");
+                    counter++;
+                }
+                else{
+                    temp.add(counter + ": Player 1: " + g.getPlayer1().getName() + " Score: " + g.getPlayer1().getScore() + ", Player 2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore() + ", Winner: " + g.getWinner().getName());
+                    counter++;
+                }
+            }
+        }
+        return temp;
+    }
+    public ArrayList getSentHighscoreListToClientString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time: " + timeNow);
+        for(Player p: highscore){
+            temp.add("Name: " + p.getName() + ", Score: " + p.getScore());
+        }
+        return temp;
+    }
+    public ArrayList getSentGameToClientString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time: " + timeNow);
+        temp.add("Player 1: " + game.getPlayer1().getName() + ", Score: " + game.getPlayer1().getScore());
+        if(game.getPlayer2()!= null){
+            temp.add("Player 2:  " + game.getPlayer2().getName() + ", Score: " + game.getPlayer2().getScore());
+        }
+        if(game.getWinner() == null){
+            temp.add("Winner: Draw");
+        }else {
+            temp.add("Winner: " + game.getWinner().getName());
+        }
+
+        // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
+        //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
+        return temp;
+
+    }
+    public ArrayList getReceivedScoreFromClientString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time: " + timeNow);
+        temp.add("Score: " + score);
+        return temp;
+    }
+    public ArrayList getReceivedNbrOfPlayersFromClientString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time: " + timeNow);
+        temp.add("Number of players: " + numOfPlayers);
         return temp;
     }
 

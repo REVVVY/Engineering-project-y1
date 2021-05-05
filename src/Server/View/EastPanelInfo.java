@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class EastPanelInfo extends JPanel {
 
@@ -37,14 +38,14 @@ public class EastPanelInfo extends JPanel {
 
         Border borderSouth = BorderFactory.createTitledBorder("Content");
         pnlSouth.setBorder(borderSouth);
-        pnlSouth.setPreferredSize(new Dimension(500, 175));
+        pnlSouth.setPreferredSize(new Dimension(500, 185));
 
-        contentList.setPreferredSize(new Dimension(490, 170));
+
         renameList = new JList();
+        JScrollPane scroller = new JScrollPane(contentList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroller.setPreferredSize(new Dimension(490, 160));
 
-
-
-        pnlSouth.add(contentList);
+        pnlSouth.add(scroller);
         pnlNorth.add(renameList);
 
         JSplitPane splitPane = new JSplitPane(SwingConstants.HORIZONTAL, pnlNorth, pnlSouth);
@@ -57,6 +58,11 @@ public class EastPanelInfo extends JPanel {
 
         for(int i = 0; i < log.size(); i++){
             array[i] = log.get(i);
+        }
+        try {
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         contentList.setListData(array);
     }

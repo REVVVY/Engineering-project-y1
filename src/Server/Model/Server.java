@@ -211,8 +211,10 @@ public class Server implements Runnable {
     public void updateDatabase(){
         connection.setDataInDatabase(game);
         ServerLog loghighscore = new ServerLog(LocalDateTime.now(), "Updated highscore in database", "Highscore", "Sent");
+        loghighscore.setGame(game);
         addLogAndUpdate(loghighscore);
         ServerLog loggame = new ServerLog(LocalDateTime.now(), "Updated games in database", "Games", "Sent");
+        loggame.setGame(game);
         addLogAndUpdate(loggame);
     }
 
@@ -338,7 +340,6 @@ public class Server implements Runnable {
                         logNbrOfPlayers.setNumOfPlayers(nbrOfplayerStr);
                         addLogAndUpdate(logNbrOfPlayers);
                         numOfPlayers = nbrOfplayerStr;
-
                     }
 
 

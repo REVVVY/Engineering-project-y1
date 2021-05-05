@@ -42,7 +42,8 @@ public class ServerUI{
 
        frame.setResizable(false);
        frame.setVisible(true);
-       frame.pack();
+       frame.setSize(1000, 420);
+       //frame.pack();
    }
 
     public void exitProgram() {
