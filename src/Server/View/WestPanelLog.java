@@ -28,18 +28,43 @@ public class WestPanelLog extends JPanel {
         model = new DefaultListModel<>();
         logList.getSelectionModel().addListSelectionListener(e -> {
             ServerLog log = (ServerLog) logList.getSelectedValue();
-            if(log.getDescription().equals("Öppnar UDP Anslutning")){
+            if(log.getDescription().equals("UPD connection open")){
                 sController.setContentInView(log.getUDPanslutningsString());
 
             }else if(log.getDescription().equals("Client connect to server")){
                 sController.setContentInView(log.getClientConnectString());
 
-            }else if(log.getDescription().equals("Game Sent From Client")){
+            }else if(log.getDescription().equals("Game recived from client")){
                 sController.setContentInView(log.getGameSentFromClientString());
 
-            }/*else if(log.getDescription().equals("")){
+            }else if(log.getDescription().equals("Updated highscore in database")){
                 sController.setContentInView();
-            } */
+
+            } else if(log.getDescription().equals("Updated games in database")){
+                sController.setContentInView();
+
+            } else if(log.getDescription().equals("Connection to database established")){
+                sController.setContentInView(log.getDatabaseConnectionString());
+
+            } else if(log.getDescription().equals("Recived highscorelist from database")){
+                sController.setContentInView();
+
+            } else if(log.getDescription().equals("Recived games from database")){
+                sController.setContentInView();
+
+            } else if(log.getDescription().equals("Sent highscorelist to client")){
+                sController.setContentInView();
+
+            }  else if(log.getDescription().equals("Sent game to client")){
+                sController.setContentInView();
+
+            } else if(log.getDescription().equals("Recived score from client")){
+                sController.setContentInView();
+
+            } else if(log.getDescription().equals("Received number of players from client")){
+                sController.setContentInView();
+
+            }
 
         });
         try {

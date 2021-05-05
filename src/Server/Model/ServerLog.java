@@ -23,6 +23,7 @@ public class ServerLog {
     private String numOfPlayers; // - Tas emot och skickas
     private String packetType; // - Ska alltid visas vid UDP / TCP överföring
     private ArrayList<Player> highscore; // - Skickas till java klient
+    private ArrayList<Game> gamelist; //hämtar från db
     private String sendOrRecieve; // - Ska alltid vara med
     private int port;
     // 8
@@ -180,6 +181,14 @@ public class ServerLog {
         return highscore;
     }
 
+    public ArrayList<Game> getGamelist() {
+        return gamelist;
+    }
+
+    public void setGamelist(ArrayList<Game> gamelist) {
+        this.gamelist = gamelist;
+    }
+
     public void setHighscore(ArrayList<Player> highscore) {
         this.highscore = highscore;
     }
@@ -212,6 +221,16 @@ public class ServerLog {
         if(game.getPlayer2()!= null){
             temp.add("Player 2:  " + game.getPlayer2().getName());
         }
+        return temp;
+    }
+    public ArrayList getDatabaseConnectionString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("DatabaseURL: " + databaseURL);
+        return temp;
+    }
+    public ArrayList getDatabaseHighscorelistString(){
+        ArrayList<String> temp = new ArrayList<>();
+        //temp.add();
         return temp;
     }
 

@@ -108,8 +108,10 @@ public class Server implements Runnable {
             }
         }
         ServerLog loghighscore = new ServerLog(LocalDateTime.now(), "Recived highscorelist from database", "Highscore", "Recived");
+        loghighscore.setHighscore(highscoreList);
         addLogAndUpdate(loghighscore);
         ServerLog loggames = new ServerLog(LocalDateTime.now(), "Recived games from database", "Games", "Recived");
+        loggames.setGamelist(gameList);
         addLogAndUpdate(loggames);
     }
 
@@ -332,6 +334,9 @@ public class Server implements Runnable {
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
                         System.out.println("nbrOfPlayersPattern");
                         String nbrOfplayerStr = sentence.substring(12);
+                        ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Received number of players from client", serverSocket, "Received", port);
+                        logNbrOfPlayers.setNumOfPlayers(nbrOfplayerStr);
+                        addLogAndUpdate(logNbrOfPlayers);
                         numOfPlayers = nbrOfplayerStr;
 
                     }
