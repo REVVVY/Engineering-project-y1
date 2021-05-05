@@ -85,6 +85,7 @@ public class Server implements Runnable {
 
     public void connectToDatabase(){
         connection = new DataConn();
+        //ServerLog log = new ServerLog()
     }
 
     public void getInfoFromDatabase() {     //icke ifyllt namn i databas = tom sträng
@@ -191,6 +192,10 @@ public class Server implements Runnable {
         connection.setDataInDatabase(game);
     }
 
+    public void setLogInfo(ServerLog log){
+
+    }
+
     /***
      * En inre klass för att kunna ta emot strängar och hantera datan utifrån patterns
      */
@@ -228,6 +233,7 @@ public class Server implements Runnable {
                             game = (Game) obj;
                             ServerLog log = new ServerLog(LocalDateTime.now(), this, "Game Sent From Client");
                             log.setGame(game);
+
                             addLogAndUpdate(log);
 
                             gameList.add(game);

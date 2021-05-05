@@ -33,23 +33,6 @@ public class DataConn {
         }
     }
 
-    public void getData() {
-        try {
-
-            String sql = "select * from Highscore";
-            rs = st.executeQuery(sql);
-            System.out.println("Data från Isacs databas");
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                int score = rs.getInt("score");
-                System.out.println("ID: " + id + "\nName: " + name + "\nScore: " + score);
-            }
-
-        } catch (Exception ex) {
-            System.out.println("Error is found: " + ex);
-        }
-    }
 
     public ArrayList<Player> getHighscore(ArrayList<Player> highscore) {
 
