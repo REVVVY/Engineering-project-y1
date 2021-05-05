@@ -7,6 +7,7 @@ import Server.Controller.ServerController;
 
 import java.io.*;
 import java.net.*;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +69,8 @@ public class Server implements Runnable {
 
 
             Socket socket = serverSocket.accept();
-            addLogAndUpdate(new ServerLog(LocalDateTime.now(), server, "Client connect to server"));
+            ServerLog log = new ServerLog(LocalDateTime.now(), server, "Client connected to server", socket);
+            addLogAndUpdate(log);
             oos = new ObjectOutputStream(socket.getOutputStream());
             ClientHandler ch = new ClientHandler(socket);
             //clientList.add(ch);
@@ -83,9 +85,10 @@ public class Server implements Runnable {
         connection.closeConnection();
     }
 
-    public void connectToDatabase(){
+    public void connectToDatabase() {
         connection = new DataConn();
-        //ServerLog log = new ServerLog()
+        ServerLog log = new ServerLog(LocalDateTime.now(), null, "Connection to database established", "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11408587");
+        addLogAndUpdate(log);
     }
 
     public void getInfoFromDatabase() {     //icke ifyllt namn i databas = tom sträng
@@ -102,6 +105,10 @@ public class Server implements Runnable {
                 System.out.println("player2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore());
             }
         }
+        ServerLog loghighscore = new ServerLog(LocalDateTime.now(), null, "Recived highscorelist from database", "Highscore", "Recived");
+        addLogAndUpdate(loghighscore);
+        ServerLog loggames = new ServerLog(LocalDateTime.now(), null, "Recived Games from database", "Games", "Recived");
+        addLogAndUpdate(loggames);
     }
 
     /***
@@ -263,7 +270,8 @@ public class Server implements Runnable {
 
         public void run() {
             System.out.println("Inne i inbyggda");
-            addLogAndUpdate(new ServerLog(LocalDateTime.now(), this, "Öppnar UDP Anslutning"));
+            ServerLog log = new ServerLog(LocalDateTime.now(), this, "Öppnar UDP anslutning", serverSocket, port);
+            addLogAndUpdate(log);
 
             while (true) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);

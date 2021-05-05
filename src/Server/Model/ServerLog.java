@@ -16,7 +16,7 @@ public class ServerLog {
     private String description; // - Finns alltid
     private Game game; // - Skickas och Tas emot
     private String databaseTable; // - Skickat eller tagit emot info från databas
-    private String databaseDriver; // - Skickat eller tagit emot info från databas
+    private String databaseURL; // - Skickat eller tagit emot info från databas
     private Socket socket; // - Ska alltid finns via TCP
     private DatagramSocket dSocket; // - Ska alltid finnas via UDP
     private String score; // - Tas emot
@@ -24,6 +24,7 @@ public class ServerLog {
     private String packetType; // - Ska alltid visas vid UDP / TCP överföring
     private ArrayList<Player> highscore; // - Skickas till java klient
     private String sendOrRecieve; // - Ska alltid vara med
+    private int port;
     // 8
 
     public ServerLog(LocalDateTime ldt, Thread thread, String description){
@@ -40,12 +41,35 @@ public class ServerLog {
         this.sendOrRecieve = direction;
     }
 
-    public ServerLog(LocalDateTime ldt, Thread thread, String description, DatagramSocket datagramSocket, String direction){
+    public ServerLog(LocalDateTime ldt, Thread thread, String description, Socket socket){
+        this.thread = thread;
+        this.description = description;
+        this.timeNow = ldt.format(formatter);
+        this.socket = socket;
+    }
+
+    public ServerLog(LocalDateTime ldt, Thread thread, String description, DatagramSocket datagramSocket, String direction, int port){
         this.thread = thread;
         this.description = description;
         this.timeNow = ldt.format(formatter);
         this.dSocket = datagramSocket;
         this.sendOrRecieve = direction;
+        this.port = port;
+    }
+
+    public ServerLog(LocalDateTime ldt, Thread thread, String description, DatagramSocket datagramSocket, int port){
+        this.thread = thread;
+        this.description = description;
+        this.timeNow = ldt.format(formatter);
+        this.dSocket = datagramSocket;
+        this.port = port;
+    }
+
+    public ServerLog(LocalDateTime ldt, Thread thread, String description, String dbDriver){
+        this.thread = thread;
+        this.description = description;
+        this.timeNow = ldt.format(formatter);
+        this.databaseURL = dbDriver;
     }
 
     public ServerLog(LocalDateTime ldt, Thread thread, String description, String dbTable, String direction){
@@ -53,7 +77,7 @@ public class ServerLog {
         this.description = description;
         this.timeNow = ldt.format(formatter);
         this.databaseTable = dbTable;
-        this.databaseDriver = "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11408587";
+        this.databaseURL = "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11408587";
         this.sendOrRecieve = direction;
     }
 
@@ -111,12 +135,12 @@ public class ServerLog {
         this.databaseTable = databaseTable;
     }
 
-    public String getDatabaseDriver() {
-        return databaseDriver;
+    public String getDatabaseURL() {
+        return databaseURL;
     }
 
-    public void setDatabaseDriver(String databaseDriver) {
-        this.databaseDriver = databaseDriver;
+    public void setDatabaseURL(String databaseURL) {
+        this.databaseURL = databaseURL;
     }
 
     public Socket getSocket() {
