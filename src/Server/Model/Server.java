@@ -31,6 +31,8 @@ public class Server implements Runnable {
     private String numOfPlayers;
     private ServerController controller;
     private ArrayList<ServerLog> serverlogs;
+    private Socket socket;
+
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
      * @param port porten som väljs när servern körs så att man vet vart informationen ska skickas/tas emot
@@ -63,12 +65,12 @@ public class Server implements Runnable {
     public void run() {
         //while (true) {
         try {
-            DatagramSocket arduinoSocket = new DatagramSocket(2525);
+            DatagramSocket arduinoSocket = new DatagramSocket(8787);
             InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
             inbyggdaSystemHandler.start();
 
 
-            Socket socket = serverSocket.accept();
+            socket = serverSocket.accept();
             ServerLog log = new ServerLog(LocalDateTime.now(), server, "Client connected to server", socket);
             addLogAndUpdate(log);
             oos = new ObjectOutputStream(socket.getOutputStream());
@@ -105,9 +107,9 @@ public class Server implements Runnable {
                 System.out.println("player2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore());
             }
         }
-        ServerLog loghighscore = new ServerLog(LocalDateTime.now(), null, "Recived highscorelist from database", "Highscore", "Recived");
+        ServerLog loghighscore = new ServerLog(LocalDateTime.now(), "Recived highscorelist from database", "Highscore", "Recived");
         addLogAndUpdate(loghighscore);
-        ServerLog loggames = new ServerLog(LocalDateTime.now(), null, "Recived Games from database", "Games", "Recived");
+        ServerLog loggames = new ServerLog(LocalDateTime.now(), "Recived games from database", "Games", "Recived");
         addLogAndUpdate(loggames);
     }
 
@@ -115,12 +117,12 @@ public class Server implements Runnable {
      * Kollar ifall sista spelaren har fått in score för att kunna skicka till klienten.
      * @throws IOException kastar IOExeption för att kunna anropa send metoden som skickar via en ström.
      */
-    public void checkIfReadyToSend() throws IOException {
+    public void checkIfReadyToSend(Thread thread) throws IOException {
         int lastIndex = highscoreList.size() - 1;
         Player lastPlayer = highscoreList.get(lastIndex);
         if (lastPlayer.getScore() != 0) {
             updateDatabase();
-            send(highscoreList);
+            send(highscoreList, thread);
         }
     }
 
@@ -130,7 +132,7 @@ public class Server implements Runnable {
      * @param highscoreList en arraylista med alla personer som spelat spelet och dess score
      * @throws IOException Kastar IOExeption för att kunna skicka över data över Objekt strömmen.
      */
-    public void send(ArrayList<Player> highscoreList) throws IOException {
+    public void send(ArrayList<Player> highscoreList, Thread thread) throws IOException {
         Collections.sort(highscoreList, Collections.reverseOrder());
         ArrayList<Player> temp = new ArrayList<>();
         for(Player p: highscoreList){
@@ -139,7 +141,16 @@ public class Server implements Runnable {
             }
         }
         oos.writeObject(temp);
+        // - Log
+        ServerLog log = new ServerLog(LocalDateTime.now(), thread, "Sent highscorelist to client", socket, "Sent");
+        log.setHighscore(temp);
+        addLogAndUpdate(log);
+
+        // - Log
         oos.writeObject(game);
+        ServerLog loggame = new ServerLog(LocalDateTime.now(), thread, "Sent game to client", socket, "Sent");
+        loggame.setGame(game);
+        addLogAndUpdate(loggame);
         oos.flush();
     }
 
@@ -197,10 +208,10 @@ public class Server implements Runnable {
 
     public void updateDatabase(){
         connection.setDataInDatabase(game);
-    }
-
-    public void setLogInfo(ServerLog log){
-
+        ServerLog loghighscore = new ServerLog(LocalDateTime.now(), "Updated highscore in database", "Highscore", "Sent");
+        addLogAndUpdate(loghighscore);
+        ServerLog loggame = new ServerLog(LocalDateTime.now(), "Updated games in database", "Games", "Sent");
+        addLogAndUpdate(loggame);
     }
 
     /***
@@ -208,7 +219,6 @@ public class Server implements Runnable {
      */
     private class ClientHandler extends Thread {
 
-        private DataInputStream dis;
         private ObjectInputStream ois;
         private Socket socket;
 
@@ -227,7 +237,7 @@ public class Server implements Runnable {
         public void run() {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
-                numOfPlayers = "2";
+                numOfPlayers = "2"; //Tester av klient
 
                 while(true) {
 
@@ -238,9 +248,9 @@ public class Server implements Runnable {
                         //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
                         if (obj instanceof Game) {
                             game = (Game) obj;
-                            ServerLog log = new ServerLog(LocalDateTime.now(), this, "Game Sent From Client");
+                            ServerLog log = new ServerLog(LocalDateTime.now(), this, "Game recived from client", socket, "Recived");
                             log.setGame(game);
-
+                            log.setPacketType("TCP");
                             addLogAndUpdate(log);
 
                             gameList.add(game);
@@ -248,7 +258,7 @@ public class Server implements Runnable {
                             addScoreToPlayer(40);
                             addScoreToPlayer(40);
                             decideWinner();
-                            checkIfReadyToSend();
+                            checkIfReadyToSend(this);
                         }
                     }
                 }
@@ -270,7 +280,7 @@ public class Server implements Runnable {
 
         public void run() {
             System.out.println("Inne i inbyggda");
-            ServerLog log = new ServerLog(LocalDateTime.now(), this, "Öppnar UDP anslutning", serverSocket, port);
+            ServerLog log = new ServerLog(LocalDateTime.now(), this, "UPD connection open", serverSocket, port);
             addLogAndUpdate(log);
 
             while (true) {
@@ -294,23 +304,35 @@ public class Server implements Runnable {
                     if (sentence.regionMatches(0, score2Pattern, 0, 6)) {
                         System.out.println("Score2 pattern");
                         String scoreStr = sentence.substring(6);
+                        // - Log
+                        ServerLog logscore = new ServerLog(LocalDateTime.now(), this, "Recived score from client", serverSocket, "Recived", port);
+                        logscore.setPacketType("UDP");
+                        logscore.setScore(scoreStr);
+                        addLogAndUpdate(logscore);
+
                         int score = Integer.parseInt(scoreStr);
                         addScoreToPlayer(score);
                         decideWinner();
-                        checkIfReadyToSend();
+                        checkIfReadyToSend(this);
 
                     } else if (sentence.regionMatches(0, score1Pattern, 0, 6)) {
                         System.out.println("Score1 pattern");
                         String scoreStr = sentence.substring(6);
+                        // - Log
+                        ServerLog logscore = new ServerLog(LocalDateTime.now(), this, "Recived score from client", serverSocket, "Recived", port);
+                        logscore.setPacketType("UDP");
+                        logscore.setScore(scoreStr);
+                        addLogAndUpdate(logscore);
+
                         int score = Integer.parseInt(scoreStr);
                         addScoreToPlayer(score);
                         decideWinner();
-                        checkIfReadyToSend();
+                        checkIfReadyToSend(this);
 
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
                         System.out.println("nbrOfPlayersPattern");
                         String nbrOfplayerStr = sentence.substring(12);
-                       // numOfPlayers = nbrOfplayerStr;
+                        numOfPlayers = nbrOfplayerStr;
 
                     }
 

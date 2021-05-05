@@ -7,7 +7,7 @@ import Server.Model.Server;
  */
 public class StartServer {
     public static void main(String[] args) {
-        ServerController controller = new ServerController(2525);
+        ServerController controller = new ServerController(8787);
     }
 
 }

@@ -65,15 +65,13 @@ public class ServerLog {
         this.port = port;
     }
 
-    public ServerLog(LocalDateTime ldt, Thread thread, String description, String dbDriver){
-        this.thread = thread;
+    public ServerLog(LocalDateTime ldt, String description, String dbDriver){
         this.description = description;
         this.timeNow = ldt.format(formatter);
         this.databaseURL = dbDriver;
     }
 
-    public ServerLog(LocalDateTime ldt, Thread thread, String description, String dbTable, String direction){
-        this.thread = thread;
+    public ServerLog(LocalDateTime ldt, String description, String dbTable, String direction){
         this.description = description;
         this.timeNow = ldt.format(formatter);
         this.databaseTable = dbTable;
