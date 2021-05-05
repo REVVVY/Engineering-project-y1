@@ -29,18 +29,36 @@ public class WestPanelLog extends JPanel {
             ServerLog log = (ServerLog) logList.getSelectedValue();
             if(log.getDescription().equals("Öppnar UDP Anslutning")){
                 sController.setContentInView(log.getUDPanslutningsString());
-            }
+
+            }else if(log.getDescription().equals("Client connect to server")){
+                sController.setContentInView(log.getClientConnectString());
+
+            }else if(log.getDescription().equals("Game Sent From Client")){
+                sController.setContentInView(log.getGameSentFromClientString());
+
+            }/*else if(log.getDescription().equals("")){
+                sController.setContentInView();
+            } */
 
         });
 
         logList.setModel(model);
 
-        logList.setPreferredSize(new Dimension(480, 345));
-        add(logList);
+       // logList.setPreferredSize(new Dimension(480, 330));
+        JScrollPane scroller = new JScrollPane(logList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.setPreferredSize(new Dimension(480, 345));
+
+        add(scroller);
+       // add(logList);
     }
 
     public void addElemtent(ServerLog newLog){
         model.addElement(newLog);
+        logList.setModel(model);
+    }
+
+    public void setListModel(DefaultListModel model){
+        this.model = model;
         logList.setModel(model);
     }
 }

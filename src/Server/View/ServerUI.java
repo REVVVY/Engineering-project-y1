@@ -46,8 +46,8 @@ public class ServerUI{
    }
 
     public void exitProgram() {
-        controller.closeConnection();
         frame.dispose();
+        controller.closeConnection();
         System.exit(0);
     }
 

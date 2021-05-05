@@ -29,6 +29,7 @@ public class Server implements Runnable {
     private DataConn connection;
     private String numOfPlayers;
     private ServerController controller;
+    private ArrayList<ServerLog> serverlogs;
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
      * @param port porten som väljs när servern körs så att man vet vart informationen ska skickas/tas emot
@@ -38,6 +39,7 @@ public class Server implements Runnable {
         this.port = port;
         clientList = new LinkedList<>();
         highscoreList = new ArrayList<>();
+        serverlogs = new ArrayList<>();
         gameList = new ArrayList<>();
         connectToDatabase();
         getInfoFromDatabase();
@@ -60,15 +62,14 @@ public class Server implements Runnable {
     public void run() {
         //while (true) {
         try {
-            controller.addElementInView(new ServerLog(LocalDateTime.now(), server, "KUKFITTA"));
             DatagramSocket arduinoSocket = new DatagramSocket(2525);
             InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
             inbyggdaSystemHandler.start();
 
 
             Socket socket = serverSocket.accept();
+            addLogAndUpdate(new ServerLog(LocalDateTime.now(), server, "Client connect to server"));
             oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject("2"); //Test för java klienten //Todo ta bort vid test av inbyggda
             ClientHandler ch = new ClientHandler(socket);
             //clientList.add(ch);
             ch.start();
@@ -181,6 +182,11 @@ public class Server implements Runnable {
         }
     }
 
+    public void addLogAndUpdate(ServerLog log){
+        serverlogs.add(log);
+        controller.getServerLogToWestPanel(serverlogs);
+    }
+
     public void updateDatabase(){
         connection.setDataInDatabase(game);
     }
@@ -208,8 +214,8 @@ public class Server implements Runnable {
          */
         public void run() {
             try {
-                //ServerLog log = new ServerLog(this);
                 ois = new ObjectInputStream(socket.getInputStream());
+                numOfPlayers = "2";
 
                 while(true) {
 
@@ -220,6 +226,10 @@ public class Server implements Runnable {
                         //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
                         if (obj instanceof Game) {
                             game = (Game) obj;
+                            ServerLog log = new ServerLog(LocalDateTime.now(), this, "Game Sent From Client");
+                            log.setGame(game);
+                            addLogAndUpdate(log);
+
                             gameList.add(game);
                             addPlayersToList();
                             addScoreToPlayer(40);
@@ -227,7 +237,6 @@ public class Server implements Runnable {
                             decideWinner();
                             checkIfReadyToSend();
                         }
-
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -248,7 +257,8 @@ public class Server implements Runnable {
 
         public void run() {
             System.out.println("Inne i inbyggda");
-            controller.addElementInView(new ServerLog(LocalDateTime.now(), this, "Öppnar UDP Anslutning"));
+            addLogAndUpdate(new ServerLog(LocalDateTime.now(), this, "Öppnar UDP Anslutning"));
+
             while (true) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
@@ -286,7 +296,8 @@ public class Server implements Runnable {
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
                         System.out.println("nbrOfPlayersPattern");
                         String nbrOfplayerStr = sentence.substring(12);
-                        numOfPlayers = nbrOfplayerStr;
+                       // numOfPlayers = nbrOfplayerStr;
+
                     }
 
 

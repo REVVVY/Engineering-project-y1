@@ -58,6 +58,12 @@ public class ServerLog {
     }
 
     public String getDescription() {
+
+        return description;
+    }
+
+    @Override
+    public String toString() {
         return description;
     }
 
@@ -145,16 +151,25 @@ public class ServerLog {
         this.sendOrRecieve = sendOrRecieve;
     }
 
-    @Override
-    public String toString() {
-        //return String.format("%s, " + thread.getName()+ "%s" , timeNow, description);
-        return timeNow + " " + description;
-    }
 
     public ArrayList getUDPanslutningsString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time : " + timeNow);
         temp.add("Thread: " +thread.getName());
        return temp;
+    }
+    public ArrayList getClientConnectString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time : " + timeNow);
+        temp.add("Thread: " +thread.getName());
+        return temp;
+    }
+    public ArrayList getGameSentFromClientString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Player 1: " + game.getPlayer1());
+        if(game.getPlayer2()!= null){
+            temp.add("Player 2:  " + game.getPlayer2().getName());
+        }
+        return temp;
     }
 }
