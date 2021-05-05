@@ -89,7 +89,7 @@ public class Server implements Runnable {
 
     public void connectToDatabase() {
         connection = new DataConn();
-        ServerLog log = new ServerLog(LocalDateTime.now(), null, "Connection to database established", "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11408587");
+        ServerLog log = new ServerLog(LocalDateTime.now(), "Connection to database established", "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11408587");
         addLogAndUpdate(log);
     }
 

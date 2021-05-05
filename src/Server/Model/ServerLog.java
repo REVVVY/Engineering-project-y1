@@ -108,11 +108,6 @@ public class ServerLog {
         return description;
     }
 
-    @Override
-    public String toString() {
-        return description;
-    }
-
     public void setDescription(String description) {
         this.description = description;
     }
@@ -198,6 +193,7 @@ public class ServerLog {
     }
 
 
+
     public ArrayList getUDPanslutningsString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time : " + timeNow);
@@ -217,5 +213,10 @@ public class ServerLog {
             temp.add("Player 2:  " + game.getPlayer2().getName());
         }
         return temp;
+    }
+
+    @Override
+    public String toString() {
+        return timeNow + "   " + description;
     }
 }

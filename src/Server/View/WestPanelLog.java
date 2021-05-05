@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.concurrent.TimeUnit;
 
 public class WestPanelLog extends JPanel {
 
@@ -41,7 +42,11 @@ public class WestPanelLog extends JPanel {
             } */
 
         });
-
+        try {
+            TimeUnit.MILLISECONDS.sleep(150);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         logList.setModel(model);
 
        // logList.setPreferredSize(new Dimension(480, 330));
@@ -59,6 +64,11 @@ public class WestPanelLog extends JPanel {
 
     public void setListModel(DefaultListModel model){
         this.model = model;
+        try {
+            TimeUnit.MILLISECONDS.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         logList.setModel(model);
     }
 }
