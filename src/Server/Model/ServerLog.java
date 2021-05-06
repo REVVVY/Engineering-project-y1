@@ -209,12 +209,14 @@ public class ServerLog {
        // temp.add("Thread: " +thread.getName());  VISA I RENAME
        return temp;
     }
+
     public ArrayList getClientConnectString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         //temp.add("Thread: " +thread.getName());       LÄGG TILL I RENAME
         return temp;
     }
+
     public ArrayList getGameSentFromClientString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
@@ -226,12 +228,14 @@ public class ServerLog {
         //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
     }
+
     public ArrayList getDatabaseConnectionString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("DatabaseURL: " + databaseURL);
         return temp;
     }
+
     public ArrayList getDatabaseHighscorelistString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
@@ -240,6 +244,7 @@ public class ServerLog {
         }
         return temp;
     }
+
     public ArrayList getUpdatedHighscoreInDBString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
@@ -252,6 +257,7 @@ public class ServerLog {
         return temp;
 
     }
+
     public ArrayList getUpdatedGameInDbString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
@@ -269,6 +275,7 @@ public class ServerLog {
         //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
     }
+
     public ArrayList getDatabaseGamesListString(){
         ArrayList<String> temp = new ArrayList<>();
         int counter = 1;
@@ -291,6 +298,7 @@ public class ServerLog {
         }
         return temp;
     }
+
     public ArrayList getSentHighscoreListToClientString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
@@ -299,6 +307,7 @@ public class ServerLog {
         }
         return temp;
     }
+
     public ArrayList getSentGameToClientString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
@@ -317,12 +326,14 @@ public class ServerLog {
         return temp;
 
     }
+
     public ArrayList getReceivedScoreFromClientString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("Score: " + score);
         return temp;
     }
+
     public ArrayList getReceivedNbrOfPlayersFromClientString(){
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
