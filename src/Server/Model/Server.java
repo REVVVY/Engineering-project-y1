@@ -263,6 +263,7 @@ public class Server implements Runnable {
                             addScoreToPlayer(40);
                             decideWinner();
                             checkIfReadyToSend(this);
+                            //numOfPlayers = "1";
                         }
                     }
                 }
