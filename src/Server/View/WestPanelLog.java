@@ -32,7 +32,7 @@ public class WestPanelLog extends JPanel {
                 sController.setContentInView(log.getUDPanslutningsString());
                 sController.setInfoInView(log.getUDPConnectionInfo());
 
-            }else if(log.getDescription().equals("Client connect to server")){
+            }else if(log.getDescription().equals("Client connected to server")){
                 sController.setContentInView(log.getClientConnectString());
                 sController.setInfoInView(log.getClientConnectedInfo());
 

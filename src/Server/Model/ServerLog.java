@@ -332,14 +332,14 @@ public class ServerLog {
 
     public ArrayList getUDPConnectionInfo(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Port: " + port);
         return temp;
     }
 
     public ArrayList getClientConnectedInfo(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
         temp.add("Socket port: " + socket.getPort());
         return temp;
@@ -347,7 +347,7 @@ public class ServerLog {
 
     public ArrayList getGameRecivedInfo(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
         temp.add("Socket port: " + socket.getPort());
         temp.add("Packettype: " + packetType);
@@ -397,7 +397,7 @@ public class ServerLog {
 
     public ArrayList getSentGameToClientInfo(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
         temp.add("Port: " + socket.getPort());
         temp.add("Packettype: " + packetType);
@@ -407,7 +407,7 @@ public class ServerLog {
 
     public ArrayList getSentHighscoreToClientInfo(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
         temp.add("Port: " + socket.getPort());
         temp.add("Packettype: " + packetType);

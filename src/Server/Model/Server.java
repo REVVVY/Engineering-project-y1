@@ -145,12 +145,14 @@ public class Server implements Runnable {
         oos.writeObject(temp);
         // - Log
         ServerLog log = new ServerLog(LocalDateTime.now(), thread, "Sent highscorelist to client", socket, "Sent");
+        log.setPacketType("TCP");
         log.setHighscore(temp);
         addLogAndUpdate(log);
 
         // - Log
         oos.writeObject(game);
         ServerLog loggame = new ServerLog(LocalDateTime.now(), thread, "Sent game to client", socket, "Sent");
+        loggame.setPacketType("TCP");
         loggame.setGame(game);
         addLogAndUpdate(loggame);
         oos.flush();
