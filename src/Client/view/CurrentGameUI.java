@@ -4,6 +4,8 @@ import Client.Controller.ClientController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class CurrentGameUI extends JFrame {
     private ClientController controller;
@@ -13,16 +15,14 @@ public class CurrentGameUI extends JFrame {
     private JPanel playersPnl = new JPanel();
     private JList<String> scoreList = new JList<>();
     private JScrollPane scroll = new JScrollPane();
+    private Font highScoreFont;
 
     public CurrentGameUI(ClientController controller, String name1, String name2){
         this.controller = controller;
-
         openGameUI();
         openPlayersPnl(name1, name2);
         openScorePnl();
-
     }
-
 
     private void openGameUI() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -30,7 +30,7 @@ public class CurrentGameUI extends JFrame {
             public void run() {
                 setTitle("Game");
                 // setPreferredSize(new Dimension(1140, 750));
-                setSize(1140, 750);
+                setSize(1167, 670);
                 //     getContentPane().setLayout(new BorderLayout(0, 0));
                 //setLayout(new BorderLayout());
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,7 +52,7 @@ public class CurrentGameUI extends JFrame {
         test.setLayout(null);
         picLabel2.add(test, BorderLayout.PAGE_START);
 
-        scoreListPnl.setPreferredSize(new Dimension(400, 750));
+        scoreListPnl.setPreferredSize(new Dimension(470, 670));
         scoreListPnl.setLayout(new BorderLayout(0, 0)); //tar bort gaps
 
         scoreListPnl.add(picLabel2, BorderLayout.CENTER);
@@ -66,36 +66,30 @@ public class CurrentGameUI extends JFrame {
     private void openPlayersPnl(String name1, String name2) {
         ImageIcon lPic = new ImageIcon("src/Client/view/images/LeftPic.png");
         JLabel picLabel2 = new JLabel(lPic);
-        //picLabel2.setLayout(new FlowLayout());
-
-
-
-        //  String player1 = clientUI.getName1();
-        System.out.println(name1);
-        JLabel player1Lbl = new JLabel("<html>" +
-                "<span style='text-align: center;" +
-                "font: normal normal normal 60px/72px Highscore Hero;" +
-                "color: #FAECD9;" +
-                "opacity: 1;'>"+name1+"</span>" +
-                "</html>", SwingConstants.CENTER);
-
-        JLabel player2Lbl = new JLabel("<html>" +
-                "<span style='text-align: right;" +
-                "font: normal normal normal 60px/72px Highscore Hero;" +
-                "color: #FAECD9;" +
-                "opacity: 1;'>"+name2+"</span>" +
-                "</html>", SwingConstants.CENTER);
-
-
-        // player1Lbl.setLocation(500, 400);
+        try { //skapar en font
+            highScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(80f);
+            GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
+        } catch (IOException | FontFormatException e){
+            System.out.println("There is no such file!");
+        }
+        JLabel player1Lbl = new JLabel(name1);
         player1Lbl.setLayout(null);
-        player1Lbl.setBounds(200, 246, 310, 60);
-        player2Lbl.setLayout(null);
-        player2Lbl.setBounds(200, 430, 310, 60);
+        player1Lbl.setBounds(68, 219, 554, 70);
+        player1Lbl.setForeground(Color.decode("#FAECD9"));
+        player1Lbl.setFont(highScoreFont);
+        player1Lbl.setHorizontalAlignment(SwingConstants.CENTER);
         picLabel2.add(player1Lbl, BorderLayout.PAGE_START);
+
+        JLabel player2Lbl = new JLabel(name2);
+        player2Lbl.setLayout(null);
+        player2Lbl.setBounds(68, 435, 554, 70);
+        player2Lbl.setForeground(Color.decode("#FAECD9"));
+        player2Lbl.setFont(highScoreFont);
+        player2Lbl.setHorizontalAlignment(SwingConstants.CENTER);
         picLabel2.add(player2Lbl, BorderLayout.PAGE_START);
 
-        playersPnl.setPreferredSize(new Dimension(697, 750));
+        playersPnl.setPreferredSize(new Dimension(697, 670));
         playersPnl.setLayout(new BorderLayout(0, 0)); //tar bort gaps
         playersPnl.add(picLabel2, BorderLayout.CENTER);
 
