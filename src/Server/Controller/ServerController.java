@@ -32,6 +32,10 @@ public class ServerController {
         gui.getPnlEast().setContentList(log);
     }
 
+    public void setInfoInView(ArrayList<String> log){
+        gui.getPnlEast().setInfoList(log);
+    }
+
     public void getServerLogToWestPanel(ArrayList<ServerLog> list){
         DefaultListModel temp = new DefaultListModel();
 

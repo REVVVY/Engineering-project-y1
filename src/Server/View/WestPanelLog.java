@@ -30,39 +30,51 @@ public class WestPanelLog extends JPanel {
             ServerLog log = (ServerLog) logList.getSelectedValue();
             if(log.getDescription().equals("UPD connection open")){
                 sController.setContentInView(log.getUDPanslutningsString());
+                sController.setInfoInView(log.getUDPConnectionInfo());
 
             }else if(log.getDescription().equals("Client connect to server")){
                 sController.setContentInView(log.getClientConnectString());
+                sController.setInfoInView(log.getClientConnectedInfo());
 
             }else if(log.getDescription().equals("Game recived from client")){
                 sController.setContentInView(log.getGameSentFromClientString());
+                sController.setInfoInView(log.getGameRecivedInfo());
 
             }else if(log.getDescription().equals("Updated highscore in database")){
                 sController.setContentInView(log.getUpdatedHighscoreInDBString());
+                sController.setInfoInView(log.getUpdatedHighscoreInDBInfo());
 
             } else if(log.getDescription().equals("Updated games in database")){
                 sController.setContentInView(log.getUpdatedGameInDbString());
+                sController.setInfoInView(log.getUpdatedGamesInDBInfo());
 
             } else if(log.getDescription().equals("Connection to database established")){
                 sController.setContentInView(log.getDatabaseConnectionString());
+                sController.setInfoInView(log.getConnectedToDBInfo());
 
             } else if(log.getDescription().equals("Recived highscorelist from database")){
                 sController.setContentInView(log.getDatabaseHighscorelistString());
+                sController.setInfoInView(log.getRecievedHighscorelistFromDbInfo());
 
             } else if(log.getDescription().equals("Recived games from database")){
                 sController.setContentInView(log.getDatabaseGamesListString());
+                sController.setInfoInView(log.getReceivedGamesFromDbInfo());
 
             } else if(log.getDescription().equals("Sent highscorelist to client")){
                 sController.setContentInView(log.getSentHighscoreListToClientString());
+                sController.setInfoInView(log.getSentHighscoreToClientInfo());
 
             }  else if(log.getDescription().equals("Sent game to client")){
                 sController.setContentInView(log.getSentGameToClientString());
+                sController.setInfoInView(log.getSentGameToClientInfo());
 
             } else if(log.getDescription().equals("Recived score from client")){
                 sController.setContentInView(log.getReceivedScoreFromClientString());
+                sController.setInfoInView(log.getScoreFromClientInfo());
 
             } else if(log.getDescription().equals("Received number of players from client")){
                 sController.setContentInView(log.getReceivedNbrOfPlayersFromClientString());
+                sController.setInfoInView(log.getNbrOfPlayersRecievedInfo());
             }
 
         });

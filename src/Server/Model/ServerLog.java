@@ -330,6 +330,105 @@ public class ServerLog {
         return temp;
     }
 
+    public ArrayList getUDPConnectionInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Port: " + port);
+        return temp;
+    }
+
+    public ArrayList getClientConnectedInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Socket address: " + socket.getInetAddress());
+        temp.add("Socket port: " + socket.getPort());
+        return temp;
+    }
+
+    public ArrayList getGameRecivedInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Socket address: " + socket.getInetAddress());
+        temp.add("Socket port: " + socket.getPort());
+        temp.add("Packettype: " + packetType);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getUpdatedHighscoreInDBInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Database table: " + databaseTable);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getUpdatedGamesInDBInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Database table: " + databaseTable);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getConnectedToDBInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Database connection established");
+        return temp;
+    }
+
+    public ArrayList getNbrOfPlayersRecievedInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Socket address: " + dSocket.getInetAddress());
+        temp.add("Port: " + dSocket.getPort());
+        temp.add("Packettype: " + packetType);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getScoreFromClientInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Socket address: " + dSocket.getInetAddress());
+        temp.add("Port: " + dSocket.getPort());
+        temp.add("Packettype: " + packetType);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getSentGameToClientInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Socket address: " + socket.getInetAddress());
+        temp.add("Port: " + socket.getPort());
+        temp.add("Packettype: " + packetType);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getSentHighscoreToClientInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Socket address: " + socket.getInetAddress());
+        temp.add("Port: " + socket.getPort());
+        temp.add("Packettype: " + packetType);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getReceivedGamesFromDbInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Database table: " + databaseTable);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getRecievedHighscorelistFromDbInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Database table: " + databaseTable);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
     @Override
     public String toString() {
         return timeNow + "   " + description;

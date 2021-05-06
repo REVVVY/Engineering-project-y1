@@ -1,7 +1,6 @@
 package Server.View;
 
 import Server.Controller.ServerController;
-import Server.Model.ServerLog;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -15,7 +14,7 @@ public class EastPanelInfo extends JPanel {
     private JPanel pnlSouth;
     private JPanel pnlNorth;
    // private JLabel contentLabel;
-    private JList renameList;
+    private JList infoList;
     private JList contentList;
 
     public EastPanelInfo(ServerController sController){
@@ -29,10 +28,11 @@ public class EastPanelInfo extends JPanel {
 
 
         contentList = new JList();
+        infoList = new JList();
         pnlNorth = new JPanel();
         pnlSouth = new JPanel();
 
-        Border borderNorth = BorderFactory.createTitledBorder("RENAME");
+        Border borderNorth = BorderFactory.createTitledBorder("Info");
         pnlNorth.setBorder(borderNorth);
         pnlNorth.setPreferredSize(new Dimension(500, 175));
 
@@ -41,16 +41,31 @@ public class EastPanelInfo extends JPanel {
         pnlSouth.setPreferredSize(new Dimension(500, 185));
 
 
-        renameList = new JList();
-        JScrollPane scroller = new JScrollPane(contentList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scroller.setPreferredSize(new Dimension(490, 160));
+        JScrollPane scrollerInfo = new JScrollPane(infoList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollerInfo.setPreferredSize(new Dimension(490, 160));
 
-        pnlSouth.add(scroller);
-        pnlNorth.add(renameList);
+        JScrollPane scrollerContent = new JScrollPane(contentList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollerContent.setPreferredSize(new Dimension(490, 160));
+
+        pnlSouth.add(scrollerContent);
+        pnlNorth.add(scrollerInfo);
 
         JSplitPane splitPane = new JSplitPane(SwingConstants.HORIZONTAL, pnlNorth, pnlSouth);
         add(splitPane);
+    }
 
+    public void setInfoList(ArrayList<String> log){
+        String[] array = new String[log.size()];
+
+        for(int i = 0; i < log.size(); i++){
+            array[i] = log.get(i);
+        }
+        try {
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        infoList.setListData(array);
     }
 
     public void setContentList(ArrayList<String> log){
@@ -66,10 +81,4 @@ public class EastPanelInfo extends JPanel {
         }
         contentList.setListData(array);
     }
-
-
-
-    /*public JLabel getContentLabel() {
-        return contentLabel;
-    } */
 }
