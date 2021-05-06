@@ -11,6 +11,7 @@ public class ClientController {
 
     private Client client;
     private ClientUI ui = new ClientUI(this);
+    private JFrame frame;
 
 
     public ClientController(String ip, int port) {
@@ -89,12 +90,17 @@ public class ClientController {
         }
         return ui.getName2();
     }
+
+    public void close(){
+        frame.dispose();
+    }
+
     private void showUI(){
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame frame = new JFrame("Laser-Game");
+                frame = new JFrame("Laser-Game");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.add(ui);
                 frame.pack();

@@ -97,9 +97,12 @@ public class ClientUI extends JPanel  implements ActionListener{
 
         controller.sendPlayers(getName1(), getName2());
 
+
+        controller.close();
         //Ska anropas på ett annat sätt (metod i controller?)
         CurrentGameUI currentGameUI = new CurrentGameUI(controller, getName1(), getName2());
         currentGameUI.setVisible(true);
+
     }
 
     public String getName1(){
