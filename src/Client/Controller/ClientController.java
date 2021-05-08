@@ -69,6 +69,10 @@ public class ClientController {
         }
     }
 
+    public void updateHighScore() {
+
+    }
+
     public void newResponse(String response) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

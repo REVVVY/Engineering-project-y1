@@ -29,15 +29,12 @@ public class CurrentGameUI extends JFrame {
             @Override
             public void run() {
                 setTitle("Game");
-                // setPreferredSize(new Dimension(1140, 750));
                 setSize(1167, 670);
-                //     getContentPane().setLayout(new BorderLayout(0, 0));
-                //setLayout(new BorderLayout());
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                // frame.add(ui);
-                pack();
+                setResizable(false);
                 setLocationRelativeTo(null);
                 setVisible(true);
+                pack();
             }
         });
     }

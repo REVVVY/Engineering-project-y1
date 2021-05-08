@@ -210,8 +210,8 @@ public class Server implements Runnable {
                         game = (Game)obj;
                         gameList.add(game);
                         addPlayersToList();
-                        addScoreToPlayer(40);
-                        addScoreToPlayer(40);
+                        addScoreToPlayer(15);
+                        addScoreToPlayer(30);
                         decideWinner();
                         checkIfReadyToSend();
                     }

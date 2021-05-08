@@ -1,8 +1,5 @@
 package Client.Controller;
 
-import Client.Model.Client;
-
-import javax.swing.*;
 
 /***
  * Main klass för att starta klienten
