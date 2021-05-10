@@ -55,7 +55,7 @@ public class Server implements Runnable {
     public void run() {
         //while (true) {
         try {
-            DatagramSocket arduinoSocket = new DatagramSocket(2575);
+            DatagramSocket arduinoSocket = new DatagramSocket(25755);
             InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
             inbyggdaSystemHandler.start();
 
@@ -210,7 +210,7 @@ public class Server implements Runnable {
                         game = (Game)obj;
                         gameList.add(game);
                         addPlayersToList();
-                        addScoreToPlayer(15);
+                        addScoreToPlayer(20);
                         addScoreToPlayer(30);
                         decideWinner();
                         checkIfReadyToSend();

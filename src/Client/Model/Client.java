@@ -5,7 +5,6 @@ import Client.Controller.ClientController;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /***
  * Klient klass för tester av servern.
@@ -84,14 +83,16 @@ public class Client implements Runnable {
     public void getScoreFromServer() {
         try {
             playerScore = (ArrayList<Player>) ois.readObject();
-            Arrays.sort(new ArrayList[]{playerScore});
+            controller.printScoreboard(playerScore);
             for (Player p : playerScore) {
                 System.out.println(p.getName() + " " + p.getScore());
             }
         } catch (IOException | ClassNotFoundException e){}
     }
 
-
+    public ArrayList<Player> getPlayerScoreList() {
+        return playerScore;
+    }
 
     public void getCurrGameFromServer(){
         try {
@@ -116,7 +117,6 @@ public class Client implements Runnable {
 
                 numOfPlayers = nbrOfPlayers;
                 getScoreFromServer();
-                controller.updateHighScore();
                 getCurrGameFromServer();
             }
 

@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class CurrentGameUI extends JFrame {
     private ClientController controller;
@@ -13,16 +14,26 @@ public class CurrentGameUI extends JFrame {
 
     private JPanel scoreListPnl = new JPanel();
     private JPanel playersPnl = new JPanel();
-    private JList<String> scoreList = new JList<>();
-    private JScrollPane scroll = new JScrollPane();
+
+    private JLabel scoreList = new JLabel("");
     private Font highScoreFont;
 
-    public CurrentGameUI(ClientController controller, String name1, String name2){
+    // private ArrayList<Object> highScoreList;
+
+
+    public CurrentGameUI(ClientController controller, String name1, String name2, ArrayList<Object> highScoreList){
         this.controller = controller;
         openGameUI();
         openPlayersPnl(name1, name2);
-        openScorePnl();
+        openScorePnl(highScoreList);
     }
+
+    public CurrentGameUI(){
+    }
+
+
+
+
 
     private void openGameUI() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -39,12 +50,14 @@ public class CurrentGameUI extends JFrame {
         });
     }
 
-    private void openScorePnl() {
-        ImageIcon rPic = new ImageIcon("src/Client/view/images/RightPic.png");
 
+
+    private void openScorePnl(ArrayList<Object> highScoreList) {
+        ImageIcon rPic = new ImageIcon("src/Client/view/images/newRPic.png");
         JLabel picLabel2 = new JLabel(rPic);
-        // picLabel2.setLayout(new FlowLayout());
-        JLabel test = new JLabel("Hello");
+
+       // System.out.println(highScoreList.size());
+        JLabel test = new JLabel(" ");
         test.setBounds(14, 212, 146, 25);
         test.setLayout(null);
         picLabel2.add(test, BorderLayout.PAGE_START);
@@ -61,8 +74,7 @@ public class CurrentGameUI extends JFrame {
     }
 
     private void openPlayersPnl(String name1, String name2) {
-        ImageIcon lPic = new ImageIcon("src/Client/view/images/LeftPic.png");
-        JLabel picLabel2 = new JLabel(lPic);
+
         try { //skapar en font
             highScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(80f);
             GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -70,21 +82,41 @@ public class CurrentGameUI extends JFrame {
         } catch (IOException | FontFormatException e){
             System.out.println("There is no such file!");
         }
-        JLabel player1Lbl = new JLabel(name1);
-        player1Lbl.setLayout(null);
-        player1Lbl.setBounds(68, 219, 554, 70);
-        player1Lbl.setForeground(Color.decode("#FAECD9"));
-        player1Lbl.setFont(highScoreFont);
-        player1Lbl.setHorizontalAlignment(SwingConstants.CENTER);
-        picLabel2.add(player1Lbl, BorderLayout.PAGE_START);
 
-        JLabel player2Lbl = new JLabel(name2);
-        player2Lbl.setLayout(null);
-        player2Lbl.setBounds(68, 435, 554, 70);
-        player2Lbl.setForeground(Color.decode("#FAECD9"));
-        player2Lbl.setFont(highScoreFont);
-        player2Lbl.setHorizontalAlignment(SwingConstants.CENTER);
-        picLabel2.add(player2Lbl, BorderLayout.PAGE_START);
+        ImageIcon lPic;
+        JLabel picLabel2;
+
+        if (name2 == null) {
+            lPic = new ImageIcon("src/Client/view/images/leftPicOne.png");
+            picLabel2 = new JLabel(lPic);
+            JLabel player1Lbl = new JLabel(name1);
+            player1Lbl.setLayout(null);
+            player1Lbl.setBounds(68, 300, 554, 70);
+            player1Lbl.setForeground(Color.decode("#FAECD9"));
+            player1Lbl.setFont(highScoreFont);
+            player1Lbl.setHorizontalAlignment(SwingConstants.CENTER);
+            picLabel2.add(player1Lbl, BorderLayout.PAGE_START);
+        }
+        else {
+            lPic = new ImageIcon("src/Client/view/images/lPic.png");
+            picLabel2 = new JLabel(lPic);
+
+            JLabel player1Lbl = new JLabel(name1);
+            player1Lbl.setLayout(null);
+            player1Lbl.setBounds(68, 219, 554, 70);
+            player1Lbl.setForeground(Color.decode("#FAECD9"));
+            player1Lbl.setFont(highScoreFont);
+            player1Lbl.setHorizontalAlignment(SwingConstants.CENTER);
+            picLabel2.add(player1Lbl, BorderLayout.PAGE_START);
+
+            JLabel player2Lbl = new JLabel(name2);
+            player2Lbl.setLayout(null);
+            player2Lbl.setBounds(68, 430, 554, 70);
+            player2Lbl.setForeground(Color.decode("#FAECD9"));
+            player2Lbl.setFont(highScoreFont);
+            player2Lbl.setHorizontalAlignment(SwingConstants.CENTER);
+            picLabel2.add(player2Lbl, BorderLayout.PAGE_START);
+        }
 
         playersPnl.setPreferredSize(new Dimension(697, 670));
         playersPnl.setLayout(new BorderLayout(0, 0)); //tar bort gaps
@@ -93,5 +125,4 @@ public class CurrentGameUI extends JFrame {
         add(playersPnl, BorderLayout.WEST);
         pack();
     }
-
 }

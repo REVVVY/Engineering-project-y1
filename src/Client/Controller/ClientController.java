@@ -1,18 +1,18 @@
 package Client.Controller;
 
-import Client.Controller.*;
 import Client.Model.Client;
+import Client.Model.Player;
 import Client.view.*;
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ClientController {
 
     private Client client;
     private ClientUI ui = new ClientUI(this);
     private JFrame frame;
-
+    private ArrayList<Object> comingPlayerScore;
 
     public ClientController(String ip, int port) {
 
@@ -24,7 +24,6 @@ public class ClientController {
             e.printStackTrace();
         }
         showUI();
-
         viewPlayerUI();
         //client.getScoreFromServer();
         //printScoreboard(getFirstPlayer(), getSecondPlayer());
@@ -60,18 +59,20 @@ public class ClientController {
         }
     }
 
-
-    public void printScoreboard(String name1, String name2) {
-        try {
-            client.createScoreboard();
-        } catch (IOException | ClassNotFoundException e){
-            e.printStackTrace();
+    /**
+     * Uppdaterar highscore listan och skickar den vidare till view
+     * @param playerScore players' name & score coming from client
+     */
+    public void printScoreboard(ArrayList<Player> playerScore) {
+            comingPlayerScore = new ArrayList<>();
+        for (Player p : playerScore) {
+            comingPlayerScore.add(p.getName());
+            comingPlayerScore.add(p.getScore());
         }
+        ui.updateScoreList(comingPlayerScore);
     }
 
-    public void updateHighScore() {
 
-    }
 
     public void newResponse(String response) {
         SwingUtilities.invokeLater(new Runnable() {

@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class ClientUI extends JPanel  implements ActionListener{
     private JButton btnRegister = new JButton("Register");
@@ -20,6 +21,7 @@ public class ClientUI extends JPanel  implements ActionListener{
 
     private JPanel centerPanel = new JPanel();
 
+    private ArrayList<Object> highScoreList;
     /** Creates new form UserInput */
     public ClientUI(ClientController controller) {
         this.controller = controller;
@@ -33,6 +35,9 @@ public class ClientUI extends JPanel  implements ActionListener{
 
         add(lblTitle,BorderLayout.NORTH);
         add(taResult, BorderLayout.SOUTH);
+
+    }
+    public ClientUI(){
 
     }
 
@@ -88,19 +93,19 @@ public class ClientUI extends JPanel  implements ActionListener{
         JOptionPane.showMessageDialog( null, ui );
     }
 
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String playerInfo = getName1() +"\n" + getName2();
 
         taResult.setText(playerInfo);
         //anropa twoPlayers
-
         controller.sendPlayers(getName1(), getName2());
-
-
         controller.close();
         //Ska anropas på ett annat sätt (metod i controller?)
-        CurrentGameUI currentGameUI = new CurrentGameUI(controller, getName1(), getName2());
+        //System.out.println("check size" + highScoreList.size());
+        CurrentGameUI currentGameUI = new CurrentGameUI(controller, getName1(), getName2(), highScoreList);
         currentGameUI.setVisible(true);
 
     }
@@ -109,6 +114,30 @@ public class ClientUI extends JPanel  implements ActionListener{
         return tfPlayer1.getText();
     }
     public String getName2(){
+        if (!tfPlayer2.isValid()){
+            return null;
+        }
         return tfPlayer2.getText();
+    }
+
+
+    public ArrayList<Object> getScoreList(){
+      //  System.out.println("Size2 " + highScoreList.size());
+        return highScoreList;
+    }
+
+    public void setHighScoreList(ArrayList<Object> highScoreList) {
+        this.highScoreList = highScoreList;
+        System.out.println("Size1 " + highScoreList.size());
+
+    }
+
+    public void updateScoreList(ArrayList<Object> comingPlayerScoreObj) {
+        highScoreList = new ArrayList<>();
+        ClientUI client = new ClientUI(controller);
+
+        highScoreList.addAll(comingPlayerScoreObj);
+
+        setHighScoreList(highScoreList);
     }
 }
