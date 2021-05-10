@@ -4,10 +4,8 @@ import Client.Model.Player;
 import Client.Model.Game;
 import Database.DataConn;
 import Server.Controller.ServerController;
-
 import java.io.*;
 import java.net.*;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,9 +52,7 @@ public class Server implements Runnable {
         }
         server.start();
     }
-
-
-
+    
     /***
      * Accepterar klientens anslutning och skapar ett objekt av en inre klass.
      * Lägger till i klientlistan och startar klientens tråd.
@@ -243,10 +239,9 @@ public class Server implements Runnable {
         public void run() {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
-                numOfPlayers = "2"; //Tester av klient
+                //numOfPlayers = "2"; //Tester av klient
 
                 while(true) {
-
                     if (numOfPlayers != null) {
                         sendNbrOfPlayersToClient(numOfPlayers);
                         Object obj = ois.readObject();
@@ -261,10 +256,11 @@ public class Server implements Runnable {
 
                             gameList.add(game);
                             addPlayersToList();
-                            addScoreToPlayer(40);
-                            addScoreToPlayer(40);
-                            decideWinner();
-                            checkIfReadyToSend(this);
+                            //Tester nedan
+                            //addScoreToPlayer(40);
+                            //addScoreToPlayer(40);
+                            //decideWinner();
+                            //checkIfReadyToSend(this);
                             //numOfPlayers = "1";
                         }
                     }
