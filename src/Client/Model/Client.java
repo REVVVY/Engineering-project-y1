@@ -2,10 +2,7 @@ package Client.Model;
 
 import Client.Controller.ClientController;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -29,6 +26,7 @@ public class Client implements Runnable {
     private ObjectOutputStream oos;
 
 
+
     /***
      * Konstruktor för starten av klienten
      * @param ip addressen klienten använder vid start
@@ -50,75 +48,99 @@ public class Client implements Runnable {
         thread.start();
     }
 
-    public ClientController setController() {
-        return controller;
+    private void startNamePanels(){
+        controller.showUI(getNumOfPlayers());
     }
 
-    public int numOfPlayers() {
-
-        return numOfPlayers;
-    }
-
-    public void onePlayer(String name) throws IOException {
-        Player player1 = new Player(name);
-        Game game = new Game(player1);
-        oos.writeObject(game);
-        oos.flush();
-    }
-
-    public void twoPlayers(String name, String name2) throws IOException {
-        Player player1 = new Player(name);
-        Player player2 = new Player(name2);
-        Game game = new Game(player1, player2);
-        oos.writeObject(game);
-        oos.flush();
-    }
-
-    public void createScoreboard() throws IOException, ClassNotFoundException {
-        ArrayList<Player> scoreboard = (ArrayList<Player>) ois.readObject();
-        for (Player p : scoreboard) {
-            System.out.println(p.getName() + " " + p.getScore());
-        }
-    }
-
-    public void getScoreFromServer() {
+    public int getNumOfPlayersFromServer()  {
+        String nbrOfPlayersStr = null;
         try {
-            playerScore = (ArrayList<Player>) ois.readObject();
-            for (Player p : playerScore) {
-                System.out.println(p.getName() + " " + p.getScore());
-            }
-        } catch (IOException | ClassNotFoundException e) {
-        }
-    }
-
-    public void getCurrGameFromServer() {
-        try {
-            currentGame = (Game) ois.readObject();
+            nbrOfPlayersStr = (String) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
+        System.out.println(nbrOfPlayers);
+        numOfPlayers = nbrOfPlayers;
+        return numOfPlayers;
+    }
+    public int getNumOfPlayers(){
+        return numOfPlayers;
     }
 
+    public void onePlayer(String name)  {
+        Player player1 = new Player(name);
+        Game game = new Game(player1);
+        try {
+            oos.writeObject(game);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        numOfPlayers = 0;
+    }
+
+    public void twoPlayers(String name, String name2) {
+        Player player1 = new Player(name);
+        Player player2 = new Player(name2);
+        Game game = new Game(player1, player2);
+        try {
+            oos.writeObject(game);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        numOfPlayers = 0;
+    }
+
+    /**
+     * Skickar highscore listan till Server
+     * och vidare till controller
+     */
+    public void getScoreFromServer() {
+        try {
+            playerScore = (ArrayList<Player>) ois.readObject();
+          //  controller.printScoreboard(playerScore);
+            for (Player p : playerScore) {
+                System.out.println(p.getName() + " " + p.getScore());
+            }
+            System.out.println("GotList");
+        } catch (IOException | ClassNotFoundException e){}
+
+       ArrayList<String> comingPlayerScore = new ArrayList<>();
+        for (Player p : playerScore) {
+            comingPlayerScore.add(p.getName());
+            comingPlayerScore.add(String.valueOf(p.getScore()));
+        }
+
+        controller.showScore(comingPlayerScore);
+      //  controller.setScoreList(playerScore);
+    }
+
+    public void getCurrGameFromServer(){
+        try {
+            currentGame = (Game) ois.readObject();
+        } catch (IOException  | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Klientens tråd som lägger till spelares namn + score som test för servern
      * samt hämtar arraylistan med hela highscorelistan.
      */
-    @Override
+
     public void run() {
-        try {
-            while (true) {
-                String nbrOfPlayersstr = (String) ois.readObject();
-                int nbrOfPlayers = Integer.parseInt(nbrOfPlayersstr);
-                System.out.println(nbrOfPlayers);
 
-                numOfPlayers = nbrOfPlayers;
-                getScoreFromServer();
-                getCurrGameFromServer();
-            }
+        while(true) {
+            getNumOfPlayersFromServer();
 
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            startNamePanels();
+
+            getScoreFromServer();
+            System.out.println("Score is sent");
+
+            getCurrGameFromServer();
         }
     }
 }
