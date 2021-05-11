@@ -21,6 +21,7 @@ public class DataConn {
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Error is found: " + e);
         }
+
     }
 
     public void getData() {

@@ -1,6 +1,7 @@
 package Client.Controller;
 
 import Client.Model.Client;
+import Client.view.ClientUI;
 
 import javax.swing.*;
 
@@ -9,10 +10,8 @@ import javax.swing.*;
  */
 public class StartClient {
     public static void main(String[] args) {
-        //controller = new Client("localhost", 2323);
 
-                new ClientController("localhost", 2725);
-
-       // new ClientController(new Client("localhost", 2323));
+        ClientController ctr = new ClientController("localhost", 2725);
+        new ClientUI(ctr);
     }
 }

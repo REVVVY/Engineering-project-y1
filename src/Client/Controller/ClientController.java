@@ -1,6 +1,5 @@
 package Client.Controller;
 
-import Client.Controller.*;
 import Client.Model.Client;
 import Client.view.*;
 import javax.swing.*;
@@ -12,7 +11,6 @@ public class ClientController {
     private Client client;
     private ClientUI ui = new ClientUI(this);
 
-
     public ClientController(String ip, int port) {
 
         this.client = new Client(ip, port, this);
@@ -23,23 +21,26 @@ public class ClientController {
             e.printStackTrace();
         }
         showUI();
-
-        viewPlayerUI();
-        //client.getScoreFromServer();
-        //printScoreboard(getFirstPlayer(), getSecondPlayer());
     }
 
     private void viewPlayerUI() {
         int controlNbrOfPlayers = controlNbrOfPlayers();
+
         if (controlNbrOfPlayers == 1) {
-            ui.playersPnl(1);
-        }
-        else if(controlNbrOfPlayers == 2) {
-            ui.playersPnl(2);
+            ui.getSecondPlayer().removeAll();
+            ui.getSecondPlayerFieldText().removeAll();
+            ui.validate();
+            ui.repaint();
+
+        } else if (controlNbrOfPlayers == 2) {
+            ui.getSecondPlayer().removeAll();
+            ui.getSecondPlayerFieldText().removeAll();
+            ui.validate();
+            ui.repaint();
         }
     }
 
-    public int controlNbrOfPlayers(){
+    public int controlNbrOfPlayers() {
         int numPlayers = 0;
         numPlayers = client.numOfPlayers();
         return numPlayers;
@@ -50,11 +51,10 @@ public class ClientController {
             int controlNbrOfPlayers = controlNbrOfPlayers();
             if (controlNbrOfPlayers == 1) {
                 client.onePlayer(name1);
-            }
-            else if(controlNbrOfPlayers == 2) {
+            } else if (controlNbrOfPlayers == 2) {
                 client.twoPlayers(name1, name2);
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -63,7 +63,7 @@ public class ClientController {
     public void printScoreboard(String name1, String name2) {
         try {
             client.createScoreboard();
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -72,35 +72,42 @@ public class ClientController {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ui.setResult(response);
+                // ui.setResult(response);
             }
         });
     }
-    public String getFirstPlayer(){
-        if (ui.getName1().isEmpty() || ui.getName1().equals(null)) {
+
+    public String getFirstPlayer() {
+        if (new ClientUI().getName1().isEmpty() || new ClientUI().getName1().equals(null)) {
             return "NoName";
         }
-        return ui.getName1();
+        return new ClientUI().getName1();
     }
 
-    public String getSecondPlayer(){
-        if (ui.getName2().isEmpty() || ui.getName2().equals("")) {
+    public String getSecondPlayer() {
+        if (new ClientUI().getName2().isEmpty() || new ClientUI().getName2().equals("")) {
             return "NoName";
         }
-        return ui.getName2();
+        return new ClientUI().getName2();
     }
-    private void showUI(){
+
+    private void showUI() {
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame frame = new JFrame("Laser-Game");
+                JFrame frame = new JFrame("Laser Game");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.add(ui);
                 frame.pack();
+                ui.getSecondPlayer().removeAll();
+                ui.getSecondPlayerFieldText().removeAll();
+                ui.validate();
+                ui.repaint();
+                frame.setContentPane(ui.getMainPanel());
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
-                viewPlayerUI();
+                frame.setSize(650,300);
+                frame.setPreferredSize(new Dimension(50, 50));
             }
         });
     }
