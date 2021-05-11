@@ -239,7 +239,7 @@ public class Server implements Runnable {
         public void run() {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
-                //numOfPlayers = "2"; //Tester av klient
+                numOfPlayers = "2"; //Tester av klient
 
                 while(true) {
                     if (numOfPlayers != null) {
@@ -257,10 +257,10 @@ public class Server implements Runnable {
                             gameList.add(game);
                             addPlayersToList();
                             //Tester nedan
-                            //addScoreToPlayer(40);
-                            //addScoreToPlayer(40);
-                            //decideWinner();
-                            //checkIfReadyToSend(this);
+                            addScoreToPlayer(40);
+                            addScoreToPlayer(40);
+                            decideWinner();
+                            checkIfReadyToSend(this);
                             //numOfPlayers = "1";
                         }
                     }
