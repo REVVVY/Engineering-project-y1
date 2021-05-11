@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class ClientUI extends JPanel  implements ActionListener{
+public class ClientUI extends JPanel implements ActionListener{
     private JButton btnRegister = new JButton("Register");
     private JLabel lblTitle = new JLabel("Welcome to our Laser-game!", SwingConstants.CENTER);
     private JTextArea taResult = new JTextArea("Score: ");
@@ -18,13 +18,15 @@ public class ClientUI extends JPanel  implements ActionListener{
     private JTextField tfPlayer2 = new JTextField();
 
     private ClientController controller;
-
+    private CurrentGameUI currentGameUI;
     private JPanel centerPanel = new JPanel();
 
     private ArrayList<Object> highScoreList;
+    private int numOfPlayers;
     /** Creates new form UserInput */
     public ClientUI(ClientController controller) {
         this.controller = controller;
+        currentGameUI = new CurrentGameUI(controller);
         setLayout(new BorderLayout());
 
 
@@ -37,14 +39,14 @@ public class ClientUI extends JPanel  implements ActionListener{
         add(taResult, BorderLayout.SOUTH);
 
     }
-    public ClientUI(){
-
-    }
 
     public JPanel onePlayerPnl(){
+        tfPlayer2.setEnabled(false); //not used
+
         centerPanel.setBorder(BorderFactory.createTitledBorder("Enter your name: "));
         tfPlayer1.setHorizontalAlignment(JTextField.LEFT);
         tfPlayer1.setPreferredSize(new Dimension(150,25));
+
         centerPanel.add(lblPlayer1);
         centerPanel.add(tfPlayer1);
 
@@ -78,52 +80,58 @@ public class ClientUI extends JPanel  implements ActionListener{
         else if(numOfPlayers == 2){
             add(twoPlayersPnl(), BorderLayout.CENTER);
         }
-
+        this.numOfPlayers = numOfPlayers;
     }
 
     public void setResult(String result) {
-        //  controller.printScoreboard(tfPlayer1.getText(), tfPlayer2.getText());
-
         taResult.setText(result);
     }
     public static void main(String[] args) {
         ClientUI ui = new ClientUI(null);
         ui.playersPnl(2);
-        //   ui.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         JOptionPane.showMessageDialog( null, ui );
     }
 
-
+    /**
+     * Om "Register button är klickad
+     * @param e visar controller att button har blivit klickad
+     */
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String playerInfo = getName1() +"\n" + getName2();
+        if (e.getSource() == btnRegister)
+            controller.buttonPressed(BtnType.btnRegister);
+    }
 
-        taResult.setText(playerInfo);
-        //anropa twoPlayers
-        controller.sendPlayers(getName1(), getName2());
-        controller.close();
-        //Ska anropas på ett annat sätt (metod i controller?)
-        //System.out.println("check size" + highScoreList.size());
-        CurrentGameUI currentGameUI = new CurrentGameUI(controller, getName1(), getName2(), highScoreList);
+    /**
+     * Startar players' panel genom att använda namn och spelaren från controller
+     * @param numOfPlayers antal nuvarande spelare
+     * @param name1 namn på player 1 som är hämtad från 1:st frame
+     * @param name2 namn på player 1 som är hämtad från 1:st frame
+     */
+    public void startCurrentGame(int numOfPlayers, String name1, String name2){
+        currentGameUI.startCurrentGame(numOfPlayers, name1, name2);
+
+        currentGameUI.pack();
         currentGameUI.setVisible(true);
+        System.out.println("Started");
+    }
 
+    public void startScorePnl(ArrayList<String> comingPlayerScore){
+        currentGameUI.openScorePnl(comingPlayerScore);
+        currentGameUI.pack();
+        currentGameUI.setVisible(true);
+        System.out.println("showed score");
     }
 
     public String getName1(){
         return tfPlayer1.getText();
     }
     public String getName2(){
-        if (!tfPlayer2.isValid()){
+        if (tfPlayer2.isEnabled() == false) {
             return null;
         }
         return tfPlayer2.getText();
-    }
-
-
-    public ArrayList<Object> getScoreList(){
-      //  System.out.println("Size2 " + highScoreList.size());
-        return highScoreList;
     }
 
     public void setHighScoreList(ArrayList<Object> highScoreList) {
@@ -133,11 +141,7 @@ public class ClientUI extends JPanel  implements ActionListener{
     }
 
     public void updateScoreList(ArrayList<Object> comingPlayerScoreObj) {
-        highScoreList = new ArrayList<>();
-        ClientUI client = new ClientUI(controller);
-
-        highScoreList.addAll(comingPlayerScoreObj);
-
+        highScoreList = comingPlayerScoreObj;
         setHighScoreList(highScoreList);
     }
 }

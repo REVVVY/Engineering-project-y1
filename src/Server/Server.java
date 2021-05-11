@@ -62,7 +62,7 @@ public class Server implements Runnable {
 
             Socket socket = serverSocket.accept();
             oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject("2"); //Test för java klienten //Todo ta bort vid test av inbyggda
+             //Test för java klienten //Todo ta bort vid test av inbyggda
             ClientHandler ch = new ClientHandler(socket);
             //clientList.add(ch);
             ch.start();
@@ -201,6 +201,8 @@ public class Server implements Runnable {
         public void run() {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
+                oos.writeObject("2");
+
 
                 while(true){
                     Object obj = ois.readObject();
@@ -210,10 +212,11 @@ public class Server implements Runnable {
                         game = (Game)obj;
                         gameList.add(game);
                         addPlayersToList();
-                        addScoreToPlayer(20);
                         addScoreToPlayer(30);
+                        addScoreToPlayer(10);
                         decideWinner();
-                        checkIfReadyToSend();
+                        checkIfReadyToSend(); //send list --> game
+                     //   oos.writeObject("1");
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {

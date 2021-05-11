@@ -15,8 +15,6 @@ public class Client implements Runnable {
     private String ip;
     private int port;
     private Thread thread = new Thread(this);
-    private Player player; //Skapa player arraylist
-    private Player player1; //Skapa player arraylist
     private ArrayList<Player> playerScore;
     private Game currentGame;
 
@@ -26,6 +24,7 @@ public class Client implements Runnable {
 
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
+
 
 
     /***
@@ -49,49 +48,73 @@ public class Client implements Runnable {
         thread.start();
     }
 
-    public ClientController setController() {
-        return controller;
+    private void startNamePanels(){
+        controller.showUI(getNumOfPlayers());
     }
 
-    public int numOfPlayers(){
-
+    public int getNumOfPlayersFromServer()  {
+        String nbrOfPlayersStr = null;
+        try {
+            nbrOfPlayersStr = (String) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
+        System.out.println(nbrOfPlayers);
+        numOfPlayers = nbrOfPlayers;
+        return numOfPlayers;
+    }
+    public int getNumOfPlayers(){
         return numOfPlayers;
     }
 
-    public void onePlayer(String name) throws IOException {
+    public void onePlayer(String name)  {
         Player player1 = new Player(name);
         Game game = new Game(player1);
-        oos.writeObject(game);
-        oos.flush();
+        try {
+            oos.writeObject(game);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        numOfPlayers = 0;
     }
 
-    public void twoPlayers(String name, String name2) throws IOException {
+    public void twoPlayers(String name, String name2) {
         Player player1 = new Player(name);
         Player player2 = new Player(name2);
         Game game = new Game(player1, player2);
-        oos.writeObject(game);
-        oos.flush();
-    }
-
-    public void createScoreboard() throws IOException, ClassNotFoundException {
-        ArrayList<Player> scoreboard = (ArrayList<Player>) ois.readObject();
-        for (Player p : scoreboard) {
-            System.out.println(p.getName() + " " + p.getScore());
+        try {
+            oos.writeObject(game);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        numOfPlayers = 0;
     }
 
+    /**
+     * Skickar highscore listan till Server
+     * och vidare till controller
+     */
     public void getScoreFromServer() {
         try {
             playerScore = (ArrayList<Player>) ois.readObject();
-            controller.printScoreboard(playerScore);
+          //  controller.printScoreboard(playerScore);
             for (Player p : playerScore) {
                 System.out.println(p.getName() + " " + p.getScore());
             }
+            System.out.println("GotList");
         } catch (IOException | ClassNotFoundException e){}
-    }
 
-    public ArrayList<Player> getPlayerScoreList() {
-        return playerScore;
+       ArrayList<String> comingPlayerScore = new ArrayList<>();
+        for (Player p : playerScore) {
+            comingPlayerScore.add(p.getName());
+            comingPlayerScore.add(String.valueOf(p.getScore()));
+        }
+
+        controller.showScore(comingPlayerScore);
+      //  controller.setScoreList(playerScore);
     }
 
     public void getCurrGameFromServer(){
@@ -102,91 +125,22 @@ public class Client implements Runnable {
         }
     }
 
-
     /**
      * Klientens tråd som lägger till spelares namn + score som test för servern
      * samt hämtar arraylistan med hela highscorelistan.
      */
-    @Override
+
     public void run() {
-        try {
-            while(true){
-                String nbrOfPlayersstr = (String) ois.readObject();
-                int nbrOfPlayers = Integer.parseInt(nbrOfPlayersstr);
-                System.out.println(nbrOfPlayers);
 
-                numOfPlayers = nbrOfPlayers;
-                getScoreFromServer();
-                getCurrGameFromServer();
-            }
+        while(true) {
+            getNumOfPlayersFromServer();
 
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            startNamePanels();
+
+            getScoreFromServer();
+            System.out.println("Score is sent");
+
+            getCurrGameFromServer();
         }
-
-
     }
-
-
-
-
-
-
-
-
-/*
-    public void run(){
-        String nbrOfPlayersStr = "";
-        try {
-            nbrOfPlayersStr = (String) ois.readObject();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
-        System.out.println(nbrOfPlayers);
-
-        numOfPlayers = nbrOfPlayers;
-
-
-
-    }
-*/
-    /*try {
-            while (true) {
-                String nbrOfPlayersStr = (String) ois.readObject();
-                int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
-                System.out.println(nbrOfPlayers);
-
-                numOfPlayers = nbrOfPlayers;
-
-                if (nbrOfPlayers == 1) {
-                    onePlayer();
-                    String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
-                    dos.writeUTF(score);
-                } else if (nbrOfPlayers == 2) {
-                    twoPlayers();
-                   /* String score = "score1" + JOptionPane.showInputDialog("Skriv in din score");
-                    dos.writeUTF(score);
-                    String score1 = "score2" + JOptionPane.showInputDialog("Skriv in din score");
-                    dos.writeUTF(score1);*/
-    /*
-}
-                dos.flush();
-                        //createScoreboard();
-                        }
-
-                        } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                        }
-                        try {
-                        socket.close();
-                        } catch(Exception e) {}
-                        controller.newResponse("Klient kopplar ner");
-
-                        }
-*/
-
 }
