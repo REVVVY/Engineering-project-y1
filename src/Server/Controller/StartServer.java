@@ -1,11 +1,13 @@
-package Server;
+package Server.Controller;
+
+import Server.Model.Server;
 
 /***
  * Main klass för att starta servern
  */
 public class StartServer {
     public static void main(String[] args) {
-        Server server = new Server(25755);
+        ServerController controller = new ServerController(8787);
     }
 
 }

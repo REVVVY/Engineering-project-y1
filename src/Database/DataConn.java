@@ -23,23 +23,16 @@ public class DataConn {
         }
     }
 
-    public void getData() {
+    public void closeConnection(){
         try {
-
-            String sql = "select * from Highscore";
-            rs = st.executeQuery(sql);
-            System.out.println("Data från Isacs databas");
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                int score = rs.getInt("score");
-                System.out.println("ID: " + id + "\nName: " + name + "\nScore: " + score);
-            }
-
-        } catch (Exception ex) {
-            System.out.println("Error is found: " + ex);
+            con.close();
+            st.close();
+            rs.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
+
 
     public ArrayList<Player> getHighscore(ArrayList<Player> highscore) {
 
@@ -178,5 +171,4 @@ public class DataConn {
             throwables.printStackTrace();
         }
     }
-
 }
