@@ -13,7 +13,7 @@ public class ClientUI extends JPanel implements ActionListener{
     private JLabel lblTitle = new JLabel("Welcome to our Laser-game!", SwingConstants.CENTER);
     private JTextArea taResult = new JTextArea("Score: ");
     private JLabel lblPlayer1 = new JLabel("Player 1:");
-    private JLabel lblPlayer2 = new JLabel("player 2:");
+    private JLabel lblPlayer2 = new JLabel("Player 2:");
     private JTextField tfPlayer1 = new JTextField();
     private JTextField tfPlayer2 = new JTextField();
 
