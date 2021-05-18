@@ -16,6 +16,7 @@ public class Client implements Runnable {
     private int port;
     private Thread thread = new Thread(this);
     private ArrayList<Player> playerScore;
+    private ArrayList<Player> fullScoreList;
     private Game currentGame;
 
     private Socket socket;
@@ -93,6 +94,21 @@ public class Client implements Runnable {
         numOfPlayers = 0;
     }
 
+    public void getFullScoreList() {
+        try {
+            fullScoreList = (ArrayList<Player>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<String> comingPlayerScore = new ArrayList<>();
+        for (Player p : fullScoreList) {
+            comingPlayerScore.add(p.getName());
+            comingPlayerScore.add(String.valueOf(p.getScore()));
+        }
+
+    }
+
     /**
      * Skickar highscore listan till Server
      * och vidare till controller
@@ -133,6 +149,7 @@ public class Client implements Runnable {
     public void run() {
 
         while(true) {
+            getFullScoreList();
             getNumOfPlayersFromServer();
 
             startNamePanels();
@@ -143,4 +160,6 @@ public class Client implements Runnable {
             getCurrGameFromServer();
         }
     }
+
+
 }
