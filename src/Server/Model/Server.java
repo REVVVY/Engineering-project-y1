@@ -69,7 +69,6 @@ public class Server implements Runnable {
             socket = serverSocket.accept();
             ServerLog log = new ServerLog(LocalDateTime.now(), server, "Client connected to server", socket);
             addLogAndUpdate(log);
-            oos = new ObjectOutputStream(socket.getOutputStream());
             ClientHandler ch = new ClientHandler(socket);
             //clientList.add(ch);
             ch.start();
@@ -132,17 +131,11 @@ public class Server implements Runnable {
      */
     public void send(ArrayList<Player> highscoreList, Thread thread) throws IOException {
         Collections.sort(highscoreList, Collections.reverseOrder());
-        ArrayList<Player> temp = new ArrayList<>();
-        for(Player p: highscoreList){
-            if(temp.size() < 10){
-                temp.add(p);
-            }
-        }
-        oos.writeObject(temp);
+        oos.writeObject(highscoreList);
         // - Log
         ServerLog log = new ServerLog(LocalDateTime.now(), thread, "Sent highscorelist to client", socket, "Sent");
         log.setPacketType("TCP");
-        log.setHighscore(temp);
+        log.setHighscore(highscoreList);
         addLogAndUpdate(log);
 
         // - Log
@@ -239,6 +232,14 @@ public class Server implements Runnable {
         public void run() {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
+                oos = new ObjectOutputStream(socket.getOutputStream());
+                Collections.sort(highscoreList, Collections.reverseOrder());
+                oos.writeObject(highscoreList);
+                ServerLog highscorelog = new ServerLog(LocalDateTime.now(), this, "Sent highscorelist to client", socket, "Sent");
+                highscorelog.setPacketType("TCP");
+                highscorelog.setHighscore(highscoreList);
+                addLogAndUpdate(highscorelog);
+
                 numOfPlayers = "2"; //Tester av klient
 
                 while(true) {
