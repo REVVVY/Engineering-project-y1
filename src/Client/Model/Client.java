@@ -102,11 +102,16 @@ public class Client implements Runnable {
         }
 
         ArrayList<String> comingPlayerScore = new ArrayList<>();
+        ArrayList<String> tempTop10 = new ArrayList<>();
         for (Player p : fullScoreList) {
             comingPlayerScore.add(p.getName());
             comingPlayerScore.add(String.valueOf(p.getScore()));
+            if(tempTop10.size() < 10){
+                tempTop10.add(p.getName() + "   " + p.getScore());
+            }
         }
-        controller.saveHighScore(comingPlayerScore);
+        controller.saveTop10Score(tempTop10);
+        controller.saveHighScore(comingPlayerScore); // TILL SEARCHKNAPP, FUNGERAR
     }
 
     /**
@@ -141,6 +146,8 @@ public class Client implements Runnable {
     public void getCurrGameFromServer(){
         try {
             currentGame = (Game) ois.readObject();
+            //if winner = null --> lika
+            //if winner = player2 --> winner
         } catch (IOException  | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -154,10 +161,10 @@ public class Client implements Runnable {
     public void run() {
 
         while(true) {
-            getFullScoreList();
-            getNumOfPlayersFromServer();
+            getFullScoreList(); //1
+            getNumOfPlayersFromServer(); //2
 
-            startNamePanels();
+            startNamePanels(); //3
 
             getScoreFromServer();
             System.out.println("Score is sent");

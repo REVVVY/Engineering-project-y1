@@ -12,7 +12,7 @@ public class ClientController {
     private ClientUI ui = new ClientUI(this);;
 
     private JFrame frame;
-    private ArrayList<Player> playerScore;
+    private ArrayList<String> top10ScoreList;
     private ArrayList<String> comingPlayerScore;
     private int nbrOfPlayers;
 
@@ -127,10 +127,6 @@ public class ClientController {
         });
     }
 
-    public void setScoreList(ArrayList<Player> playerScore) {
-        this.playerScore = playerScore;
-    }
-
     public ArrayList<String> getComingPlayerScore(){
         return comingPlayerScore;
     }
@@ -147,5 +143,13 @@ public class ClientController {
             temp.addElement(s);
         }
         return temp;
+    }
+
+    public void saveTop10Score(ArrayList<String> tempTop10) {
+        top10ScoreList = tempTop10;
+    }
+
+    public ArrayList<String> getTop10ScoreList() {
+        return top10ScoreList;
     }
 }

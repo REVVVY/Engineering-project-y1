@@ -3,12 +3,18 @@ package Client.view;
 import Client.Controller.ClientController;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class CurrentGameUI extends JFrame implements ActionListener {
     private ClientController controller;
@@ -19,6 +25,9 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
     private JLabel scoreList = new JLabel("");
     private JButton btnSearch =  new JButton("Search");
+    private JTable searchTable;
+    private JTextField searchFld = new JTextField();
+
     public CurrentGameUI(ClientController controller){
         this.controller = controller;
     }
@@ -76,39 +85,61 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         searchPnl.setPreferredSize(new Dimension(470, 670));
 
 
-        JLabel searchLbl = new JLabel("Search your name: ");
-        searchLbl.setBounds(37, 27, 330, 31);
-        searchLbl.setFont(highScoreFont);
-        searchLbl.setForeground(Color.decode("#FAECD9"));
-
-        JTextField searchFld = new JTextField();
-        searchFld.setBounds(37, 64, 404, 52);
 
 
        // JList highScoreList = new JList();
         int arrayLength = tempHighScore.size()/2;
-        String[] columnName = {"Name", "Score"};
+        Object[] columnName = {"Name", "Score"};
         String[][] data = new String[arrayLength][arrayLength];
         int counter = 0;
 
-        for (int i = 0; i < tempHighScore.size(); i++) {
-            for (int j = 0; j < tempHighScore.size(); j++) {
-                if (i < arrayLength){
-                    data[i][0] = tempHighScore.get(counter); //name
-                    data[i][1] = tempHighScore.get(counter+1); //score
+        DefaultTableModel tableModel = new DefaultTableModel();
+        searchTable = new JTable(tableModel);
+        tableModel.addColumn("name");
+        tableModel.addColumn("score");
 
-                }
+
+        for (int i = 0; i < tempHighScore.size(); i++) {
+                if (i < arrayLength){
+                  /*  data[i][0] = tempHighScore.get(counter); //name
+                    data[i][1] = tempHighScore.get(counter+1); //score
+*/
+                    String name = tempHighScore.get(counter); //name
+                    String score = tempHighScore.get(counter+1); //score
+                    tableModel.addRow(new Object[]{name, score});
             }
             counter = counter + 2;
         }
 
-        JTable table = new JTable(data, columnName);
-        table.setPreferredScrollableViewportSize(new Dimension(411, 500));
-        table.setFillsViewportHeight(true);
+
+        try {
+            TimeUnit.MILLISECONDS.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+       // searchTable.setModel(tableModel);
+      //  searchTable = new JTable(data, columnName);
+        searchTable.setPreferredScrollableViewportSize(new Dimension(411, 500));
+        searchTable.setFillsViewportHeight(true);
+        searchTable.setVisible(true);
 
        // table.setBounds(30, 136, 400, 1000);
 
-        JScrollPane scroller = new JScrollPane(table);
+        JScrollPane scroller = new JScrollPane(searchTable);
+
+        JLabel searchLbl = new JLabel("Search your name: ");
+        searchLbl.setBounds(37, 27, 330, 31);
+        searchLbl.setFont(highScoreFont);
+        searchLbl.setForeground(Color.decode("#0F192F"));
+
+        searchFld.setPreferredSize(new Dimension(404, 52));
+        searchFld.setEnabled(true);
+        searchFld.setVisible(true);
+        searchFld.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField5KeyReleased(evt);
+            }
+        });
 
 
         /*
@@ -119,7 +150,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
 
 
-        System.out.println("TEMP "+ tempHighScore.get(1));
+        //System.out.println("TEMP "+ tempHighScore.get(1));
 
 
        // highScoreList.setListData(tempHighScore.toArray(new String[tempHighScore.size()/2]));
@@ -136,6 +167,15 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         searchPnl.add(scroller);
 
         searchFrame.add(searchPnl);
+    }
+
+    private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
+
+        DefaultTableModel table = (DefaultTableModel) searchTable.getModel();
+        String search = searchFld.getText();
+        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(table);
+        searchTable.setRowSorter(tr);
+        tr.setRowFilter(RowFilter.regexFilter(search));
     }
 
     /**
@@ -160,12 +200,10 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         ImageIcon rPic = new ImageIcon("src/Client/view/images/RightPic.png");
         JLabel picLabel2 = new JLabel(rPic);
         JList list = new JList();
-        ArrayList<String> tempScoreList = new ArrayList<String>();
+        ArrayList<String> tempScoreList = controller.getTop10ScoreList();
 
-        for ( int i = 0; i < 9; i++){
-            tempScoreList.add(i, comingPlayerScore.get(i));
-        }
 
+/*
 
         for (int i = 0; i < tempScoreList.size(); i+=2) {
             String name  = tempScoreList.get(i);
@@ -181,11 +219,17 @@ public class CurrentGameUI extends JFrame implements ActionListener {
             if (name.length() > 7) {
                 utilRight = new StringAlignUtils(5, StringAlignUtils.Alignment.RIGHT);
             }
-            String player = String.format(utilLiftNbr.format(String.valueOf(numberOrder[i])) +
+           String player = String.format(
                     utilLift.format(name) + utilRight.format(score));
+            String player = String.format(name + score);
             tempScoreList.add(player);
             tempScoreList.add("\n");
         }
+
+        */
+
+
+
 
         System.out.println("TEMP "+ tempScoreList.get(1));
 
