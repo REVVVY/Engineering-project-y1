@@ -160,11 +160,16 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         ImageIcon rPic = new ImageIcon("src/Client/view/images/RightPic.png");
         JLabel picLabel2 = new JLabel(rPic);
         JList list = new JList();
-        ArrayList<String> tempScoreList = new ArrayList<>(comingPlayerScore.size());
+        ArrayList<String> tempScoreList = new ArrayList<String>();
 
-        for (int i = 0; i < comingPlayerScore.size(); i+=2) {
-            String name  = comingPlayerScore.get(i);
-            String score = comingPlayerScore.get(i+1);
+        for ( int i = 0; i < 9; i++){
+            tempScoreList.add(i, comingPlayerScore.get(i));
+        }
+
+
+        for (int i = 0; i < tempScoreList.size(); i+=2) {
+            String name  = tempScoreList.get(i);
+            String score = tempScoreList.get(i+1);
 
             StringAlignUtils utilLift = new StringAlignUtils(8, StringAlignUtils.Alignment.LEFT);
             StringAlignUtils utilLiftNbr = new StringAlignUtils(3, StringAlignUtils.Alignment.LEFT);

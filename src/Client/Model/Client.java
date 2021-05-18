@@ -106,7 +106,7 @@ public class Client implements Runnable {
             comingPlayerScore.add(p.getName());
             comingPlayerScore.add(String.valueOf(p.getScore()));
         }
-
+        controller.saveHighScore(comingPlayerScore);
     }
 
     /**
@@ -133,14 +133,7 @@ public class Client implements Runnable {
             comingPlayerScore.add(p.getName());
             comingPlayerScore.add(String.valueOf(p.getScore()));
         }
-
-
-
-
-
-
         controller.showScore(comingPlayerScore);
-        controller.saveHighScore(comingPlayerScore);
 
         //  controller.setScoreList(playerScore);
     }
