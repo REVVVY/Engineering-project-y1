@@ -1,10 +1,12 @@
-package Server;
+package Server.Model;
 
 import Client.Model.Player;
 import Client.Model.Game;
 import Database.DataConn;
+import Server.Controller.ServerController;
 import java.io.*;
 import java.net.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -24,15 +26,21 @@ public class Server implements Runnable {
     private ArrayList<Player> highscoreList;
     private ArrayList<Game> gameList;
     private DataConn connection;
+    private String numOfPlayers;
+    private ServerController controller;
+    private ArrayList<ServerLog> serverlogs;
+    private Socket socket;
 
     /***
      * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
      * @param port porten som väljs när servern körs så att man vet vart informationen ska skickas/tas emot
      */
-    public Server(int port) {
+    public Server(int port, ServerController controller) {
+        this.controller = controller;
         this.port = port;
         clientList = new LinkedList<>();
         highscoreList = new ArrayList<>();
+        serverlogs = new ArrayList<>();
         gameList = new ArrayList<>();
         connectToDatabase();
         getInfoFromDatabase();
@@ -44,9 +52,7 @@ public class Server implements Runnable {
         }
         server.start();
     }
-
-
-
+    
     /***
      * Accepterar klientens anslutning och skapar ett objekt av en inre klass.
      * Lägger till i klientlistan och startar klientens tråd.
@@ -55,35 +61,38 @@ public class Server implements Runnable {
     public void run() {
         //while (true) {
         try {
-            DatagramSocket arduinoSocket = new DatagramSocket(2525);
+            DatagramSocket arduinoSocket = new DatagramSocket(3737);
             InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
             inbyggdaSystemHandler.start();
 
 
-            Socket socket = serverSocket.accept();
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject("2"); //Test för java klienten //Todo ta bort vid test av inbyggda
+            socket = serverSocket.accept();
+            ServerLog log = new ServerLog(LocalDateTime.now(), server, "Client connected to server", socket);
+            addLogAndUpdate(log);
             ClientHandler ch = new ClientHandler(socket);
             //clientList.add(ch);
             ch.start();
 
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //}
     }
 
-    public void connectToDatabase(){
+    public void closeConnectionToDatabase(){
+        connection.closeConnection();
+    }
+
+    public void connectToDatabase() {
         connection = new DataConn();
+        ServerLog log = new ServerLog(LocalDateTime.now(), "Connection to database established", "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11408587");
+        addLogAndUpdate(log);
     }
 
     public void getInfoFromDatabase() {     //icke ifyllt namn i databas = tom sträng
         highscoreList = connection.getHighscore(highscoreList);
         gameList = connection.getGamelist(gameList);
         //Bara tester undan för att visa databasen
-        for (Player p: highscoreList
-        ) {
+        for (Player p: highscoreList) {
             System.out.println(p.getName() + ": " + p.getScore());
         }
         System.out.println("-------------------------");
@@ -93,18 +102,24 @@ public class Server implements Runnable {
                 System.out.println("player2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore());
             }
         }
+        ServerLog loghighscore = new ServerLog(LocalDateTime.now(), "Recived highscorelist from database", "Highscore", "Recived");
+        loghighscore.setHighscore(highscoreList);
+        addLogAndUpdate(loghighscore);
+        ServerLog loggames = new ServerLog(LocalDateTime.now(), "Recived games from database", "Games", "Recived");
+        loggames.setGamelist(gameList);
+        addLogAndUpdate(loggames);
     }
 
     /***
      * Kollar ifall sista spelaren har fått in score för att kunna skicka till klienten.
      * @throws IOException kastar IOExeption för att kunna anropa send metoden som skickar via en ström.
      */
-    public void checkIfReadyToSend() throws IOException {
+    public void checkIfReadyToSend(Thread thread) throws IOException {
         int lastIndex = highscoreList.size() - 1;
         Player lastPlayer = highscoreList.get(lastIndex);
         if (lastPlayer.getScore() != 0) {
             updateDatabase();
-            send(highscoreList);
+            send(highscoreList, thread);
         }
     }
 
@@ -114,16 +129,21 @@ public class Server implements Runnable {
      * @param highscoreList en arraylista med alla personer som spelat spelet och dess score
      * @throws IOException Kastar IOExeption för att kunna skicka över data över Objekt strömmen.
      */
-    public void send(ArrayList<Player> highscoreList) throws IOException {
+    public void send(ArrayList<Player> highscoreList, Thread thread) throws IOException {
         Collections.sort(highscoreList, Collections.reverseOrder());
-        ArrayList<Player> temp = new ArrayList<>();
-        for(Player p: highscoreList){
-            if(temp.size() < 10){
-                temp.add(p);
-            }
-        }
-        oos.writeObject(temp);
+        oos.writeObject(highscoreList);
+        // - Log
+        ServerLog log = new ServerLog(LocalDateTime.now(), thread, "Sent highscorelist to client", socket, "Sent");
+        log.setPacketType("TCP");
+        log.setHighscore(highscoreList);
+        addLogAndUpdate(log);
+
+        // - Log
         oos.writeObject(game);
+        ServerLog loggame = new ServerLog(LocalDateTime.now(), thread, "Sent game to client", socket, "Sent");
+        loggame.setPacketType("TCP");
+        loggame.setGame(game);
+        addLogAndUpdate(loggame);
         oos.flush();
     }
 
@@ -173,8 +193,19 @@ public class Server implements Runnable {
         }
     }
 
+    public void addLogAndUpdate(ServerLog log){
+        serverlogs.add(log);
+        controller.getServerLogToWestPanel(serverlogs);
+    }
+
     public void updateDatabase(){
         connection.setDataInDatabase(game);
+        ServerLog loghighscore = new ServerLog(LocalDateTime.now(), "Updated highscore in database", "Highscore", "Sent");
+        loghighscore.setGame(game);
+        addLogAndUpdate(loghighscore);
+        ServerLog loggame = new ServerLog(LocalDateTime.now(), "Updated games in database", "Games", "Sent");
+        loggame.setGame(game);
+        addLogAndUpdate(loggame);
     }
 
     /***
@@ -182,7 +213,6 @@ public class Server implements Runnable {
      */
     private class ClientHandler extends Thread {
 
-        private DataInputStream dis;
         private ObjectInputStream ois;
         private Socket socket;
 
@@ -201,16 +231,45 @@ public class Server implements Runnable {
         public void run() {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
+                oos = new ObjectOutputStream(socket.getOutputStream());
+                Collections.sort(highscoreList, Collections.reverseOrder());
+                oos.writeObject(highscoreList);
+                ServerLog highscorelog = new ServerLog(LocalDateTime.now(), this, "Sent highscorelist to client", socket, "Sent");
+                highscorelog.setPacketType("TCP");
+                highscorelog.setHighscore(highscoreList);
+                addLogAndUpdate(highscorelog);
 
-                while(true){
-                    Object obj = ois.readObject();
+                numOfPlayers = "2"; //Tester av klient
 
-                    //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
-                    if(obj instanceof Game){
-                        game = (Game)obj;
-                        gameList.add(game);
-                        addPlayersToList();
+                while(true) {
+                    if (numOfPlayers != null) {
+                        sendNbrOfPlayersToClient(numOfPlayers);
+                        ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Sent number of players from client", socket, "Sent");
+                        logNbrOfPlayers.setNumOfPlayers(numOfPlayers);
+                        logNbrOfPlayers.setPacketType("TCP");
+                        addLogAndUpdate(logNbrOfPlayers);
+                        numOfPlayers = null;
 
+
+                        Object obj = ois.readObject();
+
+                        //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
+                        if (obj instanceof Game) {
+                            game = (Game) obj;
+                            ServerLog log = new ServerLog(LocalDateTime.now(), this, "Game recived from client", socket, "Recived");
+                            log.setGame(game);
+                            log.setPacketType("TCP");
+                            addLogAndUpdate(log);
+
+                            gameList.add(game);
+                            addPlayersToList();
+                            //Tester nedan
+                            addScoreToPlayer(40);
+                            addScoreToPlayer(40);
+                            decideWinner();
+                            checkIfReadyToSend(this);
+                            //numOfPlayers = "1";
+                        }
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -231,6 +290,9 @@ public class Server implements Runnable {
 
         public void run() {
             System.out.println("Inne i inbyggda");
+            ServerLog log = new ServerLog(LocalDateTime.now(), this, "UPD connection open", serverSocket, port);
+            addLogAndUpdate(log);
+
             while (true) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
@@ -252,23 +314,38 @@ public class Server implements Runnable {
                     if (sentence.regionMatches(0, score2Pattern, 0, 6)) {
                         System.out.println("Score2 pattern");
                         String scoreStr = sentence.substring(6);
+                        // - Log
+                        ServerLog logscore = new ServerLog(LocalDateTime.now(), this, "Recived score from client", serverSocket, "Recived", port);
+                        logscore.setPacketType("UDP");
+                        logscore.setScore(scoreStr);
+                        addLogAndUpdate(logscore);
+
                         int score = Integer.parseInt(scoreStr);
                         addScoreToPlayer(score);
                         decideWinner();
-                        checkIfReadyToSend();
+                        checkIfReadyToSend(this);
 
                     } else if (sentence.regionMatches(0, score1Pattern, 0, 6)) {
                         System.out.println("Score1 pattern");
                         String scoreStr = sentence.substring(6);
+                        // - Log
+                        ServerLog logscore = new ServerLog(LocalDateTime.now(), this, "Recived score from client", serverSocket, "Recived", port);
+                        logscore.setPacketType("UDP");
+                        logscore.setScore(scoreStr);
+                        addLogAndUpdate(logscore);
+
                         int score = Integer.parseInt(scoreStr);
                         addScoreToPlayer(score);
                         decideWinner();
-                        checkIfReadyToSend();
+                        checkIfReadyToSend(this);
 
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
                         System.out.println("nbrOfPlayersPattern");
                         String nbrOfplayerStr = sentence.substring(12);
-                        sendNbrOfPlayersToClient(nbrOfplayerStr);
+                        ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Received number of players from client", serverSocket, "Received", port);
+                        logNbrOfPlayers.setNumOfPlayers(nbrOfplayerStr);
+                        addLogAndUpdate(logNbrOfPlayers);
+                        numOfPlayers = nbrOfplayerStr;
                     }
 
 
