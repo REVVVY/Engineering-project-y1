@@ -13,7 +13,7 @@ public class ClientController {
 
     private JFrame frame;
     private ArrayList<Player> playerScore;
-    private ArrayList<Object> comingPlayerScore;
+    private ArrayList<String> comingPlayerScore;
     private int nbrOfPlayers;
 
     public ClientController(String ip, int port) {
@@ -83,7 +83,9 @@ public class ClientController {
            }
            close();
            startCurrentGame(nbrOfPlayers, name1, name2);
-       }
+       } /*else if(button == BtnType.btnSearch){
+           ui.showSearchWin();
+       }*/
     }
 
     public void newResponse(String response) {
@@ -127,5 +129,23 @@ public class ClientController {
 
     public void setScoreList(ArrayList<Player> playerScore) {
         this.playerScore = playerScore;
+    }
+
+    public ArrayList<String> getComingPlayerScore(){
+        return comingPlayerScore;
+    }
+
+    public void saveHighScore(ArrayList<String> playerScore) {
+
+        comingPlayerScore = playerScore;
+
+    }
+
+    public DefaultListModel getModelToUI(){
+        DefaultListModel temp = new DefaultListModel();
+        for(String s: comingPlayerScore){
+            temp.addElement(s);
+        }
+        return temp;
     }
 }
