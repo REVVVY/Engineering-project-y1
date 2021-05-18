@@ -108,13 +108,25 @@ public class Client implements Runnable {
         } catch (IOException | ClassNotFoundException e){}
 
        ArrayList<String> comingPlayerScore = new ArrayList<>();
+        ArrayList<String> comingPlayerScore2 = new ArrayList<>();
+
+        int scoreLength = playerScore.size()/2;
+        String[][] playerScoreSearch = new String[scoreLength][scoreLength];
+
         for (Player p : playerScore) {
             comingPlayerScore.add(p.getName());
             comingPlayerScore.add(String.valueOf(p.getScore()));
         }
 
+
+
+
+
+
         controller.showScore(comingPlayerScore);
-      //  controller.setScoreList(playerScore);
+        controller.saveHighScore(comingPlayerScore);
+
+        //  controller.setScoreList(playerScore);
     }
 
     public void getCurrGameFromServer(){

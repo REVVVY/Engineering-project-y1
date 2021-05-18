@@ -124,6 +124,10 @@ public class ClientUI extends JPanel implements ActionListener{
         System.out.println("showed score");
     }
 
+    public void showSearchWin() {
+        currentGameUI.openSearch();
+    }
+
     public String getName1(){
         return tfPlayer1.getText();
     }
@@ -144,4 +148,6 @@ public class ClientUI extends JPanel implements ActionListener{
         highScoreList = comingPlayerScoreObj;
         setHighScoreList(highScoreList);
     }
+
+
 }

@@ -4,11 +4,13 @@ import Client.Controller.ClientController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CurrentGameUI extends JFrame {
+public class CurrentGameUI extends JFrame implements ActionListener {
     private ClientController controller;
     private ClientUI clientUI;
 
@@ -16,7 +18,7 @@ public class CurrentGameUI extends JFrame {
     private JPanel playersPnl = new JPanel();
 
     private JLabel scoreList = new JLabel("");
-
+    private JButton btnSearch =  new JButton("Search");
     public CurrentGameUI(ClientController controller){
         this.controller = controller;
     }
@@ -42,6 +44,99 @@ public class CurrentGameUI extends JFrame {
         });
     }
 
+    public void openSearch(){
+        Font highScoreFont = null;
+
+        try {
+            highScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(22f);
+            GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
+        } catch (IOException | FontFormatException e){
+            System.out.println("There is no such file!");
+        }
+
+        ArrayList<String> tempHighScore = controller.getComingPlayerScore();
+        /*
+        Reem
+        17
+        Johan
+        4
+         */
+
+        JFrame searchFrame = new JFrame("Search Score");
+        searchFrame.setSize(470, 670);
+
+        searchFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        searchFrame.setResizable(true);
+        searchFrame.setLocationRelativeTo(null);
+        searchFrame.setVisible(true);
+       // searchFrame.pack();
+
+        JPanel searchPnl = new JPanel();
+        searchPnl.setPreferredSize(new Dimension(470, 670));
+
+
+        JLabel searchLbl = new JLabel("Search your name: ");
+        searchLbl.setBounds(37, 27, 330, 31);
+        searchLbl.setFont(highScoreFont);
+        searchLbl.setForeground(Color.decode("#FAECD9"));
+
+        JTextField searchFld = new JTextField();
+        searchFld.setBounds(37, 64, 404, 52);
+
+
+       // JList highScoreList = new JList();
+        int arrayLength = tempHighScore.size()/2;
+        String[] columnName = {"Name", "Score"};
+        String[][] data = new String[arrayLength][arrayLength];
+        int counter = 0;
+
+        for (int i = 0; i < tempHighScore.size(); i++) {
+            for (int j = 0; j < tempHighScore.size(); j++) {
+                if (i < arrayLength){
+                    data[i][0] = tempHighScore.get(counter); //name
+                    data[i][1] = tempHighScore.get(counter+1); //score
+
+                }
+            }
+            counter = counter + 2;
+        }
+
+        JTable table = new JTable(data, columnName);
+        table.setPreferredScrollableViewportSize(new Dimension(411, 500));
+        table.setFillsViewportHeight(true);
+
+       // table.setBounds(30, 136, 400, 1000);
+
+        JScrollPane scroller = new JScrollPane(table);
+
+
+        /*
+        DefaultListModel model = controller.getModelToUI();
+        highScoreList.setModel(model);
+        JScrollPane scroller = new JScrollPane(highScoreList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+*/
+
+
+
+        System.out.println("TEMP "+ tempHighScore.get(1));
+
+
+       // highScoreList.setListData(tempHighScore.toArray(new String[tempHighScore.size()/2]));
+/*
+        highScoreList.setBounds(30, 136, 411, 514);
+        highScoreList.setBackground(Color.decode("#C07C73"));
+        highScoreList.setForeground(Color.decode("#FAECD9"));
+        highScoreList.setSelectionBackground(Color.decode("#0F192F"));
+        highScoreList.setFont(highScoreFont);
+
+*/
+        searchPnl.add(searchLbl);
+        searchPnl.add(searchFld);
+        searchPnl.add(scroller);
+
+        searchFrame.add(searchPnl);
+    }
 
     /**
      * Skapar en panel för att visa highscore listan
@@ -58,6 +153,8 @@ public class CurrentGameUI extends JFrame {
         } catch (IOException | FontFormatException e){
             System.out.println("There is no such file!");
         }
+
+
 
 
         ImageIcon rPic = new ImageIcon("src/Client/view/images/RightPic.png");
@@ -95,6 +192,9 @@ public class CurrentGameUI extends JFrame {
         list.setForeground(Color.decode("#FAECD9"));
         list.setSelectionBackground(Color.decode("#0F192F"));
         list.setFont(highScoreFont);
+
+
+
         picLabel2.add(list, BorderLayout.CENTER);
 
             scoreListPnl.setPreferredSize(new Dimension(470, 670));
@@ -114,9 +214,19 @@ public class CurrentGameUI extends JFrame {
      */
 
     public void openPlayersPnl(int numOfPlayers, String name1, String name2) {
+
         Font highScoreFont = null;
         try { //skapar en font
             highScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(80f);
+            GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
+        } catch (IOException | FontFormatException e){
+            System.out.println("There is no such file!");
+        }
+
+        Font btnFont = null;
+        try { //skapar en font
+            btnFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(40f);
             GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
             graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
         } catch (IOException | FontFormatException e){
@@ -158,12 +268,24 @@ public class CurrentGameUI extends JFrame {
             picLabel2.add(player2Lbl, BorderLayout.PAGE_START);
         }
 
+        btnSearch.setBounds(396, 25, 263, 47);
+        btnSearch.setBackground(Color.decode("#C07C73"));
+        btnSearch.setForeground(Color.decode("#FAECD9"));
+        btnSearch.setFont(btnFont);
+        btnSearch.addActionListener(this);
+        picLabel2.add(btnSearch);
+
         playersPnl.setPreferredSize(new Dimension(697, 670));
         playersPnl.setLayout(new BorderLayout(0, 0)); //tar bort gaps
         playersPnl.add(picLabel2, BorderLayout.CENTER);
 
         add(playersPnl, BorderLayout.WEST);
         pack();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        openSearch();
     }
 }
 
