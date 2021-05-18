@@ -75,6 +75,10 @@ public class WestPanelLog extends JPanel {
             } else if(log.getDescription().equals("Received number of players from client")){
                 sController.setContentInView(log.getReceivedNbrOfPlayersFromClientString());
                 sController.setInfoInView(log.getNbrOfPlayersRecievedInfo());
+
+            } else if(log.getDescription().equals("Sent number of players from client")){
+                sController.setContentInView(log.getSentNumOfPlayersToClientString());
+                sController.setInfoInView(log.getNbrOfPlayersSentInfo());
             }
 
         });

@@ -149,7 +149,6 @@ public class Server implements Runnable {
 
     public void sendNbrOfPlayersToClient(String nbrOfPlayers) throws IOException {
         oos.writeObject(nbrOfPlayers);
-        numOfPlayers = null;
     }
 
     /***
@@ -245,6 +244,13 @@ public class Server implements Runnable {
                 while(true) {
                     if (numOfPlayers != null) {
                         sendNbrOfPlayersToClient(numOfPlayers);
+                        ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Sent number of players from client", socket, "Sent");
+                        logNbrOfPlayers.setNumOfPlayers(numOfPlayers);
+                        logNbrOfPlayers.setPacketType("TCP");
+                        addLogAndUpdate(logNbrOfPlayers);
+                        numOfPlayers = null;
+
+
                         Object obj = ois.readObject();
 
                         //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv

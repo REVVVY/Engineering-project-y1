@@ -324,7 +324,13 @@ public class ServerLog {
         // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
         //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
+    }
 
+    public ArrayList getSentNumOfPlayersToClientString(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Time: " + timeNow);
+        temp.add("Number of players: " + numOfPlayers);
+        return temp;
     }
 
     public ArrayList getReceivedScoreFromClientString(){
@@ -388,9 +394,19 @@ public class ServerLog {
 
     public ArrayList getNbrOfPlayersRecievedInfo(){
         ArrayList<String> temp = new ArrayList<>();
-        temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
+        temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + dSocket.getInetAddress());
         temp.add("Port: " + dSocket.getPort());
+        temp.add("Packettype: " + packetType);
+        temp.add("Direction: " + sendOrRecieve);
+        return temp;
+    }
+
+    public ArrayList getNbrOfPlayersSentInfo(){
+        ArrayList<String> temp = new ArrayList<>();
+        temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
+        temp.add("Socket address: " + socket.getInetAddress());
+        temp.add("Port: " + socket.getPort());
         temp.add("Packettype: " + packetType);
         temp.add("Direction: " + sendOrRecieve);
         return temp;
