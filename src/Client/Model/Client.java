@@ -18,7 +18,7 @@ public class Client implements Runnable {
     private ArrayList<Player> playerScore;
     private ArrayList<Player> fullScoreList;
     private Game currentGame;
-
+    private int winner;
     private Socket socket;
 
     private int numOfPlayers;
@@ -144,14 +144,25 @@ public class Client implements Runnable {
     }
 
     public void getCurrGameFromServer(){
+        winner = -1;
         try {
             currentGame = (Game) ois.readObject();
+            if (currentGame == null) {
+             //   winner = 0;
+            } else if(currentGame.getWinner() == currentGame.getPlayer1()){
+                winner = 1;
+            } else if(currentGame.getWinner() == currentGame.getPlayer2()){
+                winner = 2;
+            }
+            controller.sendWinnerToView(winner);
+
             //if winner = null --> lika
             //if winner = player2 --> winner
         } catch (IOException  | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Klientens tråd som lägger till spelares namn + score som test för servern

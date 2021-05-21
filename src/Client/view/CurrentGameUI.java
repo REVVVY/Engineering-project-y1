@@ -54,16 +54,6 @@ public class CurrentGameUI extends JFrame implements ActionListener {
     }
 
     public void openSearch(){
-        Font highScoreFont = null;
-
-        try {
-            highScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(22f);
-            GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
-        } catch (IOException | FontFormatException e){
-            System.out.println("There is no such file!");
-        }
-
         ArrayList<String> tempHighScore = controller.getComingPlayerScore();
         /*
         Reem
@@ -129,7 +119,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
         JLabel searchLbl = new JLabel("Search your name: ");
         searchLbl.setBounds(37, 27, 330, 31);
-        searchLbl.setFont(highScoreFont);
+        searchLbl.setFont(applyFont(22));
         searchLbl.setForeground(Color.decode("#0F192F"));
 
         searchFld.setPreferredSize(new Dimension(404, 52));
@@ -184,19 +174,6 @@ public class CurrentGameUI extends JFrame implements ActionListener {
      * @param comingPlayerScore high score listan från Server --> Controller
      */
     public void openScorePnl(ArrayList<String> comingPlayerScore) {
-        Font highScoreFont = null;
-        System.out.println("UI: " + comingPlayerScore.size());
-        try {
-            highScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(22f);
-            GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
-        } catch (IOException | FontFormatException e){
-            System.out.println("There is no such file!");
-        }
-
-
-
-
         ImageIcon rPic = new ImageIcon("src/Client/view/images/RightPic.png");
         JLabel picLabel2 = new JLabel(rPic);
         JList list = new JList();
@@ -231,7 +208,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
 
 
-        System.out.println("TEMP "+ tempScoreList.get(1));
+       // System.out.println("TEMP "+ tempScoreList.get(1));
 
 
         list.setListData(tempScoreList.toArray(new String[10]));
@@ -240,7 +217,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         list.setBackground(Color.decode("#C07C73"));
         list.setForeground(Color.decode("#FAECD9"));
         list.setSelectionBackground(Color.decode("#0F192F"));
-        list.setFont(highScoreFont);
+        list.setFont(applyFont(22));
 
 
 
@@ -264,24 +241,6 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
     public void openPlayersPnl(int numOfPlayers, String name1, String name2) {
 
-        Font highScoreFont = null;
-        try { //skapar en font
-            highScoreFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(80f);
-            GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
-        } catch (IOException | FontFormatException e){
-            System.out.println("There is no such file!");
-        }
-
-        Font btnFont = null;
-        try { //skapar en font
-            btnFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont(40f);
-            GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
-        } catch (IOException | FontFormatException e){
-            System.out.println("There is no such file!");
-        }
-
         ImageIcon lPic;
         JLabel picLabel2;
 
@@ -292,7 +251,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
             player1Lbl.setLayout(null);
             player1Lbl.setBounds(68, 300, 554, 70);
             player1Lbl.setForeground(Color.decode("#FAECD9"));
-            player1Lbl.setFont(highScoreFont);
+            player1Lbl.setFont(applyFont(80));
             player1Lbl.setHorizontalAlignment(SwingConstants.CENTER);
             picLabel2.add(player1Lbl, BorderLayout.PAGE_START);
         }
@@ -304,7 +263,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
             player1Lbl.setLayout(null);
             player1Lbl.setBounds(68, 219, 554, 70);
             player1Lbl.setForeground(Color.decode("#FAECD9"));
-            player1Lbl.setFont(highScoreFont);
+            player1Lbl.setFont(applyFont(80));
             player1Lbl.setHorizontalAlignment(SwingConstants.CENTER);
             picLabel2.add(player1Lbl, BorderLayout.PAGE_START);
 
@@ -312,7 +271,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
             player2Lbl.setLayout(null);
             player2Lbl.setBounds(68, 430, 554, 70);
             player2Lbl.setForeground(Color.decode("#FAECD9"));
-            player2Lbl.setFont(highScoreFont);
+            player2Lbl.setFont(applyFont(80));
             player2Lbl.setHorizontalAlignment(SwingConstants.CENTER);
             picLabel2.add(player2Lbl, BorderLayout.PAGE_START);
         }
@@ -320,7 +279,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         btnSearch.setBounds(396, 25, 263, 47);
         btnSearch.setBackground(Color.decode("#C07C73"));
         btnSearch.setForeground(Color.decode("#FAECD9"));
-        btnSearch.setFont(btnFont);
+        btnSearch.setFont(applyFont(40));
         btnSearch.addActionListener(this);
         picLabel2.add(btnSearch);
 
@@ -335,6 +294,63 @@ public class CurrentGameUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         openSearch();
+    }
+
+    public Font applyFont(float fontSize){
+        Font highScoreFontMethod = null;
+        try {
+            highScoreFontMethod = Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")).deriveFont((float) fontSize);
+            GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            graphics.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("src/Client/view/customFonts/HighscoreHero.ttf")));
+        } catch (IOException | FontFormatException e){
+            System.out.println("There is no such file!");
+        }
+        return highScoreFontMethod;
+    }
+
+    public void close() {
+        dispose();
+        setVisible(false);
+    }
+
+    public void showWinner(int winner, String name1, String name2) {
+        ImageIcon lPic = new ImageIcon("src/Client/view/images/LeftPicOne.png");
+        JLabel picLabel2 = new JLabel(lPic);
+
+        JFrame winnerFrame = new JFrame("Winner");
+        winnerFrame.setSize(697, 670);
+        winnerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        winnerFrame.setResizable(false);
+        winnerFrame.setLocationRelativeTo(null);
+        winnerFrame.setVisible(true);
+        JPanel winnerPnl = new JPanel();
+        JLabel winnerLbl = new JLabel();
+
+        winnerLbl.setFont(applyFont(80));
+        winnerLbl.setForeground(Color.decode("#FAECD9"));
+        if (winner == 0) {
+            winnerLbl = new JLabel("<html>"+"Ended in a draw!!"+"</html>");
+            //  winnerLbl.setText("Ended in a draw!!");
+        } else if (winner == 1) {
+            String txt = name1 + " won!!";
+            winnerLbl = new JLabel("<html>"+txt+"</html>");
+        } else if (winner == 2) {
+            String txt = name2 + " won!!";
+            winnerLbl = new JLabel("<html>"+txt+"</html>");
+        }
+
+        winnerLbl.setLayout(null);
+        winnerLbl.setBounds(69, 250, 554, 200);
+        winnerLbl.setForeground(Color.decode("#FAECD9"));
+        winnerLbl.setFont(applyFont(80));
+
+        picLabel2.add(winnerLbl);
+
+        winnerPnl.setPreferredSize(new Dimension(697, 670));
+        winnerPnl.setLayout(new BorderLayout(0, 0)); //tar bort gaps
+        winnerPnl.add(picLabel2);
+        winnerFrame.add(winnerPnl);
+
     }
 }
 

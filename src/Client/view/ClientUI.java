@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class ClientUI extends JPanel implements ActionListener{
     private JButton btnRegister = new JButton("Register");
     private JLabel lblTitle = new JLabel("Welcome to our Laser-game!", SwingConstants.CENTER);
-    private JTextArea taResult = new JTextArea("Score: ");
+    private JLabel lblEnter;
     private JLabel lblPlayer1 = new JLabel("Player 1:");
     private JLabel lblPlayer2 = new JLabel("Player 2:");
     private JTextField tfPlayer1 = new JTextField();
@@ -30,23 +30,28 @@ public class ClientUI extends JPanel implements ActionListener{
         setLayout(new BorderLayout());
 
 
-        lblTitle.setFont(new Font("Apple Chancery", Font.BOLD, 24));
-        taResult.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        taResult.setPreferredSize(new Dimension(400,40));
+        lblTitle.setFont(currentGameUI.applyFont(40));
+        lblTitle.setForeground(Color.decode("#FAECD9"));
         btnRegister.addActionListener(this);
 
+        setBackground(Color.decode("#0F192F"));
         add(lblTitle,BorderLayout.NORTH);
-        add(taResult, BorderLayout.SOUTH);
-
     }
 
-    public JPanel onePlayerPnl(){
-        tfPlayer2.setEnabled(false); //not used
 
-        centerPanel.setBorder(BorderFactory.createTitledBorder("Enter your name: "));
+        public JPanel onePlayerPnl(){
+        tfPlayer2.setEnabled(false); //not used
+        centerPanel.setBackground(Color.decode("#0F192F"));
+
+        lblEnter = new JLabel("Enter your name: ", SwingConstants.LEFT);
+        lblEnter.setForeground(Color.decode("#FAECD9"));
+        lblEnter.setFont(currentGameUI.applyFont(20));
+
         tfPlayer1.setHorizontalAlignment(JTextField.LEFT);
         tfPlayer1.setPreferredSize(new Dimension(150,25));
+        lblPlayer1.setForeground(Color.decode("#FAECD9"));
 
+        centerPanel.add(lblEnter);
         centerPanel.add(lblPlayer1);
         centerPanel.add(tfPlayer1);
 
@@ -55,11 +60,20 @@ public class ClientUI extends JPanel implements ActionListener{
         return centerPanel;
     }
     public JPanel twoPlayersPnl(){
-        centerPanel.setBorder(BorderFactory.createTitledBorder("Enter your names: "));
+        centerPanel.setBackground(Color.decode("#0F192F"));
+
+        lblEnter = new JLabel("Enter your names: ", SwingConstants.LEFT);
+        lblEnter.setForeground(Color.decode("#FAECD9"));
+        lblEnter.setFont(currentGameUI.applyFont(20));
+
         tfPlayer1.setHorizontalAlignment(JTextField.LEFT);
         tfPlayer2.setHorizontalAlignment(JTextField.LEFT);
         tfPlayer1.setPreferredSize(new Dimension(150,25));
         tfPlayer2.setPreferredSize(new Dimension(150,25));
+        lblPlayer1.setForeground(Color.decode("#FAECD9"));
+        lblPlayer2.setForeground(Color.decode("#FAECD9"));
+
+        centerPanel.add(lblEnter);
         centerPanel.add(lblPlayer1);
         centerPanel.add(tfPlayer1);
         centerPanel.add(lblPlayer2);
@@ -83,9 +97,6 @@ public class ClientUI extends JPanel implements ActionListener{
         this.numOfPlayers = numOfPlayers;
     }
 
-    public void setResult(String result) {
-        taResult.setText(result);
-    }
     public static void main(String[] args) {
         ClientUI ui = new ClientUI(null);
         ui.playersPnl(2);
@@ -150,4 +161,10 @@ public class ClientUI extends JPanel implements ActionListener{
     }
 
 
+    public void showWinner(int winner) {
+        if (winner != -1) {
+            currentGameUI.close();
+            currentGameUI.showWinner(winner, getName1(), getName2());
+        }
+    }
 }

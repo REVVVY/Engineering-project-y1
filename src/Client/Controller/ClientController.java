@@ -88,14 +88,6 @@ public class ClientController {
        }*/
     }
 
-    public void newResponse(String response) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ui.setResult(response);
-            }
-        });
-    }
 
     /**
      * Stäger ner första frame efter att ta emot namn
@@ -117,12 +109,16 @@ public class ClientController {
             public void run() {
                 frame = new JFrame("Laser-Game");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(1020, 210);
+                frame.setLocation(160, 200);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
+
                 viewPlayerUI(numOfPlayers);
 
                 frame.add(ui);
                 frame.pack();
+
             }
         });
     }
@@ -151,5 +147,9 @@ public class ClientController {
 
     public ArrayList<String> getTop10ScoreList() {
         return top10ScoreList;
+    }
+
+    public void sendWinnerToView(int winner) {
+       ui.showWinner(winner);
     }
 }
