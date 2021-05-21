@@ -5,6 +5,7 @@ import Client.Controller.ClientController;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +25,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
     private JPanel playersPnl = new JPanel();
 
     private JLabel scoreList = new JLabel("");
-    private JButton btnSearch =  new JButton("Search");
+    private JButton btnSearch =  new JButton("Search Score");
     private JTable searchTable;
     private JTextField searchFld = new JTextField();
 
@@ -55,21 +56,16 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
     public void openSearch(){
         ArrayList<String> tempHighScore = controller.getComingPlayerScore();
-        /*
-        Reem
-        17
-        Johan
-        4
-         */
 
         JFrame searchFrame = new JFrame("Search Score");
         searchFrame.setSize(470, 670);
 
-        searchFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         searchFrame.setResizable(true);
         searchFrame.setLocationRelativeTo(null);
         searchFrame.setVisible(true);
-       // searchFrame.pack();
+        searchFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        // searchFrame.pack();
 
         JPanel searchPnl = new JPanel();
         searchPnl.setPreferredSize(new Dimension(470, 670));
@@ -79,21 +75,16 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
        // JList highScoreList = new JList();
         int arrayLength = tempHighScore.size()/2;
-        Object[] columnName = {"Name", "Score"};
-        String[][] data = new String[arrayLength][arrayLength];
         int counter = 0;
 
         DefaultTableModel tableModel = new DefaultTableModel();
         searchTable = new JTable(tableModel);
-        tableModel.addColumn("name");
+        tableModel.addColumn("Name");
         tableModel.addColumn("score");
 
 
         for (int i = 0; i < tempHighScore.size(); i++) {
                 if (i < arrayLength){
-                  /*  data[i][0] = tempHighScore.get(counter); //name
-                    data[i][1] = tempHighScore.get(counter+1); //score
-*/
                     String name = tempHighScore.get(counter); //name
                     String score = tempHighScore.get(counter+1); //score
                     tableModel.addRow(new Object[]{name, score});
@@ -102,16 +93,15 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         }
 
 
-        try {
-            TimeUnit.MILLISECONDS.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-       // searchTable.setModel(tableModel);
-      //  searchTable = new JTable(data, columnName);
+        searchTable.setRowHeight(25);
         searchTable.setPreferredScrollableViewportSize(new Dimension(411, 500));
         searchTable.setFillsViewportHeight(true);
+        searchTable.setDefaultEditor(Object.class, null);
         searchTable.setVisible(true);
+        searchTable.setBackground(Color.decode("#C07C73"));
+        searchTable.setForeground(Color.decode("#FAECD9"));
+        searchTable.setSelectionBackground(Color.decode("#0F192F"));
+        searchTable.setFont(applyFont(22));
 
        // table.setBounds(30, 136, 400, 1000);
 
@@ -120,11 +110,13 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         JLabel searchLbl = new JLabel("Search your name: ");
         searchLbl.setBounds(37, 27, 330, 31);
         searchLbl.setFont(applyFont(22));
-        searchLbl.setForeground(Color.decode("#0F192F"));
+        searchLbl.setForeground(Color.decode("#FAECD9"));
 
-        searchFld.setPreferredSize(new Dimension(404, 52));
+        searchFld.setPreferredSize(new Dimension(226, 43));
         searchFld.setEnabled(true);
         searchFld.setVisible(true);
+        searchFld.setHorizontalAlignment(JTextField.CENTER);
+        searchFld.setFont(applyFont(30));
         searchFld.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField5KeyReleased(evt);
@@ -152,6 +144,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         highScoreList.setFont(highScoreFont);
 
 */
+        searchPnl.setBackground(Color.decode("#0F192F"));
         searchPnl.add(searchLbl);
         searchPnl.add(searchFld);
         searchPnl.add(scroller);
@@ -160,29 +153,27 @@ public class CurrentGameUI extends JFrame implements ActionListener {
     }
 
     private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
-
         DefaultTableModel table = (DefaultTableModel) searchTable.getModel();
         String search = searchFld.getText();
         TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(table);
         searchTable.setRowSorter(tr);
-        tr.setRowFilter(RowFilter.regexFilter(search));
+        tr.setRowFilter(RowFilter.regexFilter("(?i)" + search));
     }
 
     /**
      * Skapar en panel för att visa highscore listan
      * Använder StringUtils för att ha specifik text-align
-     * @param comingPlayerScore high score listan från Server --> Controller
      */
-    public void openScorePnl(ArrayList<String> comingPlayerScore) {
+    public void openScorePnl() {
         ImageIcon rPic = new ImageIcon("src/Client/view/images/RightPic.png");
         JLabel picLabel2 = new JLabel(rPic);
         JList list = new JList();
         ArrayList<String> tempScoreList = controller.getTop10ScoreList();
 
 
-/*
 
-        for (int i = 0; i < tempScoreList.size(); i+=2) {
+        int numberOrder = 1;
+        for (int i = 0; i < tempScoreList.size(); i++) {
             String name  = tempScoreList.get(i);
             String score = tempScoreList.get(i+1);
 
@@ -191,28 +182,27 @@ public class CurrentGameUI extends JFrame implements ActionListener {
             StringAlignUtils utilRight = new StringAlignUtils(13, StringAlignUtils.Alignment.RIGHT);
 
 
-            int[] numberOrder = new int[]{1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10};
+        //    int[] numberOrder = new int[]{1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10};
 
             if (name.length() > 7) {
                 utilRight = new StringAlignUtils(5, StringAlignUtils.Alignment.RIGHT);
             }
-           String player = String.format(
-                    utilLift.format(name) + utilRight.format(score));
-            String player = String.format(name + score);
+
+           String player = String.format(utilLiftNbr.format(String.valueOf(numberOrder)) + utilLift.format(name) + utilRight.format(score));
+
             tempScoreList.add(player);
-            tempScoreList.add("\n");
+            numberOrder++;
         }
 
-        */
+
 
 
 
 
        // System.out.println("TEMP "+ tempScoreList.get(1));
 
-
+        list.setFixedCellHeight(48);
         list.setListData(tempScoreList.toArray(new String[10]));
-
         list.setBounds(15, 169, 411, 490);
         list.setBackground(Color.decode("#C07C73"));
         list.setForeground(Color.decode("#FAECD9"));
@@ -276,10 +266,13 @@ public class CurrentGameUI extends JFrame implements ActionListener {
             picLabel2.add(player2Lbl, BorderLayout.PAGE_START);
         }
 
-        btnSearch.setBounds(396, 25, 263, 47);
+        btnSearch.setBounds(396, 30, 244, 35);
+
+        btnSearch.setFont(applyFont(30));
+        btnSearch.setBorder(null);
+        btnSearch.setOpaque(true);
         btnSearch.setBackground(Color.decode("#C07C73"));
         btnSearch.setForeground(Color.decode("#FAECD9"));
-        btnSearch.setFont(applyFont(40));
         btnSearch.addActionListener(this);
         picLabel2.add(btnSearch);
 
@@ -294,6 +287,9 @@ public class CurrentGameUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         openSearch();
+        if (e.getSource() != null) {
+            btnSearch.setBackground(Color.decode("#A2786F"));
+        }
     }
 
     public Font applyFont(float fontSize){

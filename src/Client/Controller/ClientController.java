@@ -50,10 +50,9 @@ public class ClientController {
     /**
      * Startar Score panel i nuvarande spelets frame
      * Anrops efter att ta emot highscore listan från Client (genom Server)
-     * @param playerScore Highscore listan som är från Client
      */
-    public void showScore(ArrayList<String> playerScore) {
-        ui.startScorePnl(playerScore);
+    public void showScore() {
+        ui.startScorePnl();
     }
 
     /**

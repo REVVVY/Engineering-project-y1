@@ -106,8 +106,9 @@ public class Client implements Runnable {
         for (Player p : fullScoreList) {
             comingPlayerScore.add(p.getName());
             comingPlayerScore.add(String.valueOf(p.getScore()));
-            if(tempTop10.size() < 10){
-                tempTop10.add(p.getName() + "   " + p.getScore());
+            if(tempTop10.size() < 20){
+                tempTop10.add(p.getName());
+                tempTop10.add(String.valueOf(p.getScore()));
             }
         }
         controller.saveTop10Score(tempTop10);
@@ -138,7 +139,7 @@ public class Client implements Runnable {
             comingPlayerScore.add(p.getName());
             comingPlayerScore.add(String.valueOf(p.getScore()));
         }
-        controller.showScore(comingPlayerScore);
+        controller.showScore();
 
         //  controller.setScoreList(playerScore);
     }

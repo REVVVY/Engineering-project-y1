@@ -2,6 +2,7 @@ package Client.view;
 
 import Client.Controller.ClientController;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -128,8 +129,8 @@ public class ClientUI extends JPanel implements ActionListener{
         System.out.println("Started");
     }
 
-    public void startScorePnl(ArrayList<String> comingPlayerScore){
-        currentGameUI.openScorePnl(comingPlayerScore);
+    public void startScorePnl(){
+        currentGameUI.openScorePnl();
         currentGameUI.pack();
         currentGameUI.setVisible(true);
         System.out.println("showed score");
