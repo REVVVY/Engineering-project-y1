@@ -21,7 +21,7 @@ public class Client implements Runnable {
     private int winner;
     private Socket socket;
 
-    private int numOfPlayers;
+    private int numOfPlayers = 0;
 
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
@@ -49,8 +49,12 @@ public class Client implements Runnable {
         thread.start();
     }
 
-    private void startNamePanels(){
-        controller.showUI(getNumOfPlayers());
+    public void setNumOfPlayers(int numOfPlayers) {
+        this.numOfPlayers = numOfPlayers;
+    }
+
+    private void startNamePanels(int numberOfPlayers){
+        controller.showUI(numberOfPlayers);
     }
 
     public int getNumOfPlayersFromServer()  {
@@ -62,8 +66,12 @@ public class Client implements Runnable {
         }
         int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
         System.out.println(nbrOfPlayers);
-        numOfPlayers = nbrOfPlayers;
+        /*numOfPlayers = nbrOfPlayers;
         return numOfPlayers;
+
+         */
+        controller.setNbrOfPlayers(nbrOfPlayers);
+        return nbrOfPlayers;
     }
     public int getNumOfPlayers(){
         return numOfPlayers;
@@ -113,6 +121,8 @@ public class Client implements Runnable {
         }
         controller.saveTop10Score(tempTop10);
         controller.saveHighScore(comingPlayerScore); // TILL SEARCHKNAPP, FUNGERAR
+        controller.showScoreInFrame1();
+
     }
 
     /**
@@ -145,11 +155,10 @@ public class Client implements Runnable {
     }
 
     public void getCurrGameFromServer(){
-        winner = -1;
         try {
             currentGame = (Game) ois.readObject();
-            if (currentGame == null) {
-             //   winner = 0;
+            if (currentGame.getWinner() == null) {
+                winner = 0;
             } else if(currentGame.getWinner() == currentGame.getPlayer1()){
                 winner = 1;
             } else if(currentGame.getWinner() == currentGame.getPlayer2()){
@@ -173,15 +182,19 @@ public class Client implements Runnable {
     public void run() {
 
         while(true) {
-            getFullScoreList(); //1
-            getNumOfPlayersFromServer(); //2
+            if(numOfPlayers == 0){
+                numOfPlayers = 1; //en annan siffra än 0
+                getFullScoreList(); //1
+                int numberOfPlayers = getNumOfPlayersFromServer(); //2
+                //setNumOfPlayers(numberOfPlayers);
+                startNamePanels(numberOfPlayers); //3
 
-            startNamePanels(); //3
+                getScoreFromServer();
+                System.out.println("Score is sent");
 
-            getScoreFromServer();
-            System.out.println("Score is sent");
+                getCurrGameFromServer();
+            }
 
-            getCurrGameFromServer();
         }
     }
 

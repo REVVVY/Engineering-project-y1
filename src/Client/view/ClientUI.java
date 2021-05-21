@@ -40,7 +40,7 @@ public class ClientUI extends JPanel implements ActionListener{
     }
 
 
-        public JPanel onePlayerPnl(){
+    public JPanel onePlayerPnl(){
         tfPlayer2.setEnabled(false); //not used
         centerPanel.setBackground(Color.decode("#0F192F"));
 
@@ -50,13 +50,15 @@ public class ClientUI extends JPanel implements ActionListener{
 
         tfPlayer1.setHorizontalAlignment(JTextField.LEFT);
         tfPlayer1.setPreferredSize(new Dimension(150,25));
+        tfPlayer1.setFont(currentGameUI.applyFont(18));
         lblPlayer1.setForeground(Color.decode("#FAECD9"));
+        lblPlayer1.setFont(currentGameUI.applyFont(20));
 
         centerPanel.add(lblEnter);
         centerPanel.add(lblPlayer1);
         centerPanel.add(tfPlayer1);
 
-        btnRegister.setFont(new Font("Apple Chancery", Font.BOLD, 15));
+        btnRegister.setFont(currentGameUI.applyFont(18));
         centerPanel.add(btnRegister, BorderLayout.SOUTH);
         return centerPanel;
     }
@@ -69,10 +71,15 @@ public class ClientUI extends JPanel implements ActionListener{
 
         tfPlayer1.setHorizontalAlignment(JTextField.LEFT);
         tfPlayer2.setHorizontalAlignment(JTextField.LEFT);
+        tfPlayer1.setFont(currentGameUI.applyFont(18));
+        tfPlayer2.setFont(currentGameUI.applyFont(18));
+
         tfPlayer1.setPreferredSize(new Dimension(150,25));
         tfPlayer2.setPreferredSize(new Dimension(150,25));
         lblPlayer1.setForeground(Color.decode("#FAECD9"));
         lblPlayer2.setForeground(Color.decode("#FAECD9"));
+        lblPlayer1.setFont(currentGameUI.applyFont(20));
+        lblPlayer2.setFont(currentGameUI.applyFont(20));
 
         centerPanel.add(lblEnter);
         centerPanel.add(lblPlayer1);
@@ -80,7 +87,7 @@ public class ClientUI extends JPanel implements ActionListener{
         centerPanel.add(lblPlayer2);
         centerPanel.add(tfPlayer2);
 
-        btnRegister.setFont(new Font("Apple Chancery", Font.BOLD, 15));
+        btnRegister.setFont(currentGameUI.applyFont(18));
         centerPanel.add(btnRegister, BorderLayout.SOUTH);
 
         return centerPanel;
@@ -167,5 +174,22 @@ public class ClientUI extends JPanel implements ActionListener{
             currentGameUI.close();
             currentGameUI.showWinner(winner, getName1(), getName2());
         }
+    }
+
+    public void closeWinnerFrame() {
+        currentGameUI.closeWinnerFrame();
+    }
+
+    public void resetUI() {
+        tfPlayer1.setText("");
+        tfPlayer2.setEnabled(true);
+        tfPlayer2.setText("");
+        centerPanel.removeAll();
+        centerPanel.revalidate();
+        centerPanel.repaint();
+    }
+
+    public void resetCurrentGame() {
+        currentGameUI.resetCurrentGame();
     }
 }

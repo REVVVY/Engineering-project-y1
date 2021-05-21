@@ -233,16 +233,17 @@ public class Server implements Runnable {
                 ois = new ObjectInputStream(socket.getInputStream());
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 Collections.sort(highscoreList, Collections.reverseOrder());
-                oos.writeObject(highscoreList);
+               // oos.writeObject(highscoreList);
                 ServerLog highscorelog = new ServerLog(LocalDateTime.now(), this, "Sent highscorelist to client", socket, "Sent");
                 highscorelog.setPacketType("TCP");
                 highscorelog.setHighscore(highscoreList);
                 addLogAndUpdate(highscorelog);
 
-                numOfPlayers = "2"; //Tester av klient
+                numOfPlayers = "1"; //Tester av klient
 
                 while(true) {
                     if (numOfPlayers != null) {
+                        oos.writeObject(highscoreList); //bara för att testa, ska vara där uppe
                         sendNbrOfPlayersToClient(numOfPlayers);
                         ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Sent number of players from client", socket, "Sent");
                         logNbrOfPlayers.setNumOfPlayers(numOfPlayers);
@@ -264,12 +265,13 @@ public class Server implements Runnable {
                             gameList.add(game);
                             addPlayersToList();
                             //Tester nedan
-                            addScoreToPlayer(40);
+                            addScoreToPlayer(72);
                             addScoreToPlayer(40);
                             decideWinner();
                             checkIfReadyToSend(this);
-                            //numOfPlayers = "1";
+
                         }
+                        numOfPlayers = "2"; //bara för testa
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {

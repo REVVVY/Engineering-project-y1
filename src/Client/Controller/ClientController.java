@@ -5,6 +5,7 @@ import Client.Model.Player;
 import Client.view.*;
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class ClientController {
 
@@ -81,10 +82,15 @@ public class ClientController {
                client.twoPlayers(name1, name2);
            }
            close();
+           resetCurrentGame();
            startCurrentGame(nbrOfPlayers, name1, name2);
        } /*else if(button == BtnType.btnSearch){
            ui.showSearchWin();
        }*/
+    }
+
+    private void resetCurrentGame() {
+        ui.resetCurrentGame();
     }
 
 
@@ -117,7 +123,6 @@ public class ClientController {
 
                 frame.add(ui);
                 frame.pack();
-
             }
         });
     }
@@ -127,9 +132,7 @@ public class ClientController {
     }
 
     public void saveHighScore(ArrayList<String> playerScore) {
-
         comingPlayerScore = playerScore;
-
     }
 
     public DefaultListModel getModelToUI(){
@@ -150,5 +153,23 @@ public class ClientController {
 
     public void sendWinnerToView(int winner) {
        ui.showWinner(winner);
+
+        try {
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        ui.closeWinnerFrame();
+        ui.resetUI();
+        client.setNumOfPlayers(0);
+    }
+
+
+    public void setNbrOfPlayers(int nbrOfPlayers) {
+        this.nbrOfPlayers = nbrOfPlayers;
+    }
+
+    public void showScoreInFrame1() {
+        ui.showSearchWin();
     }
 }

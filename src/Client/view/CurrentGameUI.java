@@ -9,13 +9,10 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public class CurrentGameUI extends JFrame implements ActionListener {
     private ClientController controller;
@@ -23,10 +20,11 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
     private JPanel scoreListPnl = new JPanel();
     private JPanel playersPnl = new JPanel();
-
+    private JPanel winnerPnl;
     private JLabel scoreList = new JLabel("");
     private JButton btnSearch =  new JButton("Search Score");
     private JTable searchTable;
+    private JFrame winnerFrame;
     private JTextField searchFld = new JTextField();
 
     public CurrentGameUI(ClientController controller){
@@ -60,20 +58,15 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         JFrame searchFrame = new JFrame("Search Score");
         searchFrame.setSize(470, 670);
 
+        searchFrame.setLocation(280, 200);
         searchFrame.setResizable(true);
         searchFrame.setLocationRelativeTo(null);
         searchFrame.setVisible(true);
         searchFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // searchFrame.pack();
-
         JPanel searchPnl = new JPanel();
         searchPnl.setPreferredSize(new Dimension(470, 670));
 
-
-
-
-       // JList highScoreList = new JList();
         int arrayLength = tempHighScore.size()/2;
         int counter = 0;
 
@@ -103,8 +96,6 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         searchTable.setSelectionBackground(Color.decode("#0F192F"));
         searchTable.setFont(applyFont(22));
 
-       // table.setBounds(30, 136, 400, 1000);
-
         JScrollPane scroller = new JScrollPane(searchTable);
 
         JLabel searchLbl = new JLabel("Search your name: ");
@@ -123,33 +114,13 @@ public class CurrentGameUI extends JFrame implements ActionListener {
             }
         });
 
-
-        /*
-        DefaultListModel model = controller.getModelToUI();
-        highScoreList.setModel(model);
-        JScrollPane scroller = new JScrollPane(highScoreList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-*/
-
-
-
-        //System.out.println("TEMP "+ tempHighScore.get(1));
-
-
-       // highScoreList.setListData(tempHighScore.toArray(new String[tempHighScore.size()/2]));
-/*
-        highScoreList.setBounds(30, 136, 411, 514);
-        highScoreList.setBackground(Color.decode("#C07C73"));
-        highScoreList.setForeground(Color.decode("#FAECD9"));
-        highScoreList.setSelectionBackground(Color.decode("#0F192F"));
-        highScoreList.setFont(highScoreFont);
-
-*/
         searchPnl.setBackground(Color.decode("#0F192F"));
         searchPnl.add(searchLbl);
         searchPnl.add(searchFld);
         searchPnl.add(scroller);
 
         searchFrame.add(searchPnl);
+        searchFrame.pack();
     }
 
     private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
@@ -168,38 +139,29 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         ImageIcon rPic = new ImageIcon("src/Client/view/images/RightPic.png");
         JLabel picLabel2 = new JLabel(rPic);
         JList list = new JList();
-        ArrayList<String> tempScoreList = controller.getTop10ScoreList();
-
-
+        ArrayList<String> comingPlayerScore =  controller.getTop10ScoreList();
+        ArrayList<String> tempScoreList = new ArrayList<>(comingPlayerScore.size()/2);
 
         int numberOrder = 1;
-        for (int i = 0; i < tempScoreList.size(); i++) {
-            String name  = tempScoreList.get(i);
-            String score = tempScoreList.get(i+1);
+        for (int i = 0; i < comingPlayerScore.size(); i+=2) {
+            String name  = comingPlayerScore.get(i);
+            String score = comingPlayerScore.get(i+1);
 
             StringAlignUtils utilLift = new StringAlignUtils(8, StringAlignUtils.Alignment.LEFT);
             StringAlignUtils utilLiftNbr = new StringAlignUtils(3, StringAlignUtils.Alignment.LEFT);
             StringAlignUtils utilRight = new StringAlignUtils(13, StringAlignUtils.Alignment.RIGHT);
 
-
-        //    int[] numberOrder = new int[]{1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10};
-
-            if (name.length() > 7) {
+            if (name.length() > 9) {
                 utilRight = new StringAlignUtils(5, StringAlignUtils.Alignment.RIGHT);
             }
 
-           String player = String.format(utilLiftNbr.format(String.valueOf(numberOrder)) + utilLift.format(name) + utilRight.format(score));
+            String player = String.format(utilLiftNbr.format(String.valueOf(numberOrder))
+                    + utilLift.format(name) + utilRight.format(score));
 
             tempScoreList.add(player);
             numberOrder++;
+       //     tempScoreList.trimToSize();
         }
-
-
-
-
-
-
-       // System.out.println("TEMP "+ tempScoreList.get(1));
 
         list.setFixedCellHeight(48);
         list.setListData(tempScoreList.toArray(new String[10]));
@@ -309,17 +271,22 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         setVisible(false);
     }
 
+    public void closeWinnerFrame(){
+        winnerFrame.dispose();
+        winnerFrame.setVisible(false);
+    }
+
     public void showWinner(int winner, String name1, String name2) {
         ImageIcon lPic = new ImageIcon("src/Client/view/images/LeftPicOne.png");
         JLabel picLabel2 = new JLabel(lPic);
 
-        JFrame winnerFrame = new JFrame("Winner");
+        winnerFrame = new JFrame("Winner");
         winnerFrame.setSize(697, 670);
         winnerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         winnerFrame.setResizable(false);
         winnerFrame.setLocationRelativeTo(null);
         winnerFrame.setVisible(true);
-        JPanel winnerPnl = new JPanel();
+        winnerPnl = new JPanel();
         JLabel winnerLbl = new JLabel();
 
         winnerLbl.setFont(applyFont(80));
@@ -347,6 +314,20 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         winnerPnl.add(picLabel2);
         winnerFrame.add(winnerPnl);
 
+    }
+
+    public void resetCurrentGame() {
+        winnerPnl.removeAll();
+        winnerPnl.revalidate();
+        winnerPnl.repaint();
+
+        scoreListPnl.removeAll();
+        scoreListPnl.revalidate();
+        scoreListPnl.repaint();
+
+        playersPnl.removeAll();
+        playersPnl.revalidate();
+        playersPnl.repaint();
     }
 }
 
