@@ -317,10 +317,6 @@ public class CurrentGameUI extends JFrame implements ActionListener {
     }
 
     public void resetCurrentGame() {
-        winnerPnl.removeAll();
-        winnerPnl.revalidate();
-        winnerPnl.repaint();
-
         scoreListPnl.removeAll();
         scoreListPnl.revalidate();
         scoreListPnl.repaint();
@@ -328,6 +324,13 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         playersPnl.removeAll();
         playersPnl.revalidate();
         playersPnl.repaint();
+    }
+
+    public void resetWinner(){
+        winnerPnl.removeAll();
+        winnerPnl.revalidate();
+        winnerPnl.repaint();
+
     }
 }
 

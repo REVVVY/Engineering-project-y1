@@ -160,6 +160,7 @@ public class ClientController {
             e.printStackTrace();
         }
         ui.closeWinnerFrame();
+        ui.resetWinner();
         ui.resetUI();
         client.setNumOfPlayers(0);
     }

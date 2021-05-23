@@ -192,4 +192,8 @@ public class ClientUI extends JPanel implements ActionListener{
     public void resetCurrentGame() {
         currentGameUI.resetCurrentGame();
     }
+
+    public void resetWinner() {
+        currentGameUI.resetWinner();
+    }
 }
