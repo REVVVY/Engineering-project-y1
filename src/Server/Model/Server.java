@@ -52,7 +52,7 @@ public class Server implements Runnable {
         }
         server.start();
     }
-    
+
     /***
      * Accepterar klientens anslutning och skapar ett objekt av en inre klass.
      * Lägger till i klientlistan och startar klientens tråd.
@@ -110,18 +110,6 @@ public class Server implements Runnable {
         addLogAndUpdate(loggames);
     }
 
-    /***
-     * Kollar ifall sista spelaren har fått in score för att kunna skicka till klienten.
-     * @throws IOException kastar IOExeption för att kunna anropa send metoden som skickar via en ström.
-     */
-    public void checkIfReadyToSend(Thread thread) throws IOException {
-        int lastIndex = highscoreList.size() - 1;
-        Player lastPlayer = highscoreList.get(lastIndex);
-        if (lastPlayer.getScore() != 0) {
-            updateDatabase();
-            send(highscoreList, thread);
-        }
-    }
 
     /***
      * Metod som skickar hela highscoreListan till klienten så att klienten kan uppdatera JListen
@@ -155,20 +143,6 @@ public class Server implements Runnable {
 
     public void sendNbrOfPlayersToClient(String nbrOfPlayers) throws IOException {
         oos.writeObject(nbrOfPlayers);
-    }
-
-    /***
-     * Metod som lägger till score på den specifika spelaren
-     * @param score score som en viss spelare fått
-     */
-    public void addScoreToPlayer(int score) {
-
-        for (Player p : highscoreList) {
-            if (p.getScore() == 0) {
-                p.setScore(score);
-                break;
-            }
-        }
     }
 
     public void addPlayersToList(){
@@ -239,20 +213,16 @@ public class Server implements Runnable {
                 ois = new ObjectInputStream(socket.getInputStream());
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 Collections.sort(highscoreList, Collections.reverseOrder());
-                ArrayList<Player> temp = new ArrayList<>();
-                for (Player p : highscoreList){
-                    temp.add(p);
-                }
-                oos.writeObject(temp); //bara för att testa, ska vara där uppe
+                // oos.writeObject(highscoreList);
                 ServerLog highscorelog = new ServerLog(LocalDateTime.now(), this, "Sent highscorelist to client", socket, "Sent");
                 highscorelog.setPacketType("TCP");
                 highscorelog.setHighscore(highscoreList);
                 addLogAndUpdate(highscorelog);
 
-                numOfPlayers = "1"; //Tester av klient
 
                 while(true) {
                     if (numOfPlayers != null) {
+                        oos.writeObject(highscoreList); //bara för att testa, ska vara där uppe
                         sendNbrOfPlayersToClient(numOfPlayers);
                         ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Sent number of players from client", socket, "Sent");
                         logNbrOfPlayers.setNumOfPlayers(numOfPlayers);
@@ -273,14 +243,7 @@ public class Server implements Runnable {
 
                             gameList.add(game);
                             addPlayersToList();
-                            //Tester nedan
-                            addScoreToPlayer(82);
-                            addScoreToPlayer(40);
-                            decideWinner();
-                            checkIfReadyToSend(this);
-
                         }
-                        numOfPlayers = "2"; //bara för testa
                     }
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -332,9 +295,10 @@ public class Server implements Runnable {
                         addLogAndUpdate(logscore);
 
                         int score = Integer.parseInt(scoreStr);
-                        addScoreToPlayer(score);
+                        game.getPlayer2().setScore(score);
                         decideWinner();
-                        checkIfReadyToSend(this);
+                        updateDatabase();
+                        send(highscoreList, this);
 
                     } else if (sentence.regionMatches(0, score1Pattern, 0, 6)) {
                         System.out.println("Score1 pattern");
@@ -346,9 +310,13 @@ public class Server implements Runnable {
                         addLogAndUpdate(logscore);
 
                         int score = Integer.parseInt(scoreStr);
-                        addScoreToPlayer(score);
-                        decideWinner();
-                        checkIfReadyToSend(this);
+                        game.getPlayer1().setScore(score);
+                        if(game.getPlayer2() == null){
+                            decideWinner();
+                            updateDatabase();
+                            send(highscoreList, this);
+                        }
+
 
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
                         System.out.println("nbrOfPlayersPattern");
@@ -358,18 +326,6 @@ public class Server implements Runnable {
                         addLogAndUpdate(logNbrOfPlayers);
                         numOfPlayers = nbrOfplayerStr;
                     }
-
-
-                    //Ifall vi vill kunna skicka till det inbyggda systemet
-                   /* InetAddress IPAddress = receivePacket.getAddress();
-                    int port = receivePacket.getPort();
-                    String capitalizedSentence = sentence.toUpperCase();
-
-                    sendData = capitalizedSentence.getBytes();
-                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-
-                    serverSocket.send(sendPacket);
-                    */
 
                 } catch (IOException e) {
                     e.printStackTrace();
