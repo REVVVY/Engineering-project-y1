@@ -239,7 +239,11 @@ public class Server implements Runnable {
                 ois = new ObjectInputStream(socket.getInputStream());
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 Collections.sort(highscoreList, Collections.reverseOrder());
-               // oos.writeObject(highscoreList);
+                ArrayList<Player> temp = new ArrayList<>();
+                for (Player p : highscoreList){
+                    temp.add(p);
+                }
+                oos.writeObject(temp); //bara för att testa, ska vara där uppe
                 ServerLog highscorelog = new ServerLog(LocalDateTime.now(), this, "Sent highscorelist to client", socket, "Sent");
                 highscorelog.setPacketType("TCP");
                 highscorelog.setHighscore(highscoreList);
@@ -249,7 +253,6 @@ public class Server implements Runnable {
 
                 while(true) {
                     if (numOfPlayers != null) {
-                        oos.writeObject(highscoreList); //bara för att testa, ska vara där uppe
                         sendNbrOfPlayersToClient(numOfPlayers);
                         ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Sent number of players from client", socket, "Sent");
                         logNbrOfPlayers.setNumOfPlayers(numOfPlayers);

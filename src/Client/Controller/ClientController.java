@@ -77,7 +77,7 @@ public class ClientController {
            if (name2 == null) {
                nbrOfPlayers = 1;
                client.onePlayer(name1);
-               startCurrentGame(nbrOfPlayers, name1, null);
+               //startCurrentGame(nbrOfPlayers, name1, null);
            } else{
                nbrOfPlayers = 2;
                client.twoPlayers(name1, name2);
@@ -148,6 +148,14 @@ public class ClientController {
 
             counter = counter + 2;
         }
+
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         ui.getCurrentGameUI().setTableModel(temp);
     }
 
@@ -190,6 +198,9 @@ public class ClientController {
         ui.showSearchWin();
     }
 
+    public ClientUI getUi() {
+        return ui;
+    }
     /*public void updateFullScoreList(ArrayList<String> comingPlayerScore) {
         this.comingPlayerScore = comingPlayerScore;
         DefaultTableModel temp = new DefaultTableModel();

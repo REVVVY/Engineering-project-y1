@@ -38,6 +38,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
     public void startCurrentGame(int numOfPlayers, String name1, String name2){
         openGameUI();
         openPlayersPnl(numOfPlayers, name1, name2);
+        openScorePnl();
     }
 
 
@@ -134,11 +135,6 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
     public void setTableModel(DefaultTableModel tableModel) {
         this.tableModel = tableModel;
-        try {
-            TimeUnit.MILLISECONDS.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         searchTable.setModel(tableModel);
     }
 
@@ -271,6 +267,10 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         if (e.getSource() != null) {
             btnSearch.setBackground(Color.decode("#A2786F"));
         }
+    }
+
+    public void test(){
+        openSearch();
     }
 
     public Font applyFont(float fontSize){

@@ -124,7 +124,7 @@ public class Client implements Runnable {
 
         controller.saveTop10Score(tempTop10); //highscorelista top 10
         controller.saveHighScore(fullScoreListStr); // TILL SEARCHKNAPP, FUNGERAR
-        controller.showScoreInFrame1();
+       // controller.getUi().getCurrentGameUI().test();
 
     }
 
@@ -159,7 +159,7 @@ public class Client implements Runnable {
             highScoreListStr.add(String.valueOf(p.getScore()));
         }
 
-        controller.showScore();
+     //   controller.showScore();
         controller.saveHighScore(highScoreListStr);
 
     }
@@ -175,6 +175,7 @@ public class Client implements Runnable {
                 winner = 2;
             }
             controller.sendWinnerToView(winner);
+            controller.showScoreInFrame1();
 
             //if winner = null --> lika
             //if winner = player2 --> winner
@@ -190,11 +191,13 @@ public class Client implements Runnable {
      */
 
     public void run() {
+        getFullScoreList();
+        controller.showScoreInFrame1();
 
         while(true) {
             //if(numOfPlayers == 0){
               //  numOfPlayers = 1; //en annan siffra än 0
-                getFullScoreList(); //1
+
                 int numberOfPlayers = getNumOfPlayersFromServer(); //2
                 //setNumOfPlayers(numberOfPlayers);
                 startNamePanels(numberOfPlayers); //3
@@ -202,6 +205,7 @@ public class Client implements Runnable {
                 System.out.println("Score is sent");
 
                 getCurrGameFromServer();
+
             //}
 
         }
