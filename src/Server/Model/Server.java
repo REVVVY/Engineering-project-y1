@@ -131,7 +131,13 @@ public class Server implements Runnable {
      */
     public void send(ArrayList<Player> highscoreList, Thread thread) throws IOException {
         Collections.sort(highscoreList, Collections.reverseOrder());
-        oos.writeObject(highscoreList);
+        ArrayList<Player> temp = new ArrayList<>();
+
+        for (Player p : highscoreList){
+            temp.add(p);
+        }
+
+        oos.writeObject(temp);
         // - Log
         ServerLog log = new ServerLog(LocalDateTime.now(), thread, "Sent highscorelist to client", socket, "Sent");
         log.setPacketType("TCP");
@@ -265,7 +271,7 @@ public class Server implements Runnable {
                             gameList.add(game);
                             addPlayersToList();
                             //Tester nedan
-                            addScoreToPlayer(72);
+                            addScoreToPlayer(3000);
                             addScoreToPlayer(40);
                             decideWinner();
                             checkIfReadyToSend(this);

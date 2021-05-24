@@ -135,12 +135,21 @@ public class Client implements Runnable {
     public void getScoreFromServer() {
         try {
             highScoreList = (ArrayList<Player>) ois.readObject();
+
+            /*System.out.println(highScoreList.get(0).getName() + highScoreList.get(0).getScore());
+            System.out.println(highScoreList.get(1).getName() + highScoreList.get(1).getScore());
+            System.out.println(highScoreList.get(2).getName() + highScoreList.get(2).getScore());
+
+             */
+
           //  controller.printScoreboard(playerScore);
-            for (Player p : highScoreList) {
+            /*for (Player p : highScoreList) {
                 System.out.println(p.getName() + " " + p.getScore());
             }
-            System.out.println("GotList");
-            System.out.println("2 " + highScoreList.size());
+
+             */
+            //System.out.println("GotList");
+            //System.out.println("2 " + highScoreList.size());
         } catch (IOException | ClassNotFoundException e){}
 
        ArrayList<String> highScoreListStr = new ArrayList<>();
@@ -183,8 +192,8 @@ public class Client implements Runnable {
     public void run() {
 
         while(true) {
-            if(numOfPlayers == 0){
-                numOfPlayers = 1; //en annan siffra än 0
+            //if(numOfPlayers == 0){
+              //  numOfPlayers = 1; //en annan siffra än 0
                 getFullScoreList(); //1
                 int numberOfPlayers = getNumOfPlayersFromServer(); //2
                 //setNumOfPlayers(numberOfPlayers);
@@ -193,7 +202,7 @@ public class Client implements Runnable {
                 System.out.println("Score is sent");
 
                 getCurrGameFromServer();
-            }
+            //}
 
         }
     }

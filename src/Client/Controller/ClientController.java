@@ -137,6 +137,8 @@ public class ClientController {
 
         comingPlayerScore = playerScore;
         DefaultTableModel temp = new DefaultTableModel();
+        temp.addColumn("Name");
+        temp.addColumn("Score");
         int counter = 0;
 
         for (int i = 0; i < comingPlayerScore.size(); i+=2) {
