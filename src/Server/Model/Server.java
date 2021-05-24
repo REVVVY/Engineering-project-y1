@@ -271,7 +271,7 @@ public class Server implements Runnable {
                             gameList.add(game);
                             addPlayersToList();
                             //Tester nedan
-                            addScoreToPlayer(3000);
+                            addScoreToPlayer(82);
                             addScoreToPlayer(40);
                             decideWinner();
                             checkIfReadyToSend(this);
