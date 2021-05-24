@@ -15,12 +15,13 @@ public class Client implements Runnable {
     private String ip;
     private int port;
     private Thread thread = new Thread(this);
-    private ArrayList<Player> playerScore;
+    private ArrayList<Player> highScoreList;
+    private ArrayList<Player> fullScoreList;
     private Game currentGame;
-
+    private int winner;
     private Socket socket;
 
-    private int numOfPlayers;
+    private int numOfPlayers = 0;
 
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
@@ -48,8 +49,12 @@ public class Client implements Runnable {
         thread.start();
     }
 
-    private void startNamePanels(){
-        controller.showUI(getNumOfPlayers());
+    public void setNumOfPlayers(int numOfPlayers) {
+        this.numOfPlayers = numOfPlayers;
+    }
+
+    private void startNamePanels(int numberOfPlayers){
+        controller.showUI(numberOfPlayers);
     }
 
     public int getNumOfPlayersFromServer()  {
@@ -61,8 +66,12 @@ public class Client implements Runnable {
         }
         int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
         System.out.println(nbrOfPlayers);
-        numOfPlayers = nbrOfPlayers;
+        /*numOfPlayers = nbrOfPlayers;
         return numOfPlayers;
+
+         */
+        controller.setNbrOfPlayers(nbrOfPlayers);
+        return nbrOfPlayers;
     }
     public int getNumOfPlayers(){
         return numOfPlayers;
@@ -93,37 +102,88 @@ public class Client implements Runnable {
         numOfPlayers = 0;
     }
 
+    public void getFullScoreList() {
+        try {
+            fullScoreList = (ArrayList<Player>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("1 " + fullScoreList.size());
+
+
+        ArrayList<String> fullScoreListStr = new ArrayList<>();
+        ArrayList<String> tempTop10 = new ArrayList<>();
+        for (Player p : fullScoreList) {
+            fullScoreListStr.add(p.getName());
+            fullScoreListStr.add(String.valueOf(p.getScore()));
+            if(tempTop10.size() < 20){
+                tempTop10.add(p.getName());
+                tempTop10.add(String.valueOf(p.getScore()));
+            }
+        }
+
+        controller.saveTop10Score(tempTop10); //highscorelista top 10
+        controller.saveHighScore(fullScoreListStr); // TILL SEARCHKNAPP, FUNGERAR
+       // controller.getUi().getCurrentGameUI().test();
+
+    }
+
     /**
      * Skickar highscore listan till Server
      * och vidare till controller
      */
     public void getScoreFromServer() {
         try {
-            playerScore = (ArrayList<Player>) ois.readObject();
+            highScoreList = (ArrayList<Player>) ois.readObject();
+
+            /*System.out.println(highScoreList.get(0).getName() + highScoreList.get(0).getScore());
+            System.out.println(highScoreList.get(1).getName() + highScoreList.get(1).getScore());
+            System.out.println(highScoreList.get(2).getName() + highScoreList.get(2).getScore());
+
+             */
+
           //  controller.printScoreboard(playerScore);
-            for (Player p : playerScore) {
+            /*for (Player p : highScoreList) {
                 System.out.println(p.getName() + " " + p.getScore());
             }
-            System.out.println("GotList");
+
+             */
+            //System.out.println("GotList");
+            //System.out.println("2 " + highScoreList.size());
         } catch (IOException | ClassNotFoundException e){}
 
-       ArrayList<String> comingPlayerScore = new ArrayList<>();
-        for (Player p : playerScore) {
-            comingPlayerScore.add(p.getName());
-            comingPlayerScore.add(String.valueOf(p.getScore()));
+       ArrayList<String> highScoreListStr = new ArrayList<>();
+
+        for (Player p : highScoreList) {
+            highScoreListStr.add(p.getName());
+            highScoreListStr.add(String.valueOf(p.getScore()));
         }
 
-        controller.showScore(comingPlayerScore);
-      //  controller.setScoreList(playerScore);
+     //   controller.showScore();
+        controller.saveHighScore(highScoreListStr);
+
     }
 
     public void getCurrGameFromServer(){
         try {
             currentGame = (Game) ois.readObject();
+            if (currentGame.getWinner() == null) {
+                winner = 0;
+            } else if(currentGame.getWinner() == currentGame.getPlayer1()){
+                winner = 1;
+            } else if(currentGame.getWinner() == currentGame.getPlayer2()){
+                winner = 2;
+            }
+            controller.sendWinnerToView(winner);
+            controller.showScoreInFrame1();
+
+            //if winner = null --> lika
+            //if winner = player2 --> winner
         } catch (IOException  | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * Klientens tråd som lägger till spelares namn + score som test för servern
@@ -131,16 +191,25 @@ public class Client implements Runnable {
      */
 
     public void run() {
+        getFullScoreList();
+        controller.showScoreInFrame1();
 
         while(true) {
-            getNumOfPlayersFromServer();
+            //if(numOfPlayers == 0){
+              //  numOfPlayers = 1; //en annan siffra än 0
 
-            startNamePanels();
+                int numberOfPlayers = getNumOfPlayersFromServer(); //2
+                //setNumOfPlayers(numberOfPlayers);
+                startNamePanels(numberOfPlayers); //3
+                getScoreFromServer();
+                System.out.println("Score is sent");
 
-            getScoreFromServer();
-            System.out.println("Score is sent");
+                getCurrGameFromServer();
 
-            getCurrGameFromServer();
+            //}
+
         }
     }
+
+
 }

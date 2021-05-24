@@ -4,7 +4,9 @@ import Client.Model.Client;
 import Client.Model.Player;
 import Client.view.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class ClientController {
 
@@ -12,8 +14,8 @@ public class ClientController {
     private ClientUI ui = new ClientUI(this);;
 
     private JFrame frame;
-    private ArrayList<Player> playerScore;
-    private ArrayList<Object> comingPlayerScore;
+    private ArrayList<String> top10ScoreList;
+    private ArrayList<String> comingPlayerScore;
     private int nbrOfPlayers;
 
     public ClientController(String ip, int port) {
@@ -50,10 +52,9 @@ public class ClientController {
     /**
      * Startar Score panel i nuvarande spelets frame
      * Anrops efter att ta emot highscore listan från Client (genom Server)
-     * @param playerScore Highscore listan som är från Client
      */
-    public void showScore(ArrayList<String> playerScore) {
-        ui.startScorePnl(playerScore);
+    public void showScore() {
+        ui.startScorePnl();
     }
 
     /**
@@ -76,24 +77,24 @@ public class ClientController {
            if (name2 == null) {
                nbrOfPlayers = 1;
                client.onePlayer(name1);
-               startCurrentGame(nbrOfPlayers, name1, null);
+               //startCurrentGame(nbrOfPlayers, name1, null);
            } else{
                nbrOfPlayers = 2;
                client.twoPlayers(name1, name2);
            }
            close();
+           ui.closeSearchPanel();
+           resetCurrentGame();
            startCurrentGame(nbrOfPlayers, name1, name2);
-       }
+       } /*else if(button == BtnType.btnSearch){
+           ui.showSearchWin();
+       }*/
     }
 
-    public void newResponse(String response) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                ui.setResult(response);
-            }
-        });
+    private void resetCurrentGame() {
+        ui.resetCurrentGame();
     }
+
 
     /**
      * Stäger ner första frame efter att ta emot namn
@@ -115,8 +116,11 @@ public class ClientController {
             public void run() {
                 frame = new JFrame("Laser-Game");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(1020, 210);
+                frame.setLocation(160, 200);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
+
                 viewPlayerUI(numOfPlayers);
 
                 frame.add(ui);
@@ -125,7 +129,90 @@ public class ClientController {
         });
     }
 
-    public void setScoreList(ArrayList<Player> playerScore) {
-        this.playerScore = playerScore;
+    public ArrayList<String> getComingPlayerScore(){
+        return comingPlayerScore;
     }
+
+    public void saveHighScore(ArrayList<String> playerScore) {
+
+        comingPlayerScore = playerScore;
+        DefaultTableModel temp = new DefaultTableModel();
+        temp.addColumn("Name");
+        temp.addColumn("Score");
+        int counter = 0;
+
+        for (int i = 0; i < comingPlayerScore.size(); i+=2) {
+            String name = comingPlayerScore.get(counter); //name
+            String score = comingPlayerScore.get(counter+1); //score
+            temp.addRow(new Object[]{name, score});
+
+            counter = counter + 2;
+        }
+
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        ui.getCurrentGameUI().setTableModel(temp);
+    }
+
+    public DefaultListModel getModelToUI(){
+        DefaultListModel temp = new DefaultListModel();
+        for(String s: comingPlayerScore){
+            temp.addElement(s);
+        }
+        return temp;
+    }
+
+    public void saveTop10Score(ArrayList<String> tempTop10) {
+        top10ScoreList = tempTop10;
+    }
+
+    public ArrayList<String> getTop10ScoreList() {
+        return top10ScoreList;
+    }
+
+    public void sendWinnerToView(int winner) {
+       ui.showWinner(winner);
+
+        try {
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        ui.closeWinnerFrame();
+        ui.resetWinner();
+        ui.resetUI();
+        client.setNumOfPlayers(0);
+    }
+
+
+    public void setNbrOfPlayers(int nbrOfPlayers) {
+        this.nbrOfPlayers = nbrOfPlayers;
+    }
+
+    public void showScoreInFrame1() {
+        ui.showSearchWin();
+    }
+
+    public ClientUI getUi() {
+        return ui;
+    }
+    /*public void updateFullScoreList(ArrayList<String> comingPlayerScore) {
+        this.comingPlayerScore = comingPlayerScore;
+        DefaultTableModel temp = new DefaultTableModel();
+        int counter = 0;
+
+        for (int i = 0; i < comingPlayerScore.size(); i+=2) {
+                String name = comingPlayerScore.get(counter); //name
+                String score = comingPlayerScore.get(counter+1); //score
+                temp.addRow(new Object[]{name, score});
+
+            counter = counter + 2;
+        }
+        ui.getCurrentGameUI().setTableModel(temp);
+    } */
 }
