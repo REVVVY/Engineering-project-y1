@@ -13,19 +13,23 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class CurrentGameUI extends JFrame implements ActionListener {
     private ClientController controller;
     private ClientUI clientUI;
+    private DefaultTableModel tableModel;
+    private ArrayList<String> fullScoreList = new ArrayList<>();
 
     private JPanel scoreListPnl = new JPanel();
     private JPanel playersPnl = new JPanel();
     private JPanel winnerPnl;
     private JLabel scoreList = new JLabel("");
     private JButton btnSearch =  new JButton("Search Score");
-    private JTable searchTable;
+    private JTable searchTable = new JTable();
     private JFrame winnerFrame;
     private JTextField searchFld = new JTextField();
+    private JFrame searchFrame;
 
     public CurrentGameUI(ClientController controller){
         this.controller = controller;
@@ -52,10 +56,15 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         });
     }
 
-    public void openSearch(){
-        ArrayList<String> tempHighScore = controller.getComingPlayerScore();
+    public void setFullScoreList(ArrayList<String> fullScoreList) {
+        this.fullScoreList = fullScoreList;
+    }
 
-        JFrame searchFrame = new JFrame("Search Score");
+    public void openSearch(){
+
+        fullScoreList = controller.getComingPlayerScore();
+
+        searchFrame = new JFrame("Search Score");
         searchFrame.setSize(470, 670);
 
         searchFrame.setLocation(280, 200);
@@ -67,19 +76,19 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         JPanel searchPnl = new JPanel();
         searchPnl.setPreferredSize(new Dimension(470, 670));
 
-        int arrayLength = tempHighScore.size()/2;
+        int arrayLength = fullScoreList.size()/2;
         int counter = 0;
 
-        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel = new DefaultTableModel();
         searchTable = new JTable(tableModel);
         tableModel.addColumn("Name");
         tableModel.addColumn("score");
 
 
-        for (int i = 0; i < tempHighScore.size(); i++) {
+        for (int i = 0; i < fullScoreList.size(); i++) {
                 if (i < arrayLength){
-                    String name = tempHighScore.get(counter); //name
-                    String score = tempHighScore.get(counter+1); //score
+                    String name = fullScoreList.get(counter); //name
+                    String score = fullScoreList.get(counter+1); //score
                     tableModel.addRow(new Object[]{name, score});
             }
             counter = counter + 2;
@@ -121,6 +130,16 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
         searchFrame.add(searchPnl);
         searchFrame.pack();
+    }
+
+    public void setTableModel(DefaultTableModel tableModel) {
+        this.tableModel = tableModel;
+        try {
+            TimeUnit.MILLISECONDS.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        searchTable.setModel(tableModel);
     }
 
     private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
@@ -331,6 +350,11 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         winnerPnl.revalidate();
         winnerPnl.repaint();
 
+    }
+
+    public void closeSearchPanel() {
+        searchFrame.dispose();
+        searchFrame.setVisible(false);
     }
 }
 

@@ -4,6 +4,7 @@ import Client.Model.Client;
 import Client.Model.Player;
 import Client.view.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -82,6 +83,7 @@ public class ClientController {
                client.twoPlayers(name1, name2);
            }
            close();
+           ui.closeSearchPanel();
            resetCurrentGame();
            startCurrentGame(nbrOfPlayers, name1, name2);
        } /*else if(button == BtnType.btnSearch){
@@ -132,7 +134,19 @@ public class ClientController {
     }
 
     public void saveHighScore(ArrayList<String> playerScore) {
+
         comingPlayerScore = playerScore;
+        DefaultTableModel temp = new DefaultTableModel();
+        int counter = 0;
+
+        for (int i = 0; i < comingPlayerScore.size(); i+=2) {
+            String name = comingPlayerScore.get(counter); //name
+            String score = comingPlayerScore.get(counter+1); //score
+            temp.addRow(new Object[]{name, score});
+
+            counter = counter + 2;
+        }
+        ui.getCurrentGameUI().setTableModel(temp);
     }
 
     public DefaultListModel getModelToUI(){
@@ -173,4 +187,19 @@ public class ClientController {
     public void showScoreInFrame1() {
         ui.showSearchWin();
     }
+
+    /*public void updateFullScoreList(ArrayList<String> comingPlayerScore) {
+        this.comingPlayerScore = comingPlayerScore;
+        DefaultTableModel temp = new DefaultTableModel();
+        int counter = 0;
+
+        for (int i = 0; i < comingPlayerScore.size(); i+=2) {
+                String name = comingPlayerScore.get(counter); //name
+                String score = comingPlayerScore.get(counter+1); //score
+                temp.addRow(new Object[]{name, score});
+
+            counter = counter + 2;
+        }
+        ui.getCurrentGameUI().setTableModel(temp);
+    } */
 }

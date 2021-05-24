@@ -105,6 +105,10 @@ public class ClientUI extends JPanel implements ActionListener{
         this.numOfPlayers = numOfPlayers;
     }
 
+    public CurrentGameUI getCurrentGameUI(){
+        return currentGameUI;
+    }
+
     public static void main(String[] args) {
         ClientUI ui = new ClientUI(null);
         ui.playersPnl(2);
@@ -195,5 +199,9 @@ public class ClientUI extends JPanel implements ActionListener{
 
     public void resetWinner() {
         currentGameUI.resetWinner();
+    }
+
+    public void closeSearchPanel() {
+        currentGameUI.closeSearchPanel();
     }
 }
