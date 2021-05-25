@@ -8,20 +8,34 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Klassen EastPanelInfo används för att hantera när man klickar på ett log-objekt så det visas
+ * info och innehåll av loggen i användargränssnittet.
+ *
+ * @author Isac Pettersson, Johan Skäremo
+ * @version 1.0
+ */
 public class EastPanelInfo extends JPanel {
 
     private ServerController sController;
     private JPanel pnlSouth;
     private JPanel pnlNorth;
-   // private JLabel contentLabel;
     private JList infoList;
     private JList contentList;
 
-    public EastPanelInfo(ServerController sController){
+    /**
+     * Konstruerar och initialiserar instansvariabeln controller och sätter upp panelen.
+     *
+     * @param sController som används för att kunna kommunicera med servern via controllern.
+     */
+    public EastPanelInfo(ServerController sController) {
         this.sController = sController;
         setUpPanel();
     }
 
+    /**
+     * Metod som sätter upp panelen med alla komponenter och design.
+     */
     public void setUpPanel() {
         setLayout(new FlowLayout());
         setPreferredSize(new Dimension(500, 350));
@@ -54,10 +68,15 @@ public class EastPanelInfo extends JPanel {
         add(splitPane);
     }
 
-    public void setInfoList(ArrayList<String> log){
+    /**
+     * Metod som sätter infolistan med det valda log-objekets infomation.
+     *
+     * @param log arraylista som innehåller rätt information för det valdra objekt som ska visas i användargränssnittet.
+     */
+    public void setInfoList(ArrayList<String> log) {
         String[] array = new String[log.size()];
 
-        for(int i = 0; i < log.size(); i++){
+        for (int i = 0; i < log.size(); i++) {
             array[i] = log.get(i);
         }
         try {
@@ -68,10 +87,15 @@ public class EastPanelInfo extends JPanel {
         infoList.setListData(array);
     }
 
-    public void setContentList(ArrayList<String> log){
-            String[] array = new String[log.size()];
+    /**
+     * Metod som sätter händelsens innehåll på det valda log-objeket i användargränssnittet.
+     *
+     * @param log arraylista med allt innehåll som ska visas i listan.
+     */
+    public void setContentList(ArrayList<String> log) {
+        String[] array = new String[log.size()];
 
-        for(int i = 0; i < log.size(); i++){
+        for (int i = 0; i < log.size(); i++) {
             array[i] = log.get(i);
         }
         try {

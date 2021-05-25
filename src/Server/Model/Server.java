@@ -4,6 +4,7 @@ import Client.Model.Player;
 import Client.Model.Game;
 import Database.DataConn;
 import Server.Controller.ServerController;
+
 import java.io.*;
 import java.net.*;
 import java.time.LocalDateTime;
@@ -11,8 +12,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 
-/***
- * Server klass som lagrar data och skickar vidare data från inbyggda systemet till klienten.
+/**
+ * Klassen Server är huvuddelen i programmet som används för att kommunicera med anslutna klienter, både till och från.
+ *
+ * @author Isac Pettersson, Johan Skäremo
+ * @version 1.0
  */
 public class Server implements Runnable {
 
@@ -32,8 +36,9 @@ public class Server implements Runnable {
     private Socket socket;
 
     /***
-     * Konstruktor för att starta servern och initzialisera arraylisten samt porten.
-     * @param port porten som väljs när servern körs så att man vet vart informationen ska skickas/tas emot
+     * Konstruerar och initialiserar instansvariabler, ansluter mot databasen samt startar servertråden.
+     * @param port som väljs när servern körs så att man vet vart informationen ska skickas/tas emot
+     * @param controller används för att kommunicera mellan server och användargränssnitt.
      */
     public Server(int port, ServerController controller) {
         this.controller = controller;
@@ -44,6 +49,7 @@ public class Server implements Runnable {
         gameList = new ArrayList<>();
         connectToDatabase();
         getInfoFromDatabase();
+        numOfPlayers = "1";
 
         try {
             serverSocket = new ServerSocket(port);
@@ -54,14 +60,14 @@ public class Server implements Runnable {
     }
 
     /***
-     * Accepterar klientens anslutning och skapar ett objekt av en inre klass.
-     * Lägger till i klientlistan och startar klientens tråd.
+     * Serverns trådmetod som används för att öppna en UDP anslutning på en specifik port samt lyssna på inkommande
+     * TCP-anslutningar, startar respektives tråd.
      */
     @Override
     public void run() {
         //while (true) {
         try {
-            DatagramSocket arduinoSocket = new DatagramSocket(3737);
+            DatagramSocket arduinoSocket = new DatagramSocket(port);
             InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
             inbyggdaSystemHandler.start();
 
@@ -78,27 +84,37 @@ public class Server implements Runnable {
         }
     }
 
-    public void closeConnectionToDatabase(){
+    /**
+     * Metoden closeConnection används för att stänga serverns anslutning till databasen.
+     */
+    public void closeConnectionToDatabase() {
         connection.closeConnection();
     }
 
+    /**
+     * Metoden connectToDatabase används för att servern skall etablera en asnlutning till databasen.
+     */
     public void connectToDatabase() {
         connection = new DataConn();
         ServerLog log = new ServerLog(LocalDateTime.now(), "Connection to database established", "jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11408587");
         addLogAndUpdate(log);
     }
 
+    /**
+     * Metoden getInfoFromDatabase används för att hämta lagrad info från databsen och spara dem i
+     * lokala instansvariabler.
+     */
     public void getInfoFromDatabase() {     //icke ifyllt namn i databas = tom sträng
         highscoreList = connection.getHighscore(highscoreList);
         gameList = connection.getGamelist(gameList);
         //Bara tester undan för att visa databasen
-        for (Player p: highscoreList) {
+        for (Player p : highscoreList) {
             System.out.println(p.getName() + ": " + p.getScore());
         }
         System.out.println("-------------------------");
-        for(Game g: gameList){
+        for (Game g : gameList) {
             System.out.println("player1: " + g.getPlayer1().getName() + ", Score: " + g.getPlayer1().getScore());
-            if(!g.getPlayer2().getName().equals("")){
+            if (!g.getPlayer2().getName().equals("")) {
                 System.out.println("player2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore());
             }
         }
@@ -112,16 +128,17 @@ public class Server implements Runnable {
 
 
     /***
-     * Metod som skickar hela highscoreListan till klienten så att klienten kan uppdatera JListen
-     * Så att JListen är aktuell i början/slut av varje spel.
+     * Metod som skickar hela highscoreListan till klienten så att klienten kan uppdatera sitt användargränssnitt
+     * så att den är aktuell i både början och slutet av varje spel.
      * @param highscoreList en arraylista med alla personer som spelat spelet och dess score
+     * @param thread tråden som läggas till i logg-objektet.
      * @throws IOException Kastar IOExeption för att kunna skicka över data över Objekt strömmen.
      */
     public void send(ArrayList<Player> highscoreList, Thread thread) throws IOException {
         Collections.sort(highscoreList, Collections.reverseOrder());
         ArrayList<Player> temp = new ArrayList<>();
 
-        for (Player p : highscoreList){
+        for (Player p : highscoreList) {
             temp.add(p);
         }
 
@@ -141,44 +158,64 @@ public class Server implements Runnable {
         oos.flush();
     }
 
+    /**
+     * Metoden sendNbrOfPlayersToClient används för att skicka antalet spelare, hämtat från hårdvaran, till klienten.
+     *
+     * @param nbrOfPlayers antalet spelare som skall skickas.
+     * @throws IOException Kastar IOExeption för att kunna skicka över data över Objekt strömmen.
+     */
     public void sendNbrOfPlayersToClient(String nbrOfPlayers) throws IOException {
         oos.writeObject(nbrOfPlayers);
     }
 
-    public void addPlayersToList(){
+    /**
+     * Metoden addPlayersToList används för att lägga till aktuella spelare i highscorelistan.
+     */
+    public void addPlayersToList() {
 
-        if(game.getPlayer1() != null){
+        if (game.getPlayer1() != null) {
             highscoreList.add(game.getPlayer1());
         }
-        if(game.getPlayer2() != null){
+        if (game.getPlayer2() != null) {
             highscoreList.add(game.getPlayer2());
         }
     }
 
+    /**
+     * Metoden decideWinner används för att bestämma vinnaren på nuvarande game-objekt.
+     */
     public void decideWinner() {
 
-        if(game.getPlayer1() != null && game.getPlayer2() == null){
+        if (game.getPlayer1() != null && game.getPlayer2() == null) {
             game.setWinner(game.getPlayer1());
 
-        }else if(game.getPlayer1() != null && game.getPlayer2() != null){
+        } else if (game.getPlayer1() != null && game.getPlayer2() != null) {
 
-            if(game.getPlayer1().getScore() > game.getPlayer2().getScore()){
+            if (game.getPlayer1().getScore() > game.getPlayer2().getScore()) {
                 game.setWinner(game.getPlayer1());
 
-            }else if(game.getPlayer2().getScore() > game.getPlayer1().getScore()){
+            } else if (game.getPlayer2().getScore() > game.getPlayer1().getScore()) {
                 game.setWinner(game.getPlayer2());
-            } else if(game.getPlayer1().getScore() == game.getPlayer2().getScore()){
+            } else if (game.getPlayer1().getScore() == game.getPlayer2().getScore()) {
                 game.setWinner(null);
             }
         }
     }
 
-    public void addLogAndUpdate(ServerLog log){
+    /**
+     * Metoden addLogAndUpdate används för att lägga till ett log-objekt till listan i användargränssnittet.
+     *
+     * @param log som skall läggas till
+     */
+    public void addLogAndUpdate(ServerLog log) {
         serverlogs.add(log);
         controller.getServerLogToWestPanel(serverlogs);
     }
 
-    public void updateDatabase(){
+    /**
+     * Metoden updateDatabase används för att uppdatera databasen med nuvarande spel.
+     */
+    public void updateDatabase() {
         connection.setDataInDatabase(game);
         ServerLog loghighscore = new ServerLog(LocalDateTime.now(), "Updated highscore in database", "Highscore", "Sent");
         loghighscore.setGame(game);
@@ -189,7 +226,7 @@ public class Server implements Runnable {
     }
 
     /***
-     * En inre klass för att kunna ta emot strängar och hantera datan utifrån patterns
+     * Klassen ClientHandler är serverns sätt att hantera Klienter.
      */
     private class ClientHandler extends Thread {
 
@@ -198,7 +235,7 @@ public class Server implements Runnable {
 
         /***
          * Konstruktor för att kunna använda socketen som skapades i servern
-         * @param socket socket för att använda vid strömmarna
+         * @param socket som används vid ut -och inströmmar.
          */
         public ClientHandler(Socket socket) {
             this.socket = socket;
@@ -206,7 +243,7 @@ public class Server implements Runnable {
         }
 
         /***
-         * Den inre klassens tråd som hämtar strängar och hanterar dem utifrån deras specifika mönstert.
+         * Metoden run är den inre klassens tråd som hanterar TCP-klienten.
          */
         public void run() {
             try {
@@ -219,12 +256,11 @@ public class Server implements Runnable {
                 highscorelog.setHighscore(highscoreList);
                 addLogAndUpdate(highscorelog);
 
-
-                while(true) {
+                while (true) {
                     if (numOfPlayers != null) {
                         oos.writeObject(highscoreList); //bara för att testa, ska vara där uppe
                         sendNbrOfPlayersToClient(numOfPlayers);
-                        ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Sent number of players from client", socket, "Sent");
+                        ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Sent number of players to client", socket, "Sent");
                         logNbrOfPlayers.setNumOfPlayers(numOfPlayers);
                         logNbrOfPlayers.setPacketType("TCP");
                         addLogAndUpdate(logNbrOfPlayers);
@@ -252,16 +288,27 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Klassen InbyggdaSystemHandler hanterar inkommande strömmar från hårdvaran genom UDP.
+     */
     private class InbyggdaSystemHandler extends Thread {
 
         private DatagramSocket serverSocket;
         private byte[] receiveData = new byte[1024];
         private byte[] sendData = new byte[1024];
 
+        /**
+         * Konstruerar och iniatiliserar socket som skall användas för informationsflöde med hårdvaran.
+         *
+         * @param socket som skall användas för ta emot data från hårdvaran.
+         */
         public InbyggdaSystemHandler(DatagramSocket socket) {
             this.serverSocket = socket;
         }
 
+        /**
+         * Metoden run är den inre klassens tråd som hanterar UDP-klienten.
+         */
         public void run() {
             System.out.println("Inne i inbyggda");
             ServerLog log = new ServerLog(LocalDateTime.now(), this, "UPD connection open", serverSocket, port);
@@ -275,7 +322,7 @@ public class Server implements Runnable {
                     char[] rawData = new char[dataLength];
                     byte[] rawBytes = receivePacket.getData();
                     for (int i = 0; i < dataLength; i++) {
-                        rawData[i] = (char)rawBytes[i];
+                        rawData[i] = (char) rawBytes[i];
                     }
                     String sentence = new String(rawData);
 
@@ -311,7 +358,7 @@ public class Server implements Runnable {
 
                         int score = Integer.parseInt(scoreStr);
                         game.getPlayer1().setScore(score);
-                        if(game.getPlayer2() == null){
+                        if (game.getPlayer2() == null) {
                             decideWinner();
                             updateDatabase();
                             send(highscoreList, this);

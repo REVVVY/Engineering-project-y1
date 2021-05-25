@@ -2,39 +2,49 @@ package Server.Model;
 
 import Client.Model.Game;
 import Client.Model.Player;
+
 import java.util.ArrayList;
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Klassen ServerLog används för att kunna skapa log-objekt med olika attribut
+ * som sedan ska visas i server användargränssnittet.
+ *
+ * @author Isac Pettersson, Johan Skäremo
+ * @version 1.0
+ */
 public class ServerLog {
 
-    private String timeNow; // - Finns alltid
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // - Finns alltid
-    private Thread thread; // - Finns alltid
-    private String description; // - Finns alltid
-    private Game game; // - Skickas och Tas emot
-    private String databaseTable; // - Skickat eller tagit emot info från databas
-    private String databaseURL; // - Skickat eller tagit emot info från databas
-    private Socket socket; // - Ska alltid finns via TCP
-    private DatagramSocket dSocket; // - Ska alltid finnas via UDP
-    private String score; // - Tas emot
-    private String numOfPlayers; // - Tas emot och skickas
-    private String packetType; // - Ska alltid visas vid UDP / TCP överföring
-    private ArrayList<Player> highscore; // - Skickas till java klient
-    private ArrayList<Game> gamelist; //hämtar från db
-    private String sendOrRecieve; // - Ska alltid vara med
+    private String timeNow;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private Thread thread;
+    private String description;
+    private Game game;
+    private String databaseTable;
+    private String databaseURL;
+    private Socket socket;
+    private DatagramSocket dSocket;
+    private String score;
+    private String numOfPlayers;
+    private String packetType;
+    private ArrayList<Player> highscore;
+    private ArrayList<Game> gamelist;
+    private String sendOrRecieve;
     private int port;
-    // 12 kombinationer
 
-    public ServerLog(LocalDateTime ldt, Thread thread, String description){
-         this.thread = thread;
-         this.description = description;
-         this.timeNow = ldt.format(formatter);
-    }
-
-    public ServerLog(LocalDateTime ldt, Thread thread, String description, Socket socket, String direction){
+    /**
+     * Konstruerar och initialiserar instansvariablerna för det specifika log-objekt som skapats.
+     *
+     * @param ldt         tiden som loggades då objektet skapades för visning i användargränssnitt.
+     * @param thread      tråden som utförde händelsen som loggas.
+     * @param description på vad som loggades.
+     * @param socket      som används vid den specifika TCP händelsen.
+     * @param direction   på händelsen ifall den togs emot eller skickades.
+     */
+    public ServerLog(LocalDateTime ldt, Thread thread, String description, Socket socket, String direction) {
         this.thread = thread;
         this.description = description;
         this.timeNow = ldt.format(formatter);
@@ -42,14 +52,32 @@ public class ServerLog {
         this.sendOrRecieve = direction;
     }
 
-    public ServerLog(LocalDateTime ldt, Thread thread, String description, Socket socket){
+    /**
+     * Konstruerar och initialiserar instansvariablerna för det specifika log-objekt som skapats.
+     *
+     * @param ldt         tiden som loggades då objektet skapades för visning i användargränssnitt.
+     * @param thread      tråden som utförde händelsen som loggas.
+     * @param description på vad som loggades.
+     * @param socket      som används vid den specifika TCP händelsen.
+     */
+    public ServerLog(LocalDateTime ldt, Thread thread, String description, Socket socket) {
         this.thread = thread;
         this.description = description;
         this.timeNow = ldt.format(formatter);
         this.socket = socket;
     }
 
-    public ServerLog(LocalDateTime ldt, Thread thread, String description, DatagramSocket datagramSocket, String direction, int port){
+    /**
+     * Konstruerar och initialiserar instansvariablerna för det specifika log-objekt som skapats.
+     *
+     * @param ldt            tiden som loggades då objektet skapades för visning i användargränssnitt.
+     * @param thread         tråden som utförde händelsen som loggas.
+     * @param description    på vad som loggades.
+     * @param datagramSocket som används vid den specifika UDP händelsen.
+     * @param direction      på händelsen ifall den togs emot eller skickades.
+     * @param port           porten som används för den specifika händelsen.
+     */
+    public ServerLog(LocalDateTime ldt, Thread thread, String description, DatagramSocket datagramSocket, String direction, int port) {
         this.thread = thread;
         this.description = description;
         this.timeNow = ldt.format(formatter);
@@ -58,7 +86,16 @@ public class ServerLog {
         this.port = port;
     }
 
-    public ServerLog(LocalDateTime ldt, Thread thread, String description, DatagramSocket datagramSocket, int port){
+    /**
+     * Konstruerar och initialiserar instansvariablerna för det specifika log-objekt som skapats.
+     *
+     * @param ldt            tiden som loggades då objektet skapades för visning i användargränssnitt.
+     * @param thread         tråden som utförde händelsen som loggas.
+     * @param description    på vad som loggades.
+     * @param datagramSocket som används vid den specifika UDP händelsen.
+     * @param port           porten som används för den specifika händelsen.
+     */
+    public ServerLog(LocalDateTime ldt, Thread thread, String description, DatagramSocket datagramSocket, int port) {
         this.thread = thread;
         this.description = description;
         this.timeNow = ldt.format(formatter);
@@ -66,13 +103,28 @@ public class ServerLog {
         this.port = port;
     }
 
-    public ServerLog(LocalDateTime ldt, String description, String dbDriver){
+    /**
+     * Konstruerar och initialiserar instansvariablerna för det specifika log-objekt som skapats.
+     *
+     * @param ldt         tiden som loggades då objektet skapades för visning i användargränssnitt.
+     * @param description på vad som loggades.
+     * @param dbDriver    för databasen som används vid anslutningen till databasen.
+     */
+    public ServerLog(LocalDateTime ldt, String description, String dbDriver) {
         this.description = description;
         this.timeNow = ldt.format(formatter);
         this.databaseURL = dbDriver;
     }
 
-    public ServerLog(LocalDateTime ldt, String description, String dbTable, String direction){
+    /**
+     * Konstruerar och initialiserar instansvariablerna för det specifika log-objekt som skapats.
+     *
+     * @param ldt         tiden som loggades då objektet skapades för visning i användargränssnitt.
+     * @param description på vad som loggades.
+     * @param dbTable     tabellen som används vid hämtningen eller inmatningen av data till/från databasen.
+     * @param direction   på händelsen ifall den togs emot eller skickades.
+     */
+    public ServerLog(LocalDateTime ldt, String description, String dbTable, String direction) {
         this.description = description;
         this.timeNow = ldt.format(formatter);
         this.databaseTable = dbTable;
@@ -80,109 +132,25 @@ public class ServerLog {
         this.sendOrRecieve = direction;
     }
 
-    public String getTimeNow() {
-        return timeNow;
-    }
-
-    public void setTimeNow(String timeNow) {
-        this.timeNow = timeNow;
-    }
-
-    public DateTimeFormatter getFormatter() {
-        return formatter;
-    }
-
-    public void setFormatter(DateTimeFormatter formatter) {
-        this.formatter = formatter;
-    }
-
-    public Thread getThread() {
-        return thread;
-    }
-
-    public void setThread(Thread thread) {
-        this.thread = thread;
-    }
-
     public String getDescription() {
 
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Game getGame() {
-        return game;
     }
 
     public void setGame(Game game) {
         this.game = game;
     }
 
-    public String getDatabaseTable() {
-        return databaseTable;
-    }
-
-    public void setDatabaseTable(String databaseTable) {
-        this.databaseTable = databaseTable;
-    }
-
-    public String getDatabaseURL() {
-        return databaseURL;
-    }
-
-    public void setDatabaseURL(String databaseURL) {
-        this.databaseURL = databaseURL;
-    }
-
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
-
-    public DatagramSocket getdSocket() {
-        return dSocket;
-    }
-
-    public void setdSocket(DatagramSocket dSocket) {
-        this.dSocket = dSocket;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
     public void setScore(String score) {
         this.score = score;
-    }
-
-    public String getNumOfPlayers() {
-        return numOfPlayers;
     }
 
     public void setNumOfPlayers(String numOfPlayers) {
         this.numOfPlayers = numOfPlayers;
     }
 
-    public String getPacketType() {
-        return packetType;
-    }
-
     public void setPacketType(String packetType) {
         this.packetType = packetType;
-    }
-
-    public ArrayList<Player> getHighscore() {
-        return highscore;
-    }
-
-    public ArrayList<Game> getGamelist() {
-        return gamelist;
     }
 
     public void setGamelist(ArrayList<Game> gamelist) {
@@ -193,63 +161,83 @@ public class ServerLog {
         this.highscore = highscore;
     }
 
-    public String getSendOrRecieve() {
-        return sendOrRecieve;
-    }
-
-    public void setSendOrRecieve(String sendOrRecieve) {
-        this.sendOrRecieve = sendOrRecieve;
-    }
-
-
-
-    public ArrayList getUDPanslutningsString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getUDPanslutningsString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
-       // temp.add("Thread: " +thread.getName());  VISA I RENAME
-       return temp;
+        // temp.add("Thread: " +thread.getName());  VISA I RENAME
+        return temp;
     }
 
-    public ArrayList getClientConnectString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getClientConnectString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         //temp.add("Thread: " +thread.getName());       LÄGG TILL I RENAME
         return temp;
     }
 
-    public ArrayList getGameSentFromClientString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getGameSentFromClientString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("Player 1: " + game.getPlayer1().getName());
-        if(game.getPlayer2()!= null){
+        if (game.getPlayer2() != null) {
             temp.add("Player 2:  " + game.getPlayer2().getName());
         }
-       // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
+        // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
         //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
     }
 
-    public ArrayList getDatabaseConnectionString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getDatabaseConnectionString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("DatabaseURL: " + databaseURL);
         return temp;
     }
 
-    public ArrayList getDatabaseHighscorelistString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getDatabaseHighscorelistString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
-        for(Player p: highscore){
+        for (Player p : highscore) {
             temp.add("Name: " + p.getName() + ", Score: " + p.getScore());
         }
         return temp;
     }
 
-    public ArrayList getUpdatedHighscoreInDBString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getUpdatedHighscoreInDBString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("Player 1: " + game.getPlayer1().getName() + ", Score: " + game.getPlayer1().getScore());
-        if(game.getPlayer2()!= null){
+        if (game.getPlayer2() != null) {
             temp.add("Player 2:  " + game.getPlayer2().getName() + ", Score: " + game.getPlayer2().getScore());
         }
         // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
@@ -258,16 +246,21 @@ public class ServerLog {
 
     }
 
-    public ArrayList getUpdatedGameInDbString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getUpdatedGameInDbString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("Player 1: " + game.getPlayer1().getName() + ", Score: " + game.getPlayer1().getScore());
-        if(game.getPlayer2()!= null){
+        if (game.getPlayer2() != null) {
             temp.add("Player 2:  " + game.getPlayer2().getName() + "Score: " + game.getPlayer2().getScore());
         }
-        if(game.getWinner() == null){
+        if (game.getWinner() == null) {
             temp.add("Winner: Draw");
-        }else {
+        } else {
             temp.add("Winner: " + game.getWinner().getName());
         }
 
@@ -276,21 +269,24 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getDatabaseGamesListString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getDatabaseGamesListString() {
         ArrayList<String> temp = new ArrayList<>();
         int counter = 1;
         temp.add("Time: " + timeNow);
-        for(Game g: gamelist){
-            if(g.getPlayer2() == null){
+        for (Game g : gamelist) {
+            if (g.getPlayer2() == null) {
                 temp.add(counter + ": Player 1: " + g.getPlayer1().getName() + ", Score: " + g.getPlayer1().getScore() + ", Winner: " + g.getWinner().getName());
                 counter++;
-            }
-            else{
-                if(g.getWinner() == null){
+            } else {
+                if (g.getWinner() == null) {
                     temp.add(counter + ": Player 1: " + g.getPlayer1().getName() + " Score: " + g.getPlayer1().getScore() + ", Player 2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore() + ", Winner: Draw");
                     counter++;
-                }
-                else{
+                } else {
                     temp.add(counter + ": Player 1: " + g.getPlayer1().getName() + " Score: " + g.getPlayer1().getScore() + ", Player 2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore() + ", Winner: " + g.getWinner().getName());
                     counter++;
                 }
@@ -299,25 +295,35 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getSentHighscoreListToClientString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getSentHighscoreListToClientString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
-        for(Player p: highscore){
+        for (Player p : highscore) {
             temp.add("Name: " + p.getName() + ", Score: " + p.getScore());
         }
         return temp;
     }
 
-    public ArrayList getSentGameToClientString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getSentGameToClientString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("Player 1: " + game.getPlayer1().getName() + ", Score: " + game.getPlayer1().getScore());
-        if(game.getPlayer2()!= null){
+        if (game.getPlayer2() != null) {
             temp.add("Player 2:  " + game.getPlayer2().getName() + ", Score: " + game.getPlayer2().getScore());
         }
-        if(game.getWinner() == null){
+        if (game.getWinner() == null) {
             temp.add("Winner: Draw");
-        }else {
+        } else {
             temp.add("Winner: " + game.getWinner().getName());
         }
 
@@ -326,35 +332,60 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getSentNumOfPlayersToClientString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getSentNumOfPlayersToClientString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("Number of players: " + numOfPlayers);
         return temp;
     }
 
-    public ArrayList getReceivedScoreFromClientString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getReceivedScoreFromClientString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("Score: " + score);
         return temp;
     }
 
-    public ArrayList getReceivedNbrOfPlayersFromClientString(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under content.
+     */
+    public ArrayList getReceivedNbrOfPlayersFromClientString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
         temp.add("Number of players: " + numOfPlayers);
         return temp;
     }
 
-    public ArrayList getUDPConnectionInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getUDPConnectionInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Port: " + port);
         return temp;
     }
 
-    public ArrayList getClientConnectedInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getClientConnectedInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
@@ -362,7 +393,12 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getGameRecivedInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getGameRecivedInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
@@ -372,27 +408,47 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getUpdatedHighscoreInDBInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getUpdatedHighscoreInDBInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Database table: " + databaseTable);
         temp.add("Direction: " + sendOrRecieve);
         return temp;
     }
 
-    public ArrayList getUpdatedGamesInDBInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getUpdatedGamesInDBInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Database table: " + databaseTable);
         temp.add("Direction: " + sendOrRecieve);
         return temp;
     }
 
-    public ArrayList getConnectedToDBInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getConnectedToDBInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Database connection established");
         return temp;
     }
 
-    public ArrayList getNbrOfPlayersRecievedInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getNbrOfPlayersRecievedInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + dSocket.getInetAddress());
@@ -402,7 +458,12 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getNbrOfPlayersSentInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getNbrOfPlayersSentInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
@@ -412,7 +473,12 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getScoreFromClientInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getScoreFromClientInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Thread: " + thread.getName() + "ThreadID: " + thread.getId());
         temp.add("Socket address: " + dSocket.getInetAddress());
@@ -422,7 +488,12 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getSentGameToClientInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getSentGameToClientInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
@@ -432,7 +503,12 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getSentHighscoreToClientInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getSentHighscoreToClientInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Thread: " + thread.getName() + ", ThreadID: " + thread.getId());
         temp.add("Socket address: " + socket.getInetAddress());
@@ -442,20 +518,35 @@ public class ServerLog {
         return temp;
     }
 
-    public ArrayList getReceivedGamesFromDbInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getReceivedGamesFromDbInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Database table: " + databaseTable);
         temp.add("Direction: " + sendOrRecieve);
         return temp;
     }
 
-    public ArrayList getRecievedHighscorelistFromDbInfo(){
+    /**
+     * Metoden används för att lätt kunna samla all data i en arraylista som ska visas i användagränssnittet.
+     *
+     * @return arraylistan som ska visas i användargränssnittet under info.
+     */
+    public ArrayList getRecievedHighscorelistFromDbInfo() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Database table: " + databaseTable);
         temp.add("Direction: " + sendOrRecieve);
         return temp;
     }
 
+    /**
+     * Metoden nedan gör om objektet till en string för att visas i användagränssnitet.
+     *
+     * @return en string som beskriver händelsen som loggats.
+     */
     @Override
     public String toString() {
         return timeNow + "   " + description;
