@@ -169,7 +169,6 @@ public class ServerLog {
     public ArrayList getUDPanslutningsString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
-        // temp.add("Thread: " +thread.getName());  VISA I RENAME
         return temp;
     }
 
@@ -181,7 +180,6 @@ public class ServerLog {
     public ArrayList getClientConnectString() {
         ArrayList<String> temp = new ArrayList<>();
         temp.add("Time: " + timeNow);
-        //temp.add("Thread: " +thread.getName());       LÄGG TILL I RENAME
         return temp;
     }
 
@@ -197,8 +195,6 @@ public class ServerLog {
         if (game.getPlayer2() != null) {
             temp.add("Player 2:  " + game.getPlayer2().getName());
         }
-        // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
-        //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
     }
 
@@ -240,8 +236,6 @@ public class ServerLog {
         if (game.getPlayer2() != null) {
             temp.add("Player 2:  " + game.getPlayer2().getName() + ", Score: " + game.getPlayer2().getScore());
         }
-        // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
-        //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
 
     }
@@ -263,9 +257,6 @@ public class ServerLog {
         } else {
             temp.add("Winner: " + game.getWinner().getName());
         }
-
-        // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
-        //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
     }
 
@@ -326,9 +317,6 @@ public class ServerLog {
         } else {
             temp.add("Winner: " + game.getWinner().getName());
         }
-
-        // temp.add("PacketType: " + packetType);       LÄGG TILL I RENAME
-        //temp.add("Direction: " + sendOrRecieve);   LÄGG TILL I RENAME
         return temp;
     }
 

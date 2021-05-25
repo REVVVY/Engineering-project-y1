@@ -49,7 +49,6 @@ public class Server implements Runnable {
         gameList = new ArrayList<>();
         connectToDatabase();
         getInfoFromDatabase();
-        numOfPlayers = "1";
 
         try {
             serverSocket = new ServerSocket(port);
@@ -65,7 +64,6 @@ public class Server implements Runnable {
      */
     @Override
     public void run() {
-        //while (true) {
         try {
             DatagramSocket arduinoSocket = new DatagramSocket(port);
             InbyggdaSystemHandler inbyggdaSystemHandler = new InbyggdaSystemHandler(arduinoSocket);
@@ -76,7 +74,6 @@ public class Server implements Runnable {
             ServerLog log = new ServerLog(LocalDateTime.now(), server, "Client connected to server", socket);
             addLogAndUpdate(log);
             ClientHandler ch = new ClientHandler(socket);
-            //clientList.add(ch);
             ch.start();
 
         } catch (IOException e) {
@@ -104,20 +101,9 @@ public class Server implements Runnable {
      * Metoden getInfoFromDatabase används för att hämta lagrad info från databsen och spara dem i
      * lokala instansvariabler.
      */
-    public void getInfoFromDatabase() {     //icke ifyllt namn i databas = tom sträng
+    public void getInfoFromDatabase() {
         highscoreList = connection.getHighscore(highscoreList);
         gameList = connection.getGamelist(gameList);
-        //Bara tester undan för att visa databasen
-        for (Player p : highscoreList) {
-            System.out.println(p.getName() + ": " + p.getScore());
-        }
-        System.out.println("-------------------------");
-        for (Game g : gameList) {
-            System.out.println("player1: " + g.getPlayer1().getName() + ", Score: " + g.getPlayer1().getScore());
-            if (!g.getPlayer2().getName().equals("")) {
-                System.out.println("player2: " + g.getPlayer2().getName() + ", Score: " + g.getPlayer2().getScore());
-            }
-        }
         ServerLog loghighscore = new ServerLog(LocalDateTime.now(), "Recived highscorelist from database", "Highscore", "Recived");
         loghighscore.setHighscore(highscoreList);
         addLogAndUpdate(loghighscore);
@@ -143,13 +129,11 @@ public class Server implements Runnable {
         }
 
         oos.writeObject(temp);
-        // - Log
         ServerLog log = new ServerLog(LocalDateTime.now(), thread, "Sent highscorelist to client", socket, "Sent");
         log.setPacketType("TCP");
         log.setHighscore(highscoreList);
         addLogAndUpdate(log);
 
-        // - Log
         oos.writeObject(game);
         ServerLog loggame = new ServerLog(LocalDateTime.now(), thread, "Sent game to client", socket, "Sent");
         loggame.setPacketType("TCP");
@@ -250,7 +234,11 @@ public class Server implements Runnable {
                 ois = new ObjectInputStream(socket.getInputStream());
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 Collections.sort(highscoreList, Collections.reverseOrder());
-                // oos.writeObject(highscoreList);
+                ArrayList<Player> temp = new ArrayList<>();
+                for (Player p : highscoreList) {
+                    temp.add(p);
+                }
+                oos.writeObject(temp);
                 ServerLog highscorelog = new ServerLog(LocalDateTime.now(), this, "Sent highscorelist to client", socket, "Sent");
                 highscorelog.setPacketType("TCP");
                 highscorelog.setHighscore(highscoreList);
@@ -258,7 +246,6 @@ public class Server implements Runnable {
 
                 while (true) {
                     if (numOfPlayers != null) {
-                        oos.writeObject(highscoreList); //bara för att testa, ska vara där uppe
                         sendNbrOfPlayersToClient(numOfPlayers);
                         ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Sent number of players to client", socket, "Sent");
                         logNbrOfPlayers.setNumOfPlayers(numOfPlayers);
@@ -266,10 +253,8 @@ public class Server implements Runnable {
                         addLogAndUpdate(logNbrOfPlayers);
                         numOfPlayers = null;
 
-
                         Object obj = ois.readObject();
 
-                        //Todo ändra när vi mergar med klient så vi hanterar det korrekt och inte lägger score osv
                         if (obj instanceof Game) {
                             game = (Game) obj;
                             ServerLog log = new ServerLog(LocalDateTime.now(), this, "Game recived from client", socket, "Recived");
@@ -326,16 +311,12 @@ public class Server implements Runnable {
                     }
                     String sentence = new String(rawData);
 
-                    System.out.println("RECEIVED: " + sentence);
-
                     String score1Pattern = "score1";
                     String score2Pattern = "score2";
                     String nbrOfPlayersPattern = "nbrOfPlayers";
 
                     if (sentence.regionMatches(0, score2Pattern, 0, 6)) {
-                        System.out.println("Score2 pattern");
                         String scoreStr = sentence.substring(6);
-                        // - Log
                         ServerLog logscore = new ServerLog(LocalDateTime.now(), this, "Recived score from client", serverSocket, "Recived", port);
                         logscore.setPacketType("UDP");
                         logscore.setScore(scoreStr);
@@ -348,9 +329,7 @@ public class Server implements Runnable {
                         send(highscoreList, this);
 
                     } else if (sentence.regionMatches(0, score1Pattern, 0, 6)) {
-                        System.out.println("Score1 pattern");
                         String scoreStr = sentence.substring(6);
-                        // - Log
                         ServerLog logscore = new ServerLog(LocalDateTime.now(), this, "Recived score from client", serverSocket, "Recived", port);
                         logscore.setPacketType("UDP");
                         logscore.setScore(scoreStr);
@@ -366,7 +345,6 @@ public class Server implements Runnable {
 
 
                     } else if (sentence.regionMatches(0, nbrOfPlayersPattern, 0, 12)) {
-                        System.out.println("nbrOfPlayersPattern");
                         String nbrOfplayerStr = sentence.substring(12);
                         ServerLog logNbrOfPlayers = new ServerLog(LocalDateTime.now(), this, "Received number of players from client", serverSocket, "Received", port);
                         logNbrOfPlayers.setNumOfPlayers(nbrOfplayerStr);
