@@ -9,6 +9,6 @@ package Server.Controller;
 public class StartServer {
 
     public static void main(String[] args) {
-        ServerController controller = new ServerController(3737);
+        ServerController controller = new ServerController(2323);
     }
 }
