@@ -65,11 +65,8 @@ public class Client implements Runnable {
             e.printStackTrace();
         }
         int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
-        System.out.println(nbrOfPlayers);
-        /*numOfPlayers = nbrOfPlayers;
-        return numOfPlayers;
+        System.out.println("number of players " + nbrOfPlayers);
 
-         */
         controller.setNbrOfPlayers(nbrOfPlayers);
         return nbrOfPlayers;
     }
@@ -108,7 +105,6 @@ public class Client implements Runnable {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        System.out.println("1 " + fullScoreList.size());
 
 
         ArrayList<String> fullScoreListStr = new ArrayList<>();
@@ -124,7 +120,6 @@ public class Client implements Runnable {
 
         controller.saveTop10Score(tempTop10); //highscorelista top 10
         controller.saveHighScore(fullScoreListStr); // TILL SEARCHKNAPP, FUNGERAR
-       // controller.getUi().getCurrentGameUI().test();
 
     }
 
@@ -135,32 +130,22 @@ public class Client implements Runnable {
     public void getScoreFromServer() {
         try {
             highScoreList = (ArrayList<Player>) ois.readObject();
-
-            /*System.out.println(highScoreList.get(0).getName() + highScoreList.get(0).getScore());
-            System.out.println(highScoreList.get(1).getName() + highScoreList.get(1).getScore());
-            System.out.println(highScoreList.get(2).getName() + highScoreList.get(2).getScore());
-
-             */
-
-          //  controller.printScoreboard(playerScore);
-            /*for (Player p : highScoreList) {
-                System.out.println(p.getName() + " " + p.getScore());
-            }
-
-             */
-            //System.out.println("GotList");
-            //System.out.println("2 " + highScoreList.size());
         } catch (IOException | ClassNotFoundException e){}
 
        ArrayList<String> highScoreListStr = new ArrayList<>();
+        ArrayList<String> tempTop10 = new ArrayList<>();
 
         for (Player p : highScoreList) {
             highScoreListStr.add(p.getName());
             highScoreListStr.add(String.valueOf(p.getScore()));
+            if(tempTop10.size() < 20){
+                tempTop10.add(p.getName());
+                tempTop10.add(String.valueOf(p.getScore()));
+            }
         }
 
-     //   controller.showScore();
         controller.saveHighScore(highScoreListStr);
+        controller.saveTop10Score(tempTop10);
 
     }
 
