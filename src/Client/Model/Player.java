@@ -2,8 +2,9 @@ package Client.Model;
 
 import java.io.Serializable;
 
-/*
+/**
  * Klass för att kunna skapa Player objekt med namn och score.
+ * @author Isac Pettersson, Johan Skäremo
  */
 public class Player implements Serializable, Comparable<Player> {
 

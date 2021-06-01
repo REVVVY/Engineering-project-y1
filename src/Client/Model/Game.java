@@ -1,7 +1,10 @@
 package Client.Model;
 
 import java.io.Serializable;
-
+/**
+ * Klass för att kunna skapa Game objekt med spelaren och vinnaren.
+ * @author Isac Pettersson, Johan Skäremo
+ */
 public class Game implements Serializable {
 
     private Player player1;

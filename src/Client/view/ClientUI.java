@@ -9,6 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * En gänssnitt klass som hanterar registrering av spelarna
+ * Tar hand om kommunikation med CurrentGameUI klassen
+ * @author Reem Mohamed
+ */
 public class ClientUI extends JPanel implements ActionListener{
     private JButton btnRegister = new JButton("Register");
     private JLabel lblTitle = new JLabel("Welcome to our Laser-game!", SwingConstants.CENTER);
@@ -24,12 +29,11 @@ public class ClientUI extends JPanel implements ActionListener{
 
     private ArrayList<Object> highScoreList;
     private int numOfPlayers;
-    /** Creates new form UserInput */
+
     public ClientUI(ClientController controller) {
         this.controller = controller;
         currentGameUI = new CurrentGameUI(controller);
         setLayout(new BorderLayout());
-
 
         lblTitle.setFont(currentGameUI.applyFont(40));
         lblTitle.setForeground(Color.decode("#FAECD9"));
@@ -39,7 +43,10 @@ public class ClientUI extends JPanel implements ActionListener{
         add(lblTitle,BorderLayout.NORTH);
     }
 
-
+    /**
+     * Skapar panels om det är en spelare
+     * @return centrala panelen
+     */
     public JPanel onePlayerPnl(){
         tfPlayer2.setEnabled(false); //not used
         centerPanel.setBackground(Color.decode("#0F192F"));
@@ -62,6 +69,10 @@ public class ClientUI extends JPanel implements ActionListener{
         centerPanel.add(btnRegister, BorderLayout.SOUTH);
         return centerPanel;
     }
+    /**
+     * Skapar panels om det är två spelaren
+     * @return centrala panelen
+     */
     public JPanel twoPlayersPnl(){
         centerPanel.setBackground(Color.decode("#0F192F"));
 
@@ -93,7 +104,10 @@ public class ClientUI extends JPanel implements ActionListener{
         return centerPanel;
     }
 
-    /** Gets number of players from controller, and opens its player panel, 1 or 2 */
+    /**
+     * Tar emot antal spelaren från controller klassen
+     * Skapar gällande fönster med panel enligt antal spelaren
+     */
 
     public void playersPnl(int numOfPlayers) {
         if (numOfPlayers == 1){
@@ -127,7 +141,7 @@ public class ClientUI extends JPanel implements ActionListener{
     }
 
     /**
-     * Startar players' panel genom att använda namn och spelaren från controller
+     * Skapar namn på spelarens panel genom att använda namn och spelaren från controller
      * @param numOfPlayers antal nuvarande spelare
      * @param name1 namn på player 1 som är hämtad från 1:st frame
      * @param name2 namn på player 1 som är hämtad från 1:st frame
@@ -140,20 +154,25 @@ public class ClientUI extends JPanel implements ActionListener{
         System.out.println("Started");
     }
 
-    public void startScorePnl(){
-        currentGameUI.openScorePnl();
-        currentGameUI.pack();
-        currentGameUI.setVisible(true);
-        System.out.println("showed score");
-    }
-
+    /**
+     * Visar söklistansfönster
+     */
     public void showSearchWin() {
         currentGameUI.openSearch();
     }
 
+    /**
+     * Returnerar namn på spelare 1
+     * @return spelare 1 namn
+     */
     public String getName1(){
         return tfPlayer1.getText();
     }
+    /**
+     * Returnerar namn på spelare 2
+     * @return null om det är bara 1 spelare
+     * @return spelare 2 namn
+     */
     public String getName2(){
         if (tfPlayer2.isEnabled() == false) {
             return null;
@@ -161,18 +180,11 @@ public class ClientUI extends JPanel implements ActionListener{
         return tfPlayer2.getText();
     }
 
-    public void setHighScoreList(ArrayList<Object> highScoreList) {
-        this.highScoreList = highScoreList;
-        System.out.println("Size1 " + highScoreList.size());
-
-    }
-
-    public void updateScoreList(ArrayList<Object> comingPlayerScoreObj) {
-        highScoreList = comingPlayerScoreObj;
-        setHighScoreList(highScoreList);
-    }
-
-
+    /**
+     * Stänger ner spelplanen
+     * Visar ett nytt vinnarfönster
+     * @param winner
+     */
     public void showWinner(int winner) {
         if (winner != -1) {
             currentGameUI.close();
@@ -180,10 +192,16 @@ public class ClientUI extends JPanel implements ActionListener{
         }
     }
 
+    /**
+     * Stänger ner vinnarfönstret
+     */
     public void closeWinnerFrame() {
         currentGameUI.closeWinnerFrame();
     }
 
+    /**
+     * Tömmar alla fält på registreringsföntret
+     */
     public void resetUI() {
         tfPlayer1.setText("");
         tfPlayer2.setEnabled(true);
@@ -193,14 +211,23 @@ public class ClientUI extends JPanel implements ActionListener{
         centerPanel.repaint();
     }
 
+    /**
+     * Tömmar spelplanen
+     */
     public void resetCurrentGame() {
         currentGameUI.resetCurrentGame();
     }
 
+    /**
+     * Tömmar vinnarfönstret
+     */
     public void resetWinner() {
         currentGameUI.resetWinner();
     }
 
+    /**
+     * Stänger ner fönstret på spelarsöklistan
+     */
     public void closeSearchPanel() {
         currentGameUI.closeSearchPanel();
     }
