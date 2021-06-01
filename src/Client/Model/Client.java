@@ -7,10 +7,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 /***
- * Klient klass för tester av servern.
+ * Klient klass som representerar spelaren i spelet
+ * @author Reem Mohamed
  */
 public class Client implements Runnable {
-    private Client client;
     private ClientController controller;
     private String ip;
     private int port;
@@ -25,8 +25,6 @@ public class Client implements Runnable {
 
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-
-
 
     /***
      * Konstruktor för starten av klienten
@@ -49,14 +47,26 @@ public class Client implements Runnable {
         thread.start();
     }
 
+    /**
+     * Sätter det nya kommande antalet spelaren
+     * @param numOfPlayers nytt antal spelaren
+     */
     public void setNumOfPlayers(int numOfPlayers) {
         this.numOfPlayers = numOfPlayers;
     }
 
+    /**
+     * Skickar vidare antalet spelaren till ett refister-fönster enligt antal spelaren
+     * @param numberOfPlayers
+     */
     private void startNamePanels(int numberOfPlayers){
         controller.showUI(numberOfPlayers);
     }
 
+    /**
+     * Får antalet spelaren från servern, vilket lagras då hos controller
+     * @return antal spelaren
+     */
     public int getNumOfPlayersFromServer()  {
         String nbrOfPlayersStr = null;
         try {
@@ -65,15 +75,23 @@ public class Client implements Runnable {
             e.printStackTrace();
         }
         int nbrOfPlayers = Integer.parseInt(nbrOfPlayersStr);
-        System.out.println("number of players " + nbrOfPlayers);
-
+        System.out.println(nbrOfPlayers);
         controller.setNbrOfPlayers(nbrOfPlayers);
         return nbrOfPlayers;
     }
+
+    /**
+     * Retunerar antal spelaren
+     * @return antal spelaren
+     */
     public int getNumOfPlayers(){
         return numOfPlayers;
     }
 
+    /**
+     * Skickar namnet på spelaren om det är en spelare
+     * @param name namn på spelaren som registreras på regiser-fönstret
+     */
     public void onePlayer(String name)  {
         Player player1 = new Player(name);
         Game game = new Game(player1);
@@ -86,6 +104,11 @@ public class Client implements Runnable {
         numOfPlayers = 0;
     }
 
+    /**
+     * Skickar namnen på spelarna om det är två spelaren
+     * @param name namn på första spelaren som registreras på regiser-fönstret
+     * @param name2 namn på andra spelaren som registreras på regiser-fönstret
+     */
     public void twoPlayers(String name, String name2) {
         Player player1 = new Player(name);
         Player player2 = new Player(name2);
@@ -99,13 +122,18 @@ public class Client implements Runnable {
         numOfPlayers = 0;
     }
 
+    /**
+     * Får en lista med alla spelaren som är registrerade på spelets databas från servern
+     * Listan används som en high-scorelista med 10 spelaren
+     * Listan används igen i sin helhet för att överföras vidare till view som en söklista
+     * Båda listorna konverteras till strängar innan överföring
+     */
     public void getFullScoreList() {
         try {
             fullScoreList = (ArrayList<Player>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
 
         ArrayList<String> fullScoreListStr = new ArrayList<>();
         ArrayList<String> tempTop10 = new ArrayList<>();
@@ -117,10 +145,8 @@ public class Client implements Runnable {
                 tempTop10.add(String.valueOf(p.getScore()));
             }
         }
-
         controller.saveTop10Score(tempTop10); //highscorelista top 10
         controller.saveHighScore(fullScoreListStr); // TILL SEARCHKNAPP, FUNGERAR
-
     }
 
     /**
@@ -133,26 +159,22 @@ public class Client implements Runnable {
         } catch (IOException | ClassNotFoundException e){}
 
        ArrayList<String> highScoreListStr = new ArrayList<>();
-        ArrayList<String> tempTop10 = new ArrayList<>();
 
         for (Player p : highScoreList) {
             highScoreListStr.add(p.getName());
             highScoreListStr.add(String.valueOf(p.getScore()));
-            if(tempTop10.size() < 20){
-                tempTop10.add(p.getName());
-                tempTop10.add(String.valueOf(p.getScore()));
-            }
         }
-
         controller.saveHighScore(highScoreListStr);
-        controller.saveTop10Score(tempTop10);
-
     }
 
+    /**
+     * Får vinnaren från servern, om det är spelare 1, 2, eller samma score
+     * Annonserar vinnarens namn efter mottagning av vinnaren
+     */
     public void getCurrGameFromServer(){
         try {
             currentGame = (Game) ois.readObject();
-            if (currentGame.getWinner() == null) {
+            if (currentGame.getWinner() == null) { //draw, lika score
                 winner = 0;
             } else if(currentGame.getWinner() == currentGame.getPlayer1()){
                 winner = 1;
@@ -161,9 +183,6 @@ public class Client implements Runnable {
             }
             controller.sendWinnerToView(winner);
             controller.showScoreInFrame1();
-
-            //if winner = null --> lika
-            //if winner = player2 --> winner
         } catch (IOException  | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -171,8 +190,10 @@ public class Client implements Runnable {
 
 
     /**
-     * Klientens tråd som lägger till spelares namn + score som test för servern
-     * samt hämtar arraylistan med hela highscorelistan.
+     * Klientens tråd som först tar emot spelarlista och visar den,
+     * skickar skrivna namnen på spelarena till servern,
+     * samt tar emot arraylistan med hela high-scorelistan
+     * I slutet tas emot vinnaren från servern.
      */
 
     public void run() {
@@ -180,19 +201,12 @@ public class Client implements Runnable {
         controller.showScoreInFrame1();
 
         while(true) {
-            //if(numOfPlayers == 0){
-              //  numOfPlayers = 1; //en annan siffra än 0
-
-                int numberOfPlayers = getNumOfPlayersFromServer(); //2
-                //setNumOfPlayers(numberOfPlayers);
-                startNamePanels(numberOfPlayers); //3
+                int numberOfPlayers = getNumOfPlayersFromServer();
+                startNamePanels(numberOfPlayers);
                 getScoreFromServer();
                 System.out.println("Score is sent");
 
                 getCurrGameFromServer();
-
-            //}
-
         }
     }
 

@@ -13,11 +13,13 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * En klass som hanterar spelplanen, vilken visas efter registrering på spelarna
+ * @author Reem Mohamed
+ */
 public class CurrentGameUI extends JFrame implements ActionListener {
     private ClientController controller;
-    private ClientUI clientUI;
     private DefaultTableModel tableModel;
     private ArrayList<String> fullScoreList = new ArrayList<>();
 
@@ -35,13 +37,21 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         this.controller = controller;
     }
 
+    /**
+     * Startar hela spelplanen
+     * @param numOfPlayers antal spelaren
+     * @param name1 namn på spelare 1
+     * @param name2 namn på spelare 2
+     */
     public void startCurrentGame(int numOfPlayers, String name1, String name2){
         openGameUI();
         openPlayersPnl(numOfPlayers, name1, name2);
         openScorePnl();
     }
 
-
+    /**
+     * Skapar spelplanens fönster
+     */
     public void openGameUI() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -57,10 +67,9 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         });
     }
 
-    public void setFullScoreList(ArrayList<String> fullScoreList) {
-        this.fullScoreList = fullScoreList;
-    }
-
+    /**
+     * Skapar spelarsöklistans fönster
+     */
     public void openSearch(){
 
         fullScoreList = controller.getComingPlayerScore();
@@ -133,11 +142,20 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         searchFrame.pack();
     }
 
+    /**
+     * Sätter model på tabellen med spelarlista
+     * Gör det möjligt att uppdatera listan efter varje nytt spel
+     * @param tableModel
+     */
     public void setTableModel(DefaultTableModel tableModel) {
         this.tableModel = tableModel;
         searchTable.setModel(tableModel);
     }
 
+    /**
+     * Hanterar och filtrerar sökfältet på namn i söklistan
+     * @param evt
+     */
     private void jTextField5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyReleased
         DefaultTableModel table = (DefaultTableModel) searchTable.getModel();
         String search = searchFld.getText();
@@ -147,7 +165,7 @@ public class CurrentGameUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Skapar en panel för att visa highscore listan
+     * Skapar en panel för att visa high-scorelistan
      * Använder StringUtils för att ha specifik text-align
      */
     public void openScorePnl() {
@@ -175,7 +193,6 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
             tempScoreList.add(player);
             numberOrder++;
-       //     tempScoreList.trimToSize();
         }
 
         list.setFixedCellHeight(48);
@@ -185,8 +202,6 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         list.setForeground(Color.decode("#FAECD9"));
         list.setSelectionBackground(Color.decode("#0F192F"));
         list.setFont(applyFont(22));
-
-
 
         picLabel2.add(list, BorderLayout.CENTER);
 
@@ -261,6 +276,10 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         pack();
     }
 
+    /**
+     * Hanterar knappen "search score" som visar söklistansfönstret
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         openSearch();
@@ -269,10 +288,11 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         }
     }
 
-    public void test(){
-        openSearch();
-    }
-
+    /**
+     * Genererar "HighscoreHero" stil och tillämpar den till texten vid anrop
+     * @param fontSize storlek på texten
+     * @return stil
+     */
     public Font applyFont(float fontSize){
         Font highScoreFontMethod = null;
         try {
@@ -285,16 +305,28 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         return highScoreFontMethod;
     }
 
+    /**
+     * Stänger ner spelaplanen
+     */
     public void close() {
         dispose();
         setVisible(false);
     }
 
+    /**
+     * Stänger ner Vinnarfönster
+     */
     public void closeWinnerFrame(){
         winnerFrame.dispose();
         winnerFrame.setVisible(false);
     }
 
+    /**
+     * Skapar vinnarfönster enligt den mottagna vinnaren
+     * @param winner vinnaren, spelare 1, 2 eller både
+     * @param name1 namn på vinnare 1
+     * @param name2 namn på vinnare 2
+     */
     public void showWinner(int winner, String name1, String name2) {
         ImageIcon lPic = new ImageIcon("src/Client/view/images/LeftPicOne.png");
         JLabel picLabel2 = new JLabel(lPic);
@@ -335,6 +367,9 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Tömmar spelplanen
+     */
     public void resetCurrentGame() {
         scoreListPnl.removeAll();
         scoreListPnl.revalidate();
@@ -345,6 +380,9 @@ public class CurrentGameUI extends JFrame implements ActionListener {
         playersPnl.repaint();
     }
 
+    /**
+     * Tömmar vinnarfönstret
+     */
     public void resetWinner(){
         winnerPnl.removeAll();
         winnerPnl.revalidate();
@@ -352,6 +390,9 @@ public class CurrentGameUI extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Stänger ner söklistans panel efter klickning på sökknappen på spelplanen
+     */
     public void closeSearchPanel() {
         searchFrame.dispose();
         searchFrame.setVisible(false);

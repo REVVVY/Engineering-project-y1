@@ -7,7 +7,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
+/**
+ * Klass för att kunna skapa Player objekt med namn och score.
+ * @author Reem Mohamed
+ */
 public class ClientController {
 
     private Client client;
@@ -50,14 +53,6 @@ public class ClientController {
     }
 
     /**
-     * Startar Score panel i nuvarande spelets frame
-     * Anrops efter att ta emot highscore listan från Client (genom Server)
-     */
-    public void showScore() {
-        ui.startScorePnl();
-    }
-
-    /**
      * Gör det som ska göras i ordning efter att klicka på Register button:
      * Tar emot namn från view
      * Skickar i sin tur namnen till Server (genom Client)
@@ -77,7 +72,6 @@ public class ClientController {
            if (name2 == null) {
                nbrOfPlayers = 1;
                client.onePlayer(name1);
-               //startCurrentGame(nbrOfPlayers, name1, null);
            } else{
                nbrOfPlayers = 2;
                client.twoPlayers(name1, name2);
@@ -86,11 +80,12 @@ public class ClientController {
            ui.closeSearchPanel();
            resetCurrentGame();
            startCurrentGame(nbrOfPlayers, name1, name2);
-       } /*else if(button == BtnType.btnSearch){
-           ui.showSearchWin();
-       }*/
+       }
     }
 
+    /**
+     * Tömmar spelplanen
+     */
     private void resetCurrentGame() {
         ui.resetCurrentGame();
     }
@@ -129,10 +124,18 @@ public class ClientController {
         });
     }
 
+    /**
+     * Returnerar score-listan som strängar
+     * @return
+     */
     public ArrayList<String> getComingPlayerScore(){
         return comingPlayerScore;
     }
 
+    /**
+     * Lagrar high-scorelistan och skickar den vidare till view
+     * @param playerScore
+     */
     public void saveHighScore(ArrayList<String> playerScore) {
 
         comingPlayerScore = playerScore;
@@ -154,27 +157,31 @@ public class ClientController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
         ui.getCurrentGameUI().setTableModel(temp);
     }
 
-    public DefaultListModel getModelToUI(){
-        DefaultListModel temp = new DefaultListModel();
-        for(String s: comingPlayerScore){
-            temp.addElement(s);
-        }
-        return temp;
-    }
-
+    /**
+     * Sättar high-scorelistan, som kommer från dervern till klienten
+     * @param tempTop10
+     */
     public void saveTop10Score(ArrayList<String> tempTop10) {
         top10ScoreList = tempTop10;
     }
 
+    /**
+     * Returnerar high-scorelistan
+     * @return
+     */
     public ArrayList<String> getTop10ScoreList() {
         return top10ScoreList;
     }
 
+    /**
+     * Överför vidare vinnaren till view
+     * Samt stänger och tömmar vinnarfönstrer efter visning
+     * Sätter antal spelaren till 0 (inget nytt spel har startas)
+     * @param winner
+     */
     public void sendWinnerToView(int winner) {
        ui.showWinner(winner);
 
@@ -189,30 +196,18 @@ public class ClientController {
         client.setNumOfPlayers(0);
     }
 
-
+    /**
+     * Sättar antal spelaren
+     * @param nbrOfPlayers antal spelaren
+     */
     public void setNbrOfPlayers(int nbrOfPlayers) {
         this.nbrOfPlayers = nbrOfPlayers;
     }
 
+    /**
+     * Visar ett fönster med söklista med alla sparade spelarna
+     */
     public void showScoreInFrame1() {
         ui.showSearchWin();
     }
-
-    public ClientUI getUi() {
-        return ui;
-    }
-    /*public void updateFullScoreList(ArrayList<String> comingPlayerScore) {
-        this.comingPlayerScore = comingPlayerScore;
-        DefaultTableModel temp = new DefaultTableModel();
-        int counter = 0;
-
-        for (int i = 0; i < comingPlayerScore.size(); i+=2) {
-                String name = comingPlayerScore.get(counter); //name
-                String score = comingPlayerScore.get(counter+1); //score
-                temp.addRow(new Object[]{name, score});
-
-            counter = counter + 2;
-        }
-        ui.getCurrentGameUI().setTableModel(temp);
-    } */
 }
